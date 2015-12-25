@@ -62,6 +62,7 @@
 
 // Init
 - (id)initWithPhotos:(NSArray *)photosArray;
+- (id)initWithPhotos:(NSArray *)photosArray animatedFromView:(UIView*)view;
 - (id)initWithDelegate:(id <TFPhotoBrowserDelegate>)delegate;
 
 // Reloads the photo browser and refetches data

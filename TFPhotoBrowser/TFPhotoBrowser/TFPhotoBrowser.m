@@ -43,6 +43,13 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     return self;
 }
 
+- (id)initWithPhotos:(NSArray *)photosArray animatedFromView:(UIView*)view {
+    if ((self = [self init])) {
+        _fixedPhotosArray = photosArray;
+        _senderViewForAnimation = view;
+    }
+    return self;
+}
 - (id)initWithCoder:(NSCoder *)decoder {
     if ((self = [super initWithCoder:decoder])) {
         [self _initialisation];
