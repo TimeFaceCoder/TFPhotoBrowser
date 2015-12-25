@@ -44,11 +44,18 @@
     UIBarButtonItem *_previousViewControllerBackButton;
     UIImage *_previousNavigationBarBackgroundImageDefault;
     UIImage *_previousNavigationBarBackgroundImageLandscapePhone;
+    // Present
+    UIView *_senderViewForAnimation;
+    CGRect _senderViewOriginalFrame;
+    UIWindow *_applicationWindow;
+    UIViewController *_applicationTopViewController;
+    int _previousModalPresentationStyle;
     
     // Video
     MPMoviePlayerViewController *_currentVideoPlayerViewController;
     NSUInteger _currentVideoIndex;
     UIActivityIndicatorView *_currentVideoLoadingIndicator;
+    UIPanGestureRecognizer *_panGesture;
     
     // Misc
     BOOL _hasBelongedToViewController;
@@ -62,6 +69,7 @@
     BOOL _didSavePreviousStateOfNavBar;
     BOOL _skipNextPagingScrollViewPositioning;
     BOOL _viewHasAppearedInitially;
+    BOOL _autoHide;
     
 }
 

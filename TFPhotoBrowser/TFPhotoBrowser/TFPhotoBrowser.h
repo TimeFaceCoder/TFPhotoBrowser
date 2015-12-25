@@ -31,6 +31,9 @@
 - (BOOL)photoBrowser:(TFPhotoBrowser *)photoBrowser isPhotoSelectedAtIndex:(NSUInteger)index;
 - (void)photoBrowser:(TFPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index selectedChanged:(BOOL)selected;
 - (void)photoBrowserDidFinishModalPresentation:(TFPhotoBrowser *)photoBrowser;
+- (void)photoBrowser:(TFPhotoBrowser *)photoBrowser didDismissAtPageIndex:(NSUInteger)index;
+- (void)photoBrowser:(TFPhotoBrowser *)photoBrowser willDismissAtPageIndex:(NSUInteger)index;
+- (void)photoBrowser:(TFPhotoBrowser *)photoBrowser didDismissActionSheetWithButtonIndex:(NSUInteger)buttonIndex photoIndex:(NSUInteger)photoIndex;
 
 @end
 
@@ -46,6 +49,11 @@
 @property (nonatomic) BOOL autoPlayOnAppear;
 @property (nonatomic) NSUInteger delayToHideElements;
 @property (nonatomic, readonly) NSUInteger currentIndex;
+@property (nonatomic, weak) UIImage *scaleImage;
+@property (nonatomic) BOOL useWhiteBackgroundColor;
+@property (nonatomic) float animationDuration;
+@property (nonatomic) BOOL usePopAnimation;
+
 
 // Customise image selection icons as they are the only icons with a colour tint
 // Icon should be located in the app's main bundle

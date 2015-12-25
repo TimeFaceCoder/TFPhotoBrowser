@@ -77,7 +77,31 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     _photos = [[NSMutableArray alloc] init];
     _thumbPhotos = [[NSMutableArray alloc] init];
     _didSavePreviousStateOfNavBar = NO;
-    self.automaticallyAdjustsScrollViewInsets = NO;
+    
+    
+    if ([self respondsToSelector:@selector(automaticallyAdjustsScrollViewInsets)])
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    //for animation
+    _animationDuration = 0.28;
+    _senderViewForAnimation = nil;
+    _scaleImage = nil;
+    _useWhiteBackgroundColor = NO;
+    _applicationWindow = [[[UIApplication sharedApplication] delegate] window];
+    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0"))
+    {
+        self.modalPresentationStyle = UIModalPresentationCustom;
+        self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        self.modalPresentationCapturesStatusBarAppearance = YES;
+    }
+    else
+    {
+        _applicationTopViewController = [self topviewController];
+        _previousModalPresentationStyle = _applicationTopViewController.modalPresentationStyle;
+        _applicationTopViewController.modalPresentationStyle = UIModalPresentationCurrentContext;
+        self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    }
+    
+    self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     
     // Listen for TFPhoto notifications
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -126,6 +150,24 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     [super didReceiveMemoryWarning];
     
 }
+
+- (UIImage*)getImageFromView:(UIView *)view {
+    UIGraphicsBeginImageContextWithOptions(view.bounds.size, YES, 2);
+    [view.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
+}
+
+- (UIViewController *)topviewController {
+    UIViewController *topviewController = [UIApplication sharedApplication].keyWindow.rootViewController;
+    
+    while (topviewController.presentedViewController) {
+        topviewController = topviewController.presentedViewController;
+    }
+    return topviewController;
+}
+
 
 #pragma mark - View Loading
 
@@ -233,6 +275,163 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
         return NO;
     }
 }
+
+#pragma mark - Animation
+
+- (void)performPresentAnimation {
+    self.view.alpha = 0.0f;
+    _pagingScrollView.alpha = 0.0f;
+    
+    UIImage *imageFromView = _scaleImage ? _scaleImage : [self getImageFromView:_senderViewForAnimation];
+    
+    _senderViewOriginalFrame = [_senderViewForAnimation.superview convertRect:_senderViewForAnimation.frame toView:nil];
+    
+    UIView *fadeView = [[UIView alloc] initWithFrame:_applicationWindow.bounds];
+    fadeView.backgroundColor = [UIColor clearColor];
+    [_applicationWindow addSubview:fadeView];
+    
+    UIImageView *resizableImageView = [[UIImageView alloc] initWithImage:imageFromView];
+    resizableImageView.frame = _senderViewOriginalFrame;
+    resizableImageView.clipsToBounds = YES;
+    resizableImageView.contentMode = _senderViewForAnimation ? _senderViewForAnimation.contentMode : UIViewContentModeScaleAspectFill;
+    resizableImageView.backgroundColor = [UIColor clearColor];
+    [_applicationWindow addSubview:resizableImageView];
+    _senderViewForAnimation.hidden = YES;
+    
+    void (^completion)() = ^() {
+        self.view.alpha = 1.0f;
+        _pagingScrollView.alpha = 1.0f;
+        resizableImageView.backgroundColor = [UIColor colorWithWhite:(_useWhiteBackgroundColor) ? 1 : 0 alpha:1];
+        [fadeView removeFromSuperview];
+        [resizableImageView removeFromSuperview];
+    };
+    
+    [UIView animateWithDuration:_animationDuration animations:^{
+        fadeView.backgroundColor = self.useWhiteBackgroundColor ? [UIColor whiteColor] : [UIColor blackColor];
+    } completion:nil];
+    
+    CGRect finalImageViewFrame = [self animationFrameForImage:imageFromView presenting:YES scrollView:nil];
+    
+    if(_usePopAnimation)
+    {
+        [self animateView:resizableImageView
+                  toFrame:finalImageViewFrame
+               completion:completion];
+    }
+    else
+    {
+        [UIView animateWithDuration:_animationDuration animations:^{
+            resizableImageView.layer.frame = finalImageViewFrame;
+        } completion:^(BOOL finished) {
+            completion();
+        }];
+    }
+}
+
+- (void)performCloseAnimationWithScrollView:(TFZoomingScrollView *)scrollView {
+    float fadeAlpha = 1 - fabs(scrollView.frame.origin.y)/scrollView.frame.size.height;
+    
+    UIImage *imageFromView = [scrollView.photo underlyingImage];
+    UIView *fadeView = [[UIView alloc] initWithFrame:_applicationWindow.bounds];
+    fadeView.backgroundColor = self.useWhiteBackgroundColor ? [UIColor whiteColor] : [UIColor blackColor];
+    fadeView.alpha = fadeAlpha;
+    [_applicationWindow addSubview:fadeView];
+    
+    CGRect imageViewFrame = [self animationFrameForImage:imageFromView presenting:NO scrollView:scrollView];
+    
+    UIImageView *resizableImageView = [[UIImageView alloc] initWithImage:imageFromView];
+    resizableImageView.frame = imageViewFrame;
+    resizableImageView.contentMode = _senderViewForAnimation ? _senderViewForAnimation.contentMode : UIViewContentModeScaleAspectFill;
+    resizableImageView.backgroundColor = [UIColor clearColor];
+    resizableImageView.clipsToBounds = YES;
+    [_applicationWindow addSubview:resizableImageView];
+    self.view.hidden = YES;
+    
+    void (^completion)() = ^() {
+        _senderViewForAnimation.hidden = NO;
+        _senderViewForAnimation = nil;
+        _scaleImage = nil;
+        
+        [fadeView removeFromSuperview];
+        [resizableImageView removeFromSuperview];
+        
+        [self prepareForClosePhotoBrowser];
+        [self dismissPhotoBrowserAnimated:NO];
+    };
+    
+    [UIView animateWithDuration:_animationDuration animations:^{
+        fadeView.alpha = 0;
+        self.view.backgroundColor = [UIColor clearColor];
+    } completion:nil];
+    
+    CGRect senderViewOriginalFrame = _senderViewForAnimation.superview ? [_senderViewForAnimation.superview convertRect:_senderViewForAnimation.frame toView:nil] : _senderViewOriginalFrame;
+    
+    if(_usePopAnimation)
+    {
+        [self animateView:resizableImageView
+                  toFrame:senderViewOriginalFrame
+               completion:completion];
+    }
+    else
+    {
+        [UIView animateWithDuration:_animationDuration animations:^{
+            resizableImageView.layer.frame = senderViewOriginalFrame;
+        } completion:^(BOOL finished) {
+            completion();
+        }];
+    }
+}
+
+
+- (CGRect)animationFrameForImage:(UIImage *)image presenting:(BOOL)presenting scrollView:(UIScrollView *)scrollView
+{
+    if (!image) {
+        return CGRectZero;
+    }
+    
+    CGSize imageSize = image.size;
+    
+    CGFloat maxWidth = CGRectGetWidth(_applicationWindow.bounds);
+    CGFloat maxHeight = CGRectGetHeight(_applicationWindow.bounds);
+    
+    CGRect animationFrame = CGRectZero;
+    
+    CGFloat aspect = imageSize.width / imageSize.height;
+    if (maxWidth / aspect <= maxHeight) {
+        animationFrame.size = CGSizeMake(maxWidth, maxWidth / aspect);
+    }
+    else {
+        animationFrame.size = CGSizeMake(maxHeight * aspect, maxHeight);
+    }
+    
+    animationFrame.origin.x = roundf((maxWidth - animationFrame.size.width) / 2.0f);
+    animationFrame.origin.y = roundf((maxHeight - animationFrame.size.height) / 2.0f);
+    
+    if (!presenting) {
+        animationFrame.origin.y += scrollView.frame.origin.y;
+    }
+    
+    return animationFrame;
+}
+
+#pragma mark - pop Animation
+
+- (void)animateView:(UIView *)view toFrame:(CGRect)frame completion:(void (^)(void))completion
+{
+    POPSpringAnimation *animation = [POPSpringAnimation animationWithPropertyNamed:kPOPViewFrame];
+    [animation setSpringBounciness:6];
+    [animation setDynamicsMass:1];
+    [animation setToValue:[NSValue valueWithCGRect:frame]];
+    [view pop_addAnimation:animation forKey:nil];
+    
+    if (completion)
+    {
+        [animation setCompletionBlock:^(POPAnimation *animation, BOOL finished) {
+            completion();
+        }];
+    }
+}
+
 
 #pragma mark - Appearance
 
@@ -1311,5 +1510,34 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
         }
     }
 }
+
+
+#pragma mark - Genaral
+
+- (void)prepareForClosePhotoBrowser {
+    // Gesture
+    [_applicationWindow removeGestureRecognizer:_panGesture];
+    _autoHide = NO;
+    // Controls
+    [NSObject cancelPreviousPerformRequestsWithTarget:self]; // Cancel any pending toggles from taps
+}
+
+- (void)dismissPhotoBrowserAnimated:(BOOL)animated {
+    self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    
+    if ([_delegate respondsToSelector:@selector(photoBrowser:willDismissAtPageIndex:)])
+        [_delegate photoBrowser:self willDismissAtPageIndex:_currentPageIndex];
+    
+    [self dismissViewControllerAnimated:animated completion:^{
+        if ([_delegate respondsToSelector:@selector(photoBrowser:didDismissAtPageIndex:)])
+            [_delegate photoBrowser:self didDismissAtPageIndex:_currentPageIndex];
+        
+        if (SYSTEM_VERSION_LESS_THAN(@"8.0"))
+        {
+            _applicationTopViewController.modalPresentationStyle = _previousModalPresentationStyle;
+        }
+    }];
+}
+
 
 @end
