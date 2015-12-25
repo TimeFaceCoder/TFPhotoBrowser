@@ -55,14 +55,14 @@ static const CGFloat TFMotionViewRotationFactor = 4.0f;
         _tapView = [[TFTapDetectingView alloc] initWithFrame:self.bounds];
         _tapView.tapDelegate = self;
         _tapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        _tapView.backgroundColor = [UIColor blackColor];
+        _tapView.backgroundColor = [UIColor clearColor];
         [self addSubview:_tapView];
         
         // Image view
         _photoImageView = [[TFTapDetectingImageView alloc] initWithFrame:CGRectZero];
         _photoImageView.tapDelegate = self;
         _photoImageView.contentMode = UIViewContentModeCenter;
-        _photoImageView.backgroundColor = [UIColor blackColor];
+        _photoImageView.backgroundColor = [UIColor clearColor];
         [self addSubview:_photoImageView];
         
         // Loading indicator
@@ -81,7 +81,7 @@ static const CGFloat TFMotionViewRotationFactor = 4.0f;
                                                    object:nil];
         
         // Setup
-        self.backgroundColor = [UIColor blackColor];
+        self.backgroundColor = [UIColor clearColor];
         self.delegate = self;
         self.showsHorizontalScrollIndicator = NO;
         self.showsVerticalScrollIndicator = NO;
