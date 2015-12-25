@@ -52,6 +52,7 @@
 		B093BCF41BFB44F900754A2D /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B093BCF31BFB44F900754A2D /* CoreMotion.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		B093BCF71BFC1C2D00754A2D /* TFPhotoCaptionView.m in Sources */ = {isa = PBXBuildFile; fileRef = B093BCF61BFC1C2D00754A2D /* TFPhotoCaptionView.m */; };
 		B09C3C491C2015C9009C6CF0 /* TFLibraryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B09C3C481C2015C9009C6CF0 /* TFLibraryViewController.m */; };
+		B0C5D6C31C2D413400ADF607 /* TFPhotoBrowserLocalizations.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B0C5D6C21C2D413400ADF607 /* TFPhotoBrowserLocalizations.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -143,6 +144,9 @@
 		B093BCF61BFC1C2D00754A2D /* TFPhotoCaptionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFPhotoCaptionView.m; sourceTree = "<group>"; };
 		B09C3C471C2015C9009C6CF0 /* TFLibraryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFLibraryViewController.h; sourceTree = "<group>"; };
 		B09C3C481C2015C9009C6CF0 /* TFLibraryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFLibraryViewController.m; sourceTree = "<group>"; };
+		B0C5D6C21C2D413400ADF607 /* TFPhotoBrowserLocalizations.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = TFPhotoBrowserLocalizations.bundle; sourceTree = "<group>"; };
+		B0C5D6C41C2D418300ADF607 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
+		B0C5D6C51C2D418300ADF607 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		B36250858EA58B0E345BDD17 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DED5ADB9B81503523C045BA3 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -302,6 +306,7 @@
 				B0689C271BF7081A00C46CCA /* UIScrollView+ScrollIndicator.m */,
 				B093BCF51BFC1C2D00754A2D /* TFPhotoCaptionView.h */,
 				B093BCF61BFC1C2D00754A2D /* TFPhotoCaptionView.m */,
+				B0C5D6C21C2D413400ADF607 /* TFPhotoBrowserLocalizations.bundle */,
 			);
 			path = TFPhotoBrowser;
 			sourceTree = "<group>";
@@ -450,6 +455,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B0C5D6C31C2D413400ADF607 /* TFPhotoBrowserLocalizations.bundle in Resources */,
 				B08EDBF51BFC2ADB00DE1688 /* photo9.jpg in Resources */,
 				B04C0B5D1BF5D3080012B7D8 /* photo1.jpg in Resources */,
 				B04C0B6B1BF5D3080012B7D8 /* photo8.jpg in Resources */,
@@ -600,6 +606,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				B06A14601B9039810022BCE5 /* Base */,
+				B0C5D6C41C2D418300ADF607 /* zh-Hans */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -608,6 +615,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				B06A14651B9039810022BCE5 /* Base */,
+				B0C5D6C51C2D418300ADF607 /* zh-Hans */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
