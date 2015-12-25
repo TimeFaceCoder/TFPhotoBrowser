@@ -8,6 +8,39 @@
 
 #import <UIKit/UIKit.h>
 
+@class TFAsset;
+@protocol TFLibraryViewControllerDelegate;
+
 @interface TFLibraryViewController : UIViewController
+
+
+@property (nonatomic, weak  ) id<TFLibraryViewControllerDelegate  > libraryControllerDelegate;
+/**
+ *  多选
+ */
+@property (nonatomic, assign) BOOL                              allowsMultipleSelection;
+/**
+ *  单选模式下打开图片裁剪
+ */
+@property (nonatomic, assign) BOOL                              allowsImageCrop;
+@property (nonatomic, assign) NSUInteger                        minimumNumberOfSelection;
+@property (nonatomic, assign) NSUInteger                        maximumNumberOfSelection;
+@property (nonatomic, assign) CGSize                            imageCropSize;
+
+@end
+
+
+
+/**
+ *  照片选择回调
+ */
+@protocol TFLibraryViewControllerDelegate <NSObject>
+
+@optional
+- (void)didSelectPHAssets:(NSArray<TFAsset *> *)assets
+               removeList:(NSArray<TFAsset *> *)removeList
+                    infos:(NSMutableArray *)infos;
+- (void)didSelectImage:(UIImage *)image;
+
 
 @end

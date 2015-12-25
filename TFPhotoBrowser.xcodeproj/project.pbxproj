@@ -8,6 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		3AAB0EAD616F3302486DDD59 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B36250858EA58B0E345BDD17 /* libPods.a */; };
+		B02CE3161C22D2C7005D6E62 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B02CE3151C22D2C7005D6E62 /* Photos.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		B02CE3191C22D443005D6E62 /* TFLibraryViewLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = B02CE3181C22D443005D6E62 /* TFLibraryViewLayout.m */; };
+		B02CE31C1C22D4C4005D6E62 /* NSIndexSet+TFLibrary.m in Sources */ = {isa = PBXBuildFile; fileRef = B02CE31B1C22D4C4005D6E62 /* NSIndexSet+TFLibrary.m */; };
+		B02CE31F1C22D51E005D6E62 /* TFLibraryCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B02CE31E1C22D51E005D6E62 /* TFLibraryCollectionViewCell.m */; };
+		B02CE3211C22D581005D6E62 /* PhotosUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B02CE3201C22D581005D6E62 /* PhotosUI.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		B02CE3241C22D5B0005D6E62 /* UICollectionView+TFLibrary.m in Sources */ = {isa = PBXBuildFile; fileRef = B02CE3231C22D5B0005D6E62 /* UICollectionView+TFLibrary.m */; };
 		B0420DB11B953376002CAF13 /* TFTapDetectingView.m in Sources */ = {isa = PBXBuildFile; fileRef = B0420DB01B953376002CAF13 /* TFTapDetectingView.m */; };
 		B0420DB71B953FE2002CAF13 /* TFZoomingScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = B0420DB61B953FE2002CAF13 /* TFZoomingScrollView.m */; };
 		B04C0B4A1BF5B8140012B7D8 /* UIImage+TFPhotoBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = B04C0B491BF5B8140012B7D8 /* UIImage+TFPhotoBrowser.m */; };
@@ -40,9 +46,10 @@
 		B06A14901B903BA60022BCE5 /* TFPhotoBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = B06A148F1B903BA60022BCE5 /* TFPhotoBrowser.m */; };
 		B06A14951B904B080022BCE5 /* TFPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = B06A14941B904B080022BCE5 /* TFPhoto.m */; };
 		B06A14991B904F850022BCE5 /* TFTapDetectingImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = B06A14981B904F850022BCE5 /* TFTapDetectingImageView.m */; };
+		B08D61BC1C224CBC00335903 /* TFAsset.m in Sources */ = {isa = PBXBuildFile; fileRef = B08D61BB1C224CBC00335903 /* TFAsset.m */; };
 		B08EDBF51BFC2ADB00DE1688 /* photo9.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B08EDBF31BFC2ADB00DE1688 /* photo9.jpg */; };
 		B08EDBF61BFC2ADB00DE1688 /* photo9t.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B08EDBF41BFC2ADB00DE1688 /* photo9t.jpg */; };
-		B093BCF41BFB44F900754A2D /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B093BCF31BFB44F900754A2D /* CoreMotion.framework */; };
+		B093BCF41BFB44F900754A2D /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B093BCF31BFB44F900754A2D /* CoreMotion.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		B093BCF71BFC1C2D00754A2D /* TFPhotoCaptionView.m in Sources */ = {isa = PBXBuildFile; fileRef = B093BCF61BFC1C2D00754A2D /* TFPhotoCaptionView.m */; };
 		B09C3C491C2015C9009C6CF0 /* TFLibraryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B09C3C481C2015C9009C6CF0 /* TFLibraryViewController.m */; };
 /* End PBXBuildFile section */
@@ -66,6 +73,16 @@
 
 /* Begin PBXFileReference section */
 		95A751D15D36FFE6F877EDD4 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		B02CE3151C22D2C7005D6E62 /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
+		B02CE3171C22D443005D6E62 /* TFLibraryViewLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFLibraryViewLayout.h; sourceTree = "<group>"; };
+		B02CE3181C22D443005D6E62 /* TFLibraryViewLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFLibraryViewLayout.m; sourceTree = "<group>"; };
+		B02CE31A1C22D4C4005D6E62 /* NSIndexSet+TFLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSIndexSet+TFLibrary.h"; sourceTree = "<group>"; };
+		B02CE31B1C22D4C4005D6E62 /* NSIndexSet+TFLibrary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSIndexSet+TFLibrary.m"; sourceTree = "<group>"; };
+		B02CE31D1C22D51E005D6E62 /* TFLibraryCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFLibraryCollectionViewCell.h; sourceTree = "<group>"; };
+		B02CE31E1C22D51E005D6E62 /* TFLibraryCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFLibraryCollectionViewCell.m; sourceTree = "<group>"; };
+		B02CE3201C22D581005D6E62 /* PhotosUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PhotosUI.framework; path = System/Library/Frameworks/PhotosUI.framework; sourceTree = SDKROOT; };
+		B02CE3221C22D5B0005D6E62 /* UICollectionView+TFLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UICollectionView+TFLibrary.h"; sourceTree = "<group>"; };
+		B02CE3231C22D5B0005D6E62 /* UICollectionView+TFLibrary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UICollectionView+TFLibrary.m"; sourceTree = "<group>"; };
 		B0420DAF1B953376002CAF13 /* TFTapDetectingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFTapDetectingView.h; sourceTree = "<group>"; };
 		B0420DB01B953376002CAF13 /* TFTapDetectingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFTapDetectingView.m; sourceTree = "<group>"; };
 		B0420DB51B953FE2002CAF13 /* TFZoomingScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFZoomingScrollView.h; sourceTree = "<group>"; };
@@ -117,6 +134,8 @@
 		B06A14961B904B350022BCE5 /* TFPhotoProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFPhotoProtocol.h; sourceTree = "<group>"; };
 		B06A14971B904F850022BCE5 /* TFTapDetectingImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFTapDetectingImageView.h; sourceTree = "<group>"; };
 		B06A14981B904F850022BCE5 /* TFTapDetectingImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFTapDetectingImageView.m; sourceTree = "<group>"; };
+		B08D61BA1C224CBC00335903 /* TFAsset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFAsset.h; sourceTree = "<group>"; };
+		B08D61BB1C224CBC00335903 /* TFAsset.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFAsset.m; sourceTree = "<group>"; };
 		B08EDBF31BFC2ADB00DE1688 /* photo9.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = photo9.jpg; sourceTree = "<group>"; };
 		B08EDBF41BFC2ADB00DE1688 /* photo9t.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = photo9t.jpg; sourceTree = "<group>"; };
 		B093BCF31BFB44F900754A2D /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
@@ -148,6 +167,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B02CE3211C22D581005D6E62 /* PhotosUI.framework in Frameworks */,
+				B02CE3161C22D2C7005D6E62 /* Photos.framework in Frameworks */,
 				B093BCF41BFB44F900754A2D /* CoreMotion.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -297,6 +318,16 @@
 			children = (
 				B09C3C471C2015C9009C6CF0 /* TFLibraryViewController.h */,
 				B09C3C481C2015C9009C6CF0 /* TFLibraryViewController.m */,
+				B02CE3171C22D443005D6E62 /* TFLibraryViewLayout.h */,
+				B02CE3181C22D443005D6E62 /* TFLibraryViewLayout.m */,
+				B02CE31D1C22D51E005D6E62 /* TFLibraryCollectionViewCell.h */,
+				B02CE31E1C22D51E005D6E62 /* TFLibraryCollectionViewCell.m */,
+				B08D61BA1C224CBC00335903 /* TFAsset.h */,
+				B08D61BB1C224CBC00335903 /* TFAsset.m */,
+				B02CE31A1C22D4C4005D6E62 /* NSIndexSet+TFLibrary.h */,
+				B02CE31B1C22D4C4005D6E62 /* NSIndexSet+TFLibrary.m */,
+				B02CE3221C22D5B0005D6E62 /* UICollectionView+TFLibrary.h */,
+				B02CE3231C22D5B0005D6E62 /* UICollectionView+TFLibrary.m */,
 			);
 			path = TFLibrary;
 			sourceTree = "<group>";
@@ -304,6 +335,8 @@
 		CED89CBE8042308A1B7DF0F6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B02CE3201C22D581005D6E62 /* PhotosUI.framework */,
+				B02CE3151C22D2C7005D6E62 /* Photos.framework */,
 				B093BCF31BFB44F900754A2D /* CoreMotion.framework */,
 				B36250858EA58B0E345BDD17 /* libPods.a */,
 			);
@@ -510,18 +543,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B02CE31C1C22D4C4005D6E62 /* NSIndexSet+TFLibrary.m in Sources */,
 				B06A14991B904F850022BCE5 /* TFTapDetectingImageView.m in Sources */,
 				B093BCF71BFC1C2D00754A2D /* TFPhotoCaptionView.m in Sources */,
 				B0420DB71B953FE2002CAF13 /* TFZoomingScrollView.m in Sources */,
 				B06A145E1B9039810022BCE5 /* ViewController.m in Sources */,
 				B06A14531B9039810022BCE5 /* AppDelegate.m in Sources */,
+				B02CE3241C22D5B0005D6E62 /* UICollectionView+TFLibrary.m in Sources */,
 				B0689C281BF7081A00C46CCA /* UIScrollView+ScrollIndicator.m in Sources */,
 				B06A14501B9039810022BCE5 /* main.m in Sources */,
 				B06A14901B903BA60022BCE5 /* TFPhotoBrowser.m in Sources */,
 				B04C0B4A1BF5B8140012B7D8 /* UIImage+TFPhotoBrowser.m in Sources */,
 				B0689C231BF6DF6600C46CCA /* TFPhotoToolBar.m in Sources */,
+				B02CE31F1C22D51E005D6E62 /* TFLibraryCollectionViewCell.m in Sources */,
 				B06A14951B904B080022BCE5 /* TFPhoto.m in Sources */,
 				B09C3C491C2015C9009C6CF0 /* TFLibraryViewController.m in Sources */,
+				B08D61BC1C224CBC00335903 /* TFAsset.m in Sources */,
+				B02CE3191C22D443005D6E62 /* TFLibraryViewLayout.m in Sources */,
 				B0420DB11B953376002CAF13 /* TFTapDetectingView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

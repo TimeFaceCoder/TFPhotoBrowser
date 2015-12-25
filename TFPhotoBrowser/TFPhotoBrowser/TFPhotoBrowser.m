@@ -263,7 +263,7 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     
     // Update UI
     [self hideControlsAfterDelay];
-
+    
     // If rotation occured while we're presenting a modal
     // and the index changed, make sure we show the right one now
     if (_currentPageIndex != _pageIndexBeforeRotation) {
@@ -976,7 +976,7 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     
     // Title
     NSUInteger numberOfPhotos = [self numberOfPhotos];
-   if (numberOfPhotos > 1) {
+    if (numberOfPhotos > 1) {
         if ([_delegate respondsToSelector:@selector(photoBrowser:titleForPhotoAtIndex:)]) {
             self.title = [_delegate photoBrowser:self titleForPhotoAtIndex:_currentPageIndex];
         } else {
@@ -1310,69 +1310,6 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
             [self dismissViewControllerAnimated:YES completion:nil];
         }
     }
-}
-
-#pragma mark - Actions
-
-- (void)actionButtonPressed:(id)sender {
-    
-    // Only react when image has loaded
-    id <TFPhoto> photo = [self photoAtIndex:_currentPageIndex];
-    if ([self numberOfPhotos] > 0 && [photo underlyingImage]) {
-        
-        // If they have defined a delegate method then just message them
-        if ([self.delegate respondsToSelector:@selector(photoBrowser:actionButtonPressedForPhotoAtIndex:)]) {
-            
-            // Let delegate handle things
-            [self.delegate photoBrowser:self actionButtonPressedForPhotoAtIndex:_currentPageIndex];
-            
-        } else {
-            
-            // Show activity view controller
-            NSMutableArray *items = [NSMutableArray arrayWithObject:[photo underlyingImage]];
-            if (photo.caption) {
-                [items addObject:photo.caption];
-            }
-            self.activityViewController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
-            
-            // Show loading spinner after a couple of seconds
-            double delayInSeconds = 2.0;
-            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-            dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-                if (self.activityViewController) {
-                    [self showProgressHUDWithMessage:nil];
-                }
-            });
-            
-            // Show
-            typeof(self) __weak weakSelf = self;
-            [self.activityViewController setCompletionHandler:^(NSString *activityType, BOOL completed) {
-                weakSelf.activityViewController = nil;
-                [weakSelf hideControlsAfterDelay];
-                [weakSelf hideProgressHUD:YES];
-            }];
-            // iOS 8 - Set the Anchor Point for the popover
-            if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
-            }
-            [self presentViewController:self.activityViewController animated:YES completion:nil];
-            
-        }
-        
-        // Keep controls hidden
-        [self setControlsHidden:NO animated:YES permanent:YES];
-        
-    }
-    
-}
-
-#pragma mark - Action Progress
-
-- (void)showProgressHUDWithMessage:(NSString *)message {
-    [SVProgressHUD showWithStatus:message maskType:SVProgressHUDMaskTypeClear];
-}
-
-- (void)hideProgressHUD:(BOOL)animated {
-    [SVProgressHUD dismiss];
 }
 
 @end

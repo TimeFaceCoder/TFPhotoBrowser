@@ -243,16 +243,22 @@
                                    if (iref) {
                                        self.underlyingImage = [UIImage imageWithCGImage:iref];
                                    }
-                                   [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
+                                   [self performSelectorOnMainThread:@selector(imageLoadingComplete)
+                                                          withObject:nil
+                                                       waitUntilDone:NO];
                                }
                               failureBlock:^(NSError *error) {
                                   self.underlyingImage = nil;
                                   TFPLog(@"Photo from asset library error: %@",error);
-                                  [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
+                                  [self performSelectorOnMainThread:@selector(imageLoadingComplete)
+                                                         withObject:nil
+                                                      waitUntilDone:NO];
                               }];
             } @catch (NSException *e) {
                 TFPLog(@"Photo from asset library error: %@", e);
-                [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
+                [self performSelectorOnMainThread:@selector(imageLoadingComplete)
+                                       withObject:nil
+                                    waitUntilDone:NO];
             }
         }
     });
@@ -275,12 +281,16 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:TFPHOTO_PROGRESS_NOTIFICATION object:dict];
     };
     
-    _assetRequestID = [imageManager requestImageForAsset:asset targetSize:targetSize contentMode:PHImageContentModeAspectFit options:options resultHandler:^(UIImage *result, NSDictionary *info) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.underlyingImage = result;
-            [self imageLoadingComplete];
-        });
-    }];
+    _assetRequestID = [imageManager requestImageForAsset:asset
+                                              targetSize:targetSize
+                                             contentMode:PHImageContentModeAspectFit
+                                                 options:options
+                                           resultHandler:^(UIImage *result, NSDictionary *info) {
+                                               dispatch_async(dispatch_get_main_queue(), ^{
+                                                   self.underlyingImage = result;
+                                                   [self imageLoadingComplete];
+                                               });
+                                           }];
     
 }
 

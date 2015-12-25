@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "TFPhotoBrowser.h"
+#import "TFLibraryViewController.h"
 
 @interface ViewController ()<TFPhotoBrowserDelegate>
 
@@ -43,7 +44,15 @@
             [_thumbs addObject:thumb];
         }
     }
- 
+    
+    
+    button = [UIButton buttonWithType:UIButtonTypeCustom];
+    [button setTitle:@"测试相册" forState:UIControlStateNormal];
+    [button addTarget:self action:@selector(onViewClick2:) forControlEvents:UIControlEventTouchUpInside];
+    [button setFrame:CGRectMake(100, 200, 60, 40)];
+    button.layer.borderWidth = 1;
+    [self.view addSubview:button];
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -64,6 +73,15 @@
     
     UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:browser];
     nc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    [self presentViewController:nc animated:YES completion:nil];
+}
+
+
+- (void)onViewClick2:(id)sender {
+    TFLibraryViewController *viewController = [[TFLibraryViewController alloc] init];
+    UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:viewController];
+    nc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    nc.toolbarHidden = NO;
     [self presentViewController:nc animated:YES completion:nil];
 }
 
