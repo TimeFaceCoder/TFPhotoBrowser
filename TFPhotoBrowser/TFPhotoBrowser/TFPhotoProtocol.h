@@ -26,6 +26,8 @@
 
 @optional
 
+- (UIImage *)placeholderImage;
+
 @property (nonatomic) BOOL emptyImage;
 
 // Video

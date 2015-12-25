@@ -10,7 +10,6 @@
 #import "TFTapDetectingImageView.h"
 #import "TFTapDetectingView.h"
 #import "TFPhotoBrowser.h"
-#import "TFCaptionView.h"
 #import "TFPhoto.h"
 #import <DACircularProgress/DACircularProgressView.h>
 #import "UIImage+TFPhotoBrowser.h"
@@ -177,6 +176,7 @@ static const CGFloat TFMotionViewRotationFactor = 4.0f;
         [self setNeedsLayout];
     }
 }
+
 
 // Image failed so just show black!
 - (void)displayImageFailure {
@@ -425,33 +425,33 @@ static const CGFloat TFMotionViewRotationFactor = 4.0f;
         [self zoomToRect:CGRectMake(touchPoint.x, touchPoint.y, 1, 1) animated:YES];
         [self startMonitoring];
     }
-
     
-//    
-//    // Zoom
-//    if (self.zoomScale != self.minimumZoomScale && self.zoomScale != [self initialZoomScaleWithMinScale]) {
-//        
-//        // Zoom out
-//        [self setZoomScale:self.minimumZoomScale animated:YES];
-//        
-//        [self stopMonitoring];
-//        
-//    } else {
-//        
-//        // Zoom in to twice the size
-//        [self zoomToRect:CGRectMake(touchPoint.x, touchPoint.y, 1, 1) animated:YES];
-//        
-////        CGFloat newZoomScale = ((self.maximumZoomScale + self.minimumZoomScale) / 2);
-////        CGFloat xsize = self.bounds.size.width / newZoomScale;
-////        CGFloat ysize = self.bounds.size.height / newZoomScale;
-////        [self zoomToRect:CGRectMake(touchPoint.x - xsize/2, touchPoint.y - ysize/2, xsize, ysize) animated:YES];
-//
-//        [self startMonitoring];
-//    }
+    
+    //    
+    //    // Zoom
+    //    if (self.zoomScale != self.minimumZoomScale && self.zoomScale != [self initialZoomScaleWithMinScale]) {
+    //        
+    //        // Zoom out
+    //        [self setZoomScale:self.minimumZoomScale animated:YES];
+    //        
+    //        [self stopMonitoring];
+    //        
+    //    } else {
+    //        
+    //        // Zoom in to twice the size
+    //        [self zoomToRect:CGRectMake(touchPoint.x, touchPoint.y, 1, 1) animated:YES];
+    //        
+    ////        CGFloat newZoomScale = ((self.maximumZoomScale + self.minimumZoomScale) / 2);
+    ////        CGFloat xsize = self.bounds.size.width / newZoomScale;
+    ////        CGFloat ysize = self.bounds.size.height / newZoomScale;
+    ////        [self zoomToRect:CGRectMake(touchPoint.x - xsize/2, touchPoint.y - ysize/2, xsize, ysize) animated:YES];
+    //
+    //        [self startMonitoring];
+    //    }
     
     // Delay controls
     [_photoBrowser hideControlsAfterDelay];
-        
+    
 }
 
 // Image View

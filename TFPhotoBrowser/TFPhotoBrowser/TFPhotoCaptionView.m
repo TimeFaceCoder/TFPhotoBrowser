@@ -41,6 +41,23 @@ const static CGFloat kLeftRightThreshold = 16;
     CGFloat _restrictTrueOffset;
 }
 
+
+- (id)initWithPhoto:(id<TFPhoto>)photo {
+    self = [super initWithFrame:CGRectZero]; // Random initial frame
+    if (self) {
+        self.backgroundColor = [UIColor clearColor];
+        self.layer.borderWidth = 1;
+        self.layer.borderColor = [[UIColor whiteColor] CGColor];
+        self.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
+        _photo = photo;
+        [self setupCaption];
+        
+        UIPanGestureRecognizer *panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self
+                                                                                               action:@selector(handlePanAction:)];
+        [self addGestureRecognizer:panGestureRecognizer];
+    }
+    return self;
+}
 - (id)initWithPhoto:(id<TFPhoto>)photo width:(CGFloat)width frame:(CGRect)frame{
     self = [super initWithFrame:CGRectMake(0, 0, width, 44)]; // Random initial frame
     if (self) {
@@ -73,23 +90,23 @@ const static CGFloat kLeftRightThreshold = 16;
     //content size
     
     NSString *content = @"现在我们试试看中文显示的效果怎么样？我猜会很难看，中文字体太丑陋了，太粗旷了，完全没有美感啊。。。多加一些文字试试看现实的效果是不是👌，是不是能够显示完整的三行文字。";
-//    NSString *content = @"Baked Edds and Chorizo,breakfast of champions! It's hearty.full of protein and super energizing.";
-
+    //    NSString *content = @"Baked Edds and Chorizo,breakfast of champions! It's hearty.full of protein and super energizing.";
+    
     CGSize textSize = [content boundingRectWithSize:CGSizeMake(CGRectGetWidth(self.bounds) - kLeftRightThreshold * 2, 60)
                                             options:NSStringDrawingUsesLineFragmentOrigin
                                          attributes:@{NSFontAttributeName:_contentLabel.font}
                                             context:nil].size;
     _totalTextSize = [content boundingRectWithSize:CGSizeMake(CGRectGetWidth(self.bounds) - kLeftRightThreshold * 2, 4000)
-                                            options:NSStringDrawingUsesLineFragmentOrigin
-                                         attributes:@{NSFontAttributeName:_contentLabel.font}
-                                            context:nil].size;
+                                           options:NSStringDrawingUsesLineFragmentOrigin
+                                        attributes:@{NSFontAttributeName:_contentLabel.font}
+                                           context:nil].size;
     _contentLabel.text = content;
     _contentFrame = _contentLabel.frame;
     _contentFrame.size = textSize;
     _contentFrame.origin.y = contentTop;
     _contentLabel.frame = _contentFrame;
     _restrictTrueOffset = self.initialFirstViewFrame.size.height - 180;
-
+    
     
     _originalContentFrame = _contentLabel.frame;
     
@@ -131,14 +148,14 @@ const static CGFloat kLeftRightThreshold = 16;
 - (UILabel *)contentLabel {
     if (!_contentLabel) {
         _contentLabel = [[UILabel alloc] initWithFrame:CGRectMake(kLeftRightThreshold, kTopBottomThreshold,
-                                                                CGRectGetWidth(self.bounds) - kLeftRightThreshold * 2, 60)];
+                                                                  CGRectGetWidth(self.bounds) - kLeftRightThreshold * 2, 60)];
         _contentLabel.layer.borderWidth = 1;
         _contentLabel.font = [UIFont systemFontOfSize:16];
         _contentLabel.textColor = [UIColor whiteColor];
         _contentLabel.numberOfLines = 0;
         _contentLabel.lineBreakMode = NSLineBreakByTruncatingTail;
         _contentLabel.contentMode = UIViewContentModeLeft;
-
+        
     }
     return _contentLabel;
 }
@@ -152,7 +169,7 @@ const static CGFloat kLeftRightThreshold = 16;
     
     _contentFrame = _contentLabel.frame;
     _contentFrame.size.height +=padding;
-   
+    
     if (_contentFrame.size.height > _totalTextSize.height) {
         _contentFrame.size.height = _totalTextSize.height;
     }
@@ -262,7 +279,7 @@ const static CGFloat kLeftRightThreshold = 16;
     [self pop_addAnimation:viewAnimation forKey:@"viewAnimation"];
     [self.contentLabel pop_addAnimation:positionAnimation forKey:@"positionAnimation"];
     
-
+    
 }
 
 

@@ -62,18 +62,7 @@
 
 - (void)onViewClick:(id)sender {
     // Create browser
-    TFPhotoBrowser *browser = [[TFPhotoBrowser alloc] initWithDelegate:self];
-    browser.displayActionButton = YES;
-    browser.displaySelectionButtons = NO;
-    browser.alwaysShowControls = NO;
-    browser.zoomPhotosToFill = YES;
-    browser.enableSwipeToDismiss = NO;
-    browser.autoPlayOnAppear = NO;
-    [browser setCurrentPhotoIndex:0];
     
-    UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:browser];
-    nc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [self presentViewController:nc animated:YES completion:nil];
 }
 
 

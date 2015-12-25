@@ -12,10 +12,16 @@
 
 @interface TFPhoto : NSObject <TFPhoto>
 
+typedef void (^TFProgressUpdateBlock)(CGFloat progress);
+
+
 @property (nonatomic, strong) NSString *caption;
 @property (nonatomic, strong) NSURL *videoURL;
 @property (nonatomic) BOOL emptyImage;
 @property (nonatomic) BOOL isVideo;
+@property (nonatomic, strong) TFProgressUpdateBlock progressUpdateBlock;
+@property (nonatomic, strong) UIImage *placeholderImage;
+
 
 + (TFPhoto *)photoWithImage:(UIImage *)image;
 + (TFPhoto *)photoWithURL:(NSURL *)url;

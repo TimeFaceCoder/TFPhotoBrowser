@@ -20,6 +20,7 @@ typedef NS_ENUM(NSUInteger, TFPanGestureRecognizerDirection) {
 @interface TFPhotoCaptionView : UIView
 
 // Init
+- (id)initWithPhoto:(id<TFPhoto>)photo;
 - (id)initWithPhoto:(id<TFPhoto>)photo width:(CGFloat)width frame:(CGRect)frame;
 - (void)setupCaption;
 - (CGSize)sizeThatFits:(CGSize)size;

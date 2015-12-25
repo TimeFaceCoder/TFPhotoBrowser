@@ -10,81 +10,78 @@
 #import <MediaPlayer/MediaPlayer.h>
 #import "TFZoomingScrollView.h"
 
+#ifndef TFPhotoBrowserLocalizedStrings
+#define TFPhotoBrowserLocalizedStrings(key) \
+NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBundle bundleForClass: self.class] pathForResource:@"TFPhotoBrowserLocalizations" ofType:@"bundle"]], nil)
+#endif
+
 // Declare private methods of browser
 @interface TFPhotoBrowser () {
     
     // Data
-    NSUInteger _photoCount;
     NSMutableArray *_photos;
-    NSMutableArray *_thumbPhotos;
-    NSArray *_fixedPhotosArray; // Provided via init
     
     // Views
     UIScrollView *_pagingScrollView;
     
-    // Paging & layout
-    NSMutableSet *_visiblePages, *_recycledPages;
-    NSUInteger _currentPageIndex;
-    NSUInteger _previousPageIndex;
-    CGRect _previousLayoutBounds;
-    NSUInteger _pageIndexBeforeRotation;
-    
-    // Navigation & controls
-    NSTimer *_controlVisibilityTimer;
-    UIBarButtonItem *_doneButton;
-    
-    
-    // Appearance
-    BOOL _previousNavBarHidden;
-    BOOL _previousNavBarTranslucent;
-    UIBarStyle _previousNavBarStyle;
-    UIStatusBarStyle _previousStatusBarStyle;
-    UIColor *_previousNavBarTintColor;
-    UIColor *_previousNavBarBarTintColor;
-    UIBarButtonItem *_previousViewControllerBackButton;
-    UIImage *_previousNavigationBarBackgroundImageDefault;
-    UIImage *_previousNavigationBarBackgroundImageLandscapePhone;
-    // Present
-    UIView *_senderViewForAnimation;
-    CGRect _senderViewOriginalFrame;
-    UIWindow *_applicationWindow;
-    UIViewController *_applicationTopViewController;
-    int _previousModalPresentationStyle;
-    
-    // Video
-    MPMoviePlayerViewController *_currentVideoPlayerViewController;
-    NSUInteger _currentVideoIndex;
-    UIActivityIndicatorView *_currentVideoLoadingIndicator;
+    // Gesture
     UIPanGestureRecognizer *_panGesture;
     
+    // Paging
+    NSMutableSet *_visiblePages, *_recycledPages;
+    NSUInteger _pageIndexBeforeRotation;
+    NSUInteger _currentPageIndex;
+    
+    // Buttons
+    UIButton *_doneButton;
+    
+    // Toolbar
+    UIToolbar *_toolbar;
+    UINavigationBar *_navigationBar;
+    UIBarButtonItem *_actionButton;
+    UIBarButtonItem *_counterButton;
+    UILabel *_counterLabel;
+    
+    
+    
+    // Control
+    NSTimer *_controlVisibilityTimer;
+    
+    // Appearance
+    //UIStatusBarStyle _previousStatusBarStyle;
+    BOOL _statusBarOriginallyHidden;
+    
+    // Present
+    UIView *_senderViewForAnimation;
+    
     // Misc
-    BOOL _hasBelongedToViewController;
-    BOOL _isVCBasedStatusBarAppearance;
-    BOOL _statusBarShouldBeHidden;
-    BOOL _displayActionButton;
-    BOOL _leaveStatusBarAlone;
     BOOL _performingLayout;
     BOOL _rotating;
     BOOL _viewIsActive; // active as in it's in the view heirarchy
-    BOOL _didSavePreviousStateOfNavBar;
-    BOOL _skipNextPagingScrollViewPositioning;
-    BOOL _viewHasAppearedInitially;
     BOOL _autoHide;
+    NSInteger _initalPageIndex;
+    
+    BOOL _isdraggingPhoto;
+    
+    CGRect _senderViewOriginalFrame;
+    //UIImage *_backgroundScreenshot;
+    
+    UIWindow *_applicationWindow;
+    
+    // iOS 7
+    UIViewController *_applicationTopViewController;
+    int _previousModalPresentationStyle;
     
 }
 
-// Properties
-@property (nonatomic) UIActivityViewController *activityViewController;
+// Private Properties
+@property (nonatomic, strong) UIActionSheet *actionsSheet;
+@property (nonatomic, strong) UIActivityViewController *activityViewController;
+
+// Private Methods
 
 // Layout
-- (void)layoutVisiblePages;
 - (void)performLayout;
-- (BOOL)presentingViewControllerPrefersStatusBarHidden;
-
-// Nav Bar Appearance
-- (void)setNavBarAppearance:(BOOL)animated;
-- (void)storePreviousNavBarAppearance;
-- (void)restorePreviousNavBarAppearance:(BOOL)animated;
 
 // Paging
 - (void)tilePages;
@@ -101,12 +98,14 @@
 - (CGSize)contentSizeForPagingScrollView;
 - (CGPoint)contentOffsetForPageAtIndex:(NSUInteger)index;
 - (CGRect)frameForToolbarAtOrientation:(UIInterfaceOrientation)orientation;
+- (CGRect)frameForDoneButtonAtOrientation:(UIInterfaceOrientation)orientation;
 - (CGRect)frameForCaptionView:(TFPhotoCaptionView *)captionView atIndex:(NSUInteger)index;
-- (CGRect)frameForSelectedButton:(UIButton *)selectedButton atIndex:(NSUInteger)index;
+
+// Toolbar
+- (void)updateToolbar;
 
 // Navigation
-- (void)updateNavigation;
-- (void)jumpToPageAtIndex:(NSUInteger)index animated:(BOOL)animated;
+- (void)jumpToPageAtIndex:(NSUInteger)index;
 - (void)gotoPreviousPage;
 - (void)gotoNextPage;
 
@@ -120,12 +119,9 @@
 // Data
 - (NSUInteger)numberOfPhotos;
 - (id<TFPhoto>)photoAtIndex:(NSUInteger)index;
-- (id<TFPhoto>)thumbPhotoAtIndex:(NSUInteger)index;
 - (UIImage *)imageForPhoto:(id<TFPhoto>)photo;
-- (BOOL)photoIsSelectedAtIndex:(NSUInteger)index;
-- (void)setPhotoSelected:(BOOL)selected atIndex:(NSUInteger)index;
 - (void)loadAdjacentPhotosIfNecessary:(id<TFPhoto>)photo;
-- (void)releaseAllUnderlyingPhotos:(BOOL)preserveCurrent;
+- (void)releaseAllUnderlyingPhotos;
 
 @end
 
