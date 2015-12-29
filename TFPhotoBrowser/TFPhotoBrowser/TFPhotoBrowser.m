@@ -251,7 +251,6 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     
     // Setup
     _performingLayout = YES;
-    NSUInteger numberOfPhotos = [self numberOfPhotos];
     
     // Setup pages
     [_visiblePages removeAllObjects];
@@ -259,7 +258,6 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     
     
     // Toolbar items
-    BOOL hasItems = NO;
     UIBarButtonItem *fixedSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:self action:nil];
     fixedSpace.width = 32; // To balance action button
     UIBarButtonItem *flexSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
@@ -590,15 +588,7 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
 - (void)dismissPhotoBrowserAnimated:(BOOL)animated {
     self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     
-    if ([_delegate respondsToSelector:@selector(photoBrowser:willDismissAtPageIndex:)]) {
-        //        [_delegate photoBrowser:self willDismissAtPageIndex:_currentPageIndex];
-    }
-    
     [self dismissViewControllerAnimated:animated completion:^{
-        if ([_delegate respondsToSelector:@selector(photoBrowser:didDismissAtPageIndex:)]){
-            //            [_delegate photoBrowser:self didDismissAtPageIndex:_currentPageIndex];
-        }
-        
         if (SYSTEM_VERSION_LESS_THAN(@"8.0")) {
             _applicationTopViewController.modalPresentationStyle = _previousModalPresentationStyle;
         }
@@ -805,7 +795,7 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     return YES;
 }
 
-- (NSUInteger)supportedInterfaceOrientations {
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
     return UIInterfaceOrientationMaskAll;
 }
 
