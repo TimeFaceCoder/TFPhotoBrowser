@@ -274,9 +274,15 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     [items addObject:_actionButton];
     
     
+    if (self.customToolBarView) {
+        UIBarButtonItem *customItem = [[UIBarButtonItem alloc] initWithCustomView:self.customToolBarView];
+        [_toolbar setItems:@[flexSpace,customItem,flexSpace]];
+    }
+    else {
+        // Toolbar visibility
+        [_toolbar setItems:items];
+    }
     
-    // Toolbar visibility
-    [_toolbar setItems:items];
     
     _navigationItem.rightBarButtonItems = @[_doneButton,fixedSpace];
     BOOL hideToolbar = YES;

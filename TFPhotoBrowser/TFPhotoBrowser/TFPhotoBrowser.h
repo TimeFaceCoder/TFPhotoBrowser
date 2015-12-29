@@ -28,7 +28,7 @@
 - (BOOL)photoBrowser:(TFPhotoBrowser *)photoBrowser isPhotoSelectedAtIndex:(NSUInteger)index;
 - (void)photoBrowser:(TFPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index selectedChanged:(BOOL)selected;
 - (void)photoBrowserDidFinishModalPresentation:(TFPhotoBrowser *)photoBrowser;
-
+- (UIView *)photoBrowser:(TFPhotoBrowser *)photoBrowser toolBarViewForPhotoAtIndex:(NSUInteger)index;
 @end
 
 
@@ -49,7 +49,7 @@
 // Icon should be located in the app's main bundle
 @property (nonatomic, strong) NSString *customImageSelectedIconName;
 @property (nonatomic, strong) NSString *customImageSelectedSmallIconName;
-
+@property (nonatomic, strong) UIView *customToolBarView;
 
 //Animation
 @property (nonatomic, weak) UIImage *scaleImage;
