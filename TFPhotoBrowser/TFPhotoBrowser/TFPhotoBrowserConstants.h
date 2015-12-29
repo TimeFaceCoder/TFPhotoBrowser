@@ -9,7 +9,6 @@
 #define PADDING                 10
 #define PAGE_INDEX_TAG_OFFSET   1000
 #define PAGE_INDEX(page)        ([(page) tag] - PAGE_INDEX_TAG_OFFSET)
-#define TFPHOTO_LOADING_END_NOTIFICATION    @"TFPHOTO_LOADING_END_NOTIFICATION"
 
 #if 0 // Set to 1 to enable debug logging
 #define TFPLog(x, ...) NSLog(x, ## __VA_ARGS__);

@@ -19,7 +19,6 @@ typedef void (^TFProgressUpdateBlock)(CGFloat progress);
 @property (nonatomic, strong) NSURL *videoURL;
 @property (nonatomic) BOOL emptyImage;
 @property (nonatomic) BOOL isVideo;
-@property (nonatomic, strong) TFProgressUpdateBlock progressUpdateBlock;
 @property (nonatomic, strong) UIImage *placeholderImage;
 
 

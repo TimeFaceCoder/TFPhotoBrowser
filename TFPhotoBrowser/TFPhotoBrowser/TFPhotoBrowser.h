@@ -18,12 +18,16 @@
 
 @protocol TFPhotoBrowserDelegate <NSObject>
 @optional
-- (void)photoBrowser:(TFPhotoBrowser *)photoBrowser didShowPhotoAtIndex:(NSUInteger)index;
-- (void)photoBrowser:(TFPhotoBrowser *)photoBrowser didDismissAtPageIndex:(NSUInteger)index;
-- (void)photoBrowser:(TFPhotoBrowser *)photoBrowser willDismissAtPageIndex:(NSUInteger)index;
-- (void)photoBrowser:(TFPhotoBrowser *)photoBrowser didDismissActionSheetWithButtonIndex:(NSUInteger)buttonIndex photoIndex:(NSUInteger)photoIndex;
+- (NSUInteger)numberOfPhotosInPhotoBrowser:(TFPhotoBrowser *)photoBrowser;
+- (id <TFPhoto>)photoBrowser:(TFPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index;
+- (id <TFPhoto>)photoBrowser:(TFPhotoBrowser *)photoBrowser thumbPhotoAtIndex:(NSUInteger)index;
 - (TFPhotoCaptionView *)photoBrowser:(TFPhotoBrowser *)photoBrowser captionViewForPhotoAtIndex:(NSUInteger)index;
-
+- (NSString *)photoBrowser:(TFPhotoBrowser *)photoBrowser titleForPhotoAtIndex:(NSUInteger)index;
+- (void)photoBrowser:(TFPhotoBrowser *)photoBrowser didDisplayPhotoAtIndex:(NSUInteger)index;
+- (void)photoBrowser:(TFPhotoBrowser *)photoBrowser actionButtonPressedForPhotoAtIndex:(NSUInteger)index;
+- (BOOL)photoBrowser:(TFPhotoBrowser *)photoBrowser isPhotoSelectedAtIndex:(NSUInteger)index;
+- (void)photoBrowser:(TFPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index selectedChanged:(BOOL)selected;
+- (void)photoBrowserDidFinishModalPresentation:(TFPhotoBrowser *)photoBrowser;
 
 @end
 
@@ -31,50 +35,45 @@
 @interface TFPhotoBrowser : UIViewController<UIScrollViewDelegate, UIActionSheetDelegate>
 
 @property (nonatomic, weak) id<TFPhotoBrowserDelegate> delegate;
-// Toolbar customization
-@property (nonatomic) BOOL displayToolbar;
 @property (nonatomic) BOOL zoomPhotosToFill;
-@property (nonatomic) BOOL displayCounterLabel;
-@property (nonatomic) BOOL displayArrowButton;
+@property (nonatomic) BOOL displayNavArrows;
 @property (nonatomic) BOOL displayActionButton;
-@property (nonatomic, strong) NSArray *actionButtonTitles;
-@property (nonatomic, weak) UIImage *leftArrowImage, *leftArrowSelectedImage;
-@property (nonatomic, weak) UIImage *rightArrowImage, *rightArrowSelectedImage;
+@property (nonatomic) BOOL displaySelectionButtons;
+@property (nonatomic) BOOL alwaysShowControls;
+@property (nonatomic) BOOL enableSwipeToDismiss;
+@property (nonatomic) BOOL autoPlayOnAppear;
+@property (nonatomic) NSUInteger delayToHideElements;
+@property (nonatomic, readonly) NSUInteger currentIndex;
 
-// View customization
-@property (nonatomic) BOOL displayDoneButton;
-@property (nonatomic) BOOL useWhiteBackgroundColor;
-@property (nonatomic, weak) UIImage *doneButtonImage;
-@property (nonatomic, weak) UIColor *trackTintColor, *progressTintColor;
+// Customise image selection icons as they are the only icons with a colour tint
+// Icon should be located in the app's main bundle
+@property (nonatomic, strong) NSString *customImageSelectedIconName;
+@property (nonatomic, strong) NSString *customImageSelectedSmallIconName;
 
+
+//Animation
 @property (nonatomic, weak) UIImage *scaleImage;
-
-@property (nonatomic) BOOL arrowButtonsChangePhotosAnimated;
-
-@property (nonatomic) BOOL forceHideStatusBar;
 @property (nonatomic) BOOL usePopAnimation;
-@property (nonatomic) BOOL disableVerticalSwipe;
-
-// defines zooming of the background (default 1.0)
-@property (nonatomic) float backgroundScaleFactor;
-
-// animation time (default .28)
 @property (nonatomic) float animationDuration;
+
 
 // Init
 - (id)initWithPhotos:(NSArray *)photosArray;
+- (id)initWithDelegate:(id <TFPhotoBrowserDelegate>)delegate;
 
-// Init (animated)
+
 - (id)initWithPhotos:(NSArray *)photosArray animatedFromView:(UIView*)view;
+- (id)initWithDelegate:(id <TFPhotoBrowserDelegate>)delegate animatedFromView:(UIView*)view;
 
 // Reloads the photo browser and refetches data
 - (void)reloadData;
 
 // Set page that photo browser starts on
-- (void)setInitialPageIndex:(NSUInteger)index;
+- (void)setCurrentPhotoIndex:(NSUInteger)index;
 
-// Get IDMPhoto at index
-- (id<TFPhoto>)photoAtIndex:(NSUInteger)index;
+// Navigation
+- (void)showNextPhotoAnimated:(BOOL)animated;
+- (void)showPreviousPhotoAnimated:(BOOL)animated;
 
 @end
 

@@ -107,6 +107,8 @@ static const CGFloat TFMotionViewRotationFactor = 4.0f;
     _photoImageView.hidden = NO;
     _photoImageView.image = nil;
     _index = NSUIntegerMax;
+    [self disableScrollIndicator];
+    [self stopMonitoring];
 }
 
 - (BOOL)displayingVideo {
@@ -281,8 +283,9 @@ static const CGFloat TFMotionViewRotationFactor = 4.0f;
     
     // Calculate Max
     CGFloat maxScale = yScale;
-    //图片高度大于屏幕高度1.5倍以上。
-    if (maxScale < 0.333) {
+    CGFloat imageRatio = imageSize.height / ([[UIScreen mainScreen] bounds].size.height*[[UIScreen mainScreen] scale]);
+    //图片高度大于屏幕高度2倍以上。
+    if (imageRatio > 2) {
         maxScale = xScale;
     }
     
@@ -415,6 +418,8 @@ static const CGFloat TFMotionViewRotationFactor = 4.0f;
     // Cancel any single tap handling
     [NSObject cancelPreviousPerformRequestsWithTarget:_photoBrowser];
     
+    // Delay controls
+    [_photoBrowser hideControlsAfterDelay];
     // Zoom
     if (self.zoomScale == self.maximumZoomScale) {
         // Zoom out
@@ -425,33 +430,6 @@ static const CGFloat TFMotionViewRotationFactor = 4.0f;
         [self zoomToRect:CGRectMake(touchPoint.x, touchPoint.y, 1, 1) animated:YES];
         [self startMonitoring];
     }
-    
-    
-    //    
-    //    // Zoom
-    //    if (self.zoomScale != self.minimumZoomScale && self.zoomScale != [self initialZoomScaleWithMinScale]) {
-    //        
-    //        // Zoom out
-    //        [self setZoomScale:self.minimumZoomScale animated:YES];
-    //        
-    //        [self stopMonitoring];
-    //        
-    //    } else {
-    //        
-    //        // Zoom in to twice the size
-    //        [self zoomToRect:CGRectMake(touchPoint.x, touchPoint.y, 1, 1) animated:YES];
-    //        
-    ////        CGFloat newZoomScale = ((self.maximumZoomScale + self.minimumZoomScale) / 2);
-    ////        CGFloat xsize = self.bounds.size.width / newZoomScale;
-    ////        CGFloat ysize = self.bounds.size.height / newZoomScale;
-    ////        [self zoomToRect:CGRectMake(touchPoint.x - xsize/2, touchPoint.y - ysize/2, xsize, ysize) animated:YES];
-    //
-    //        [self startMonitoring];
-    //    }
-    
-    // Delay controls
-    [_photoBrowser hideControlsAfterDelay];
-    
 }
 
 // Image View
@@ -496,41 +474,43 @@ static const CGFloat TFMotionViewRotationFactor = 4.0f;
     if (CGRectGetWidth(self.frame) >= _photoImageView.image.size.width) {
         return;
     }
-    if (self.contentSize.width <= _photoImageView.image.size.width) {
-        [self disableScrollIndicator];
-        return;
-    }
+    //    if (self.contentSize.width <= _photoImageView.image.size.width) {
+    //        [self disableScrollIndicator];
+    //        return;
+    //    }
     if (!_motionManager) {
         _motionManager = [[CMMotionManager alloc] init];
         _motionManager.gyroUpdateInterval = TFMotionGyroUpdateInterval;
     }
-    
+    __weak __typeof(self)weakSelf = self;
     if (![_motionManager isGyroActive] && [_motionManager isGyroAvailable] ) {
         [_motionManager startGyroUpdatesToQueue:[NSOperationQueue currentQueue]
-                                    withHandler:^(CMGyroData *gyroData, NSError *error) {
-                                        CGFloat rotationRate = isLandscape ? gyroData.rotationRate.x : gyroData.rotationRate.y;
-                                        if (fabs(rotationRate) >= TFMotionViewRotationMinimumTreshold) {
-                                            CGFloat offsetX = self.contentOffset.x - rotationRate * _motionRate;
-                                            if (offsetX > _maximumXOffset) {
-                                                offsetX = _maximumXOffset;
-                                            } else if (offsetX < _minimumXOffset) {
-                                                offsetX = _minimumXOffset;
-                                            }
-                                            NSLog(@"offsetX:%@",@(offsetX));
-                                            if (!_stopTracking) {
-                                                [UIView animateWithDuration:0.3f
-                                                                      delay:0.0f
-                                                                    options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionCurveEaseOut
-                                                                 animations:^{
-                                                                     
-                                                                     [self setContentOffset:CGPointMake(offsetX, 0) animated:NO];
-                                                                     _startOffset = CGPointMake(offsetX, 0);
-                                                                 }
-                                                                 completion:nil];
-                                            }
-                                            
-                                        }
-                                    }];
+                                    withHandler:^(CMGyroData *gyroData, NSError *error)
+         {
+             CGFloat rotationRate = isLandscape ? gyroData.rotationRate.x : gyroData.rotationRate.y;
+             if (fabs(rotationRate) >= TFMotionViewRotationMinimumTreshold) {
+                 CGFloat offsetX = weakSelf.contentOffset.x - rotationRate * _motionRate;
+                 if (offsetX > _maximumXOffset) {
+                     offsetX = _maximumXOffset;
+                 } else if (offsetX < _minimumXOffset) {
+                     offsetX = _minimumXOffset;
+                 }
+                 NSLog(@"offsetX:%@",@(offsetX));
+                 if (!_stopTracking) {
+                     [UIView animateWithDuration:0.3f
+                                           delay:0.0f
+                                         options:UIViewAnimationOptionBeginFromCurrentState |
+                      UIViewAnimationOptionAllowUserInteraction |
+                      UIViewAnimationOptionCurveEaseOut
+                                      animations:^{
+                                          [weakSelf setContentOffset:CGPointMake(offsetX, 0) animated:NO];
+                                          _startOffset = CGPointMake(offsetX, 0);
+                                      }
+                                      completion:nil];
+                 }
+                 
+             }
+         }];
     } else {
         NSLog(@"There is not available gyro.");
     }
