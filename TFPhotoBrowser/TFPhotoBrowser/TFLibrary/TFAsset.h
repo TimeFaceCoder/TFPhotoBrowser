@@ -34,6 +34,7 @@ typedef NS_ENUM(NSInteger, TFAssetType) {
 // Properties (ALAsset or PHAsset property)
 @property (nonatomic, strong, readonly) NSURL          *url;
 @property (nonatomic, strong, readonly) NSString       *localIdentifier;
+@property (nonatomic, strong, readonly) NSString       *md5;
 @property (nonatomic, strong, readonly) CLLocation     *location;
 @property (nonatomic, strong, readonly) NSDate         *date;
 @property (nonatomic, strong, readonly) NSString       *fileExtension;// upper string JPG, PNG, ...

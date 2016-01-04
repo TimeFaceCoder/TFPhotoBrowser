@@ -26,6 +26,11 @@
 @property (nonatomic, assign) NSUInteger                        minimumNumberOfSelection;
 @property (nonatomic, assign) NSUInteger                        maximumNumberOfSelection;
 @property (nonatomic, assign) CGSize                            imageCropSize;
+@property (nonatomic, strong) UIColor                           *barButtonColor;
+/**
+ *  最多可选图片数量
+ */
+@property (nonatomic, assign) NSInteger                         maxSelectedCount;
 
 @end
 

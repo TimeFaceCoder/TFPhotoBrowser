@@ -7,6 +7,8 @@
 //
 
 #import "TFAsset.h"
+#import <CommonCrypto/CommonDigest.h>
+
 
 @interface TFAsset()
 
@@ -20,6 +22,7 @@
 // Properties (ALAsset or PHAsset)
 @property (nonatomic, strong) NSURL          * url;
 @property (nonatomic, strong) NSString       * localIdentifier;
+@property (nonatomic, strong) NSString       * md5;
 @property (nonatomic, strong) CLLocation     * location;
 @property (nonatomic, strong) NSDate         * date;
 @property (nonatomic, assign) TFAssetType    type;
@@ -212,6 +215,18 @@ static PHCachingImageManager    *_cachingImageManager = nil;
     return _localIdentifier;
 }
 
+- (NSString *)md5 {
+    if (_md5 == nil) {
+        if (self.isPHAsset) {
+            _md5 = [self getMD5StringFromNSString:self.localIdentifier];
+        }
+        else {
+            _md5 = [self getMD5StringFromNSString:[self.url absoluteString]];
+        }
+    }
+    return _md5;
+}
+
 - (CLLocation*)location {
     if (_location == nil) {
         if (self.isPHAsset) {
@@ -330,9 +345,7 @@ static PHCachingImageManager    *_cachingImageManager = nil;
     return self.type == TFAssetTypePhoto;
 }
 
-- (BOOL)isScreenshot
-{
-    
+- (BOOL)isScreenshot {
     if (self.isPNG) {
         CGSize size = UIScreen.mainScreen.bounds.size;
         size.width *= UIScreen.mainScreen.scale;
@@ -340,6 +353,18 @@ static PHCachingImageManager    *_cachingImageManager = nil;
         return CGSizeEqualToSize(size, self.size);
     }
     return NO;
+}
+
+
+- (NSString *)getMD5StringFromNSString:(NSString *)string {
+    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
+    unsigned char digest[CC_MD5_DIGEST_LENGTH], i;
+    CC_MD5([data bytes], (CC_LONG)[data length], digest);
+    NSMutableString *result = [NSMutableString string];
+    for (i = 0; i < CC_MD5_DIGEST_LENGTH; i++) {
+        [result appendFormat: @"%02x", (int)(digest[i])];
+    }
+    return [result copy];
 }
 
 #pragma mark -

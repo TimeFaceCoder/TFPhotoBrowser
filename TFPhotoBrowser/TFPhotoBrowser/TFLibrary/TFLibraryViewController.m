@@ -29,9 +29,11 @@ static NSString * const kTFLCollectionLibraryIdentifier = @"kTFLCollectionLibrar
 @property (nonatomic, strong) PHAssetCollection     *assetCollection;
 @property (nonatomic, strong) PHCachingImageManager *imageManager;
 @property (nonatomic, strong) UICollectionView      *collectionView;
-@property (nonatomic, strong) NSMutableArray        *selectedAsset;
+@property (nonatomic, strong) NSMutableArray        *selectedAssets;
+@property (nonatomic, strong) NSMutableArray        *removeAssets;
 
 @property (nonatomic, strong) UIBarButtonItem       *doneButtonItem;
+@property (nonatomic, strong) UIButton *selectedButton;
 
 @property CGRect previousPreheatRect;
 
@@ -49,7 +51,9 @@ static CGSize AssetGridThumbnailSize;
         [self resetCachedAssets];
         [[PHPhotoLibrary sharedPhotoLibrary] registerChangeObserver:self];
         _items = [NSMutableArray array];
-        _selectedAsset = [NSMutableArray array];
+        _selectedAssets = [NSMutableArray array];
+        _allowsMultipleSelection = YES;
+        self.barButtonColor = [UIColor blueColor];
     }
     return self;
 }
@@ -65,6 +69,8 @@ static CGSize AssetGridThumbnailSize;
             }];
         } else if (status == PHAuthorizationStatusAuthorized) {
             [self performLoadAssets];
+        } else if (status == PHAuthorizationStatusDenied) {
+            //没有权限
         }
         
     } else {
@@ -160,12 +166,53 @@ static CGSize AssetGridThumbnailSize;
 
 
 - (void)setupToolBar {
-    _doneButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"保存"
-                                                       style:UIBarButtonItemStylePlain
-                                                      target:nil
-                                                      action:nil];
-    [self.navigationController setToolbarItems:@[_doneButtonItem]
-                                      animated:YES];
+    // Toolbar items
+    UIBarButtonItem *fixedSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:self action:nil];
+    fixedSpace.width = 12; // To balance action button
+    UIBarButtonItem *flexSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+    NSMutableArray *items = [[NSMutableArray alloc] init];
+    //    [items addObject:fixedSpace];
+    _doneButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.selectedButton];
+    [items addObject:flexSpace];
+    [items addObject:_doneButtonItem];
+    [items addObject:fixedSpace];
+    
+    [self setToolbarItems:items
+                 animated:YES];
+}
+
+- (UIButton *)selectedButton {
+    if (!_selectedButton) {
+        _selectedButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_selectedButton setBackgroundImage:[self createImageWithColor:self.barButtonColor] forState:UIControlStateSelected];
+        [_selectedButton setBackgroundImage:[self createImageWithColor:[UIColor lightGrayColor]] forState:UIControlStateNormal];
+        [[_selectedButton titleLabel] setFont:[UIFont systemFontOfSize:14]];
+        _selectedButton.layer.masksToBounds = YES;
+        _selectedButton.layer.cornerRadius = 4;
+        [_selectedButton setTitle:@"完成" forState:UIControlStateNormal];
+        [_selectedButton setFrame:CGRectMake(0, 0, 64, 32)];
+        [_selectedButton addTarget:self action:@selector(onViewClick:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _selectedButton;
+}
+
+
+- (UIImage *)createImageWithColor:(UIColor *)color {
+    CGRect rect=CGRectMake(0.0f, 0.0f, 1.0f, 1.0f);
+    UIGraphicsBeginImageContext(rect.size);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetFillColorWithColor(context, [color CGColor]);
+    CGContextFillRect(context, rect);
+    
+    UIImage *theImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return theImage;
+}
+
+- (void)onViewClick:(id)sender {
+    if ([_libraryControllerDelegate respondsToSelector:@selector(didSelectPHAssets:removeList:infos:)]) {
+        [_libraryControllerDelegate didSelectPHAssets:_selectedAssets removeList:_removeAssets infos:nil];
+    }
 }
 
 #pragma mark - PHPhotoLibraryChangeObserver
@@ -258,7 +305,77 @@ static CGSize AssetGridThumbnailSize;
 }
 
 #pragma mark - UICollectionViewDelegate
+- (BOOL)collectionView:(UICollectionView *)collectionView shouldDeselectItemAtIndexPath:(NSIndexPath *)indexPath; {
+    if (indexPath.section == 0 && indexPath.row == 0) {
+        return NO;
+    }
+    return YES;
+}
 
+- (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    return [self validateMaximumNumberOfSelections:([self.selectedAssets count] + 1)];
+}
+- (void) collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.section == 0 && indexPath.row == 0) {
+        //打开相机
+        if (!self.selectedAssets) {
+            _selectedAssets = [NSMutableArray array];
+        }
+        [collectionView deselectItemAtIndexPath:indexPath animated:NO];
+    } else {
+        TFAsset *asset = [self.items objectAtIndex:indexPath.item];
+        if (asset.size.width > 0) {
+            if (!_selectedAssets) {
+                _selectedAssets = [NSMutableArray array];
+            }
+            if (!_removeAssets) {
+                _removeAssets = [NSMutableArray array];
+            }
+            if (self.allowsMultipleSelection) {
+                //多选
+                [_selectedAssets addObject:asset];
+                [_removeAssets enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                    if ([obj isEqual:asset.localIdentifier]) {
+                        [_removeAssets removeObject:obj];
+                    }
+                }];
+            } else {
+                if ( _allowsImageCrop) {
+                    //打开裁剪界面
+                } else {
+                    //选择完成
+                    if ([_libraryControllerDelegate respondsToSelector:@selector(didSelectPHAssets:removeList:infos:)]) {
+                        [_libraryControllerDelegate didSelectPHAssets:@[asset] removeList:nil infos:nil];
+                    }
+                }
+            }
+            //            [_countButton setTitle:[NSString stringWithFormat:NSLocalizedString(@"照片选择完成", nil),[self.selectedAssets count],_maximumNumberOfSelection]
+            //                          forState:UIControlStateNormal];
+        }
+    }
+}
+
+
+
+- (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == 0 && indexPath.row == 0) {
+        return;
+    }
+    TFAsset *asset = [self.items objectAtIndex:indexPath.item];
+    if (asset.size.width > 0) {
+        if ([_selectedAssets containsObject:asset]) {
+            [_selectedAssets removeObject:asset];
+        }
+        if (!_removeAssets) {
+            _removeAssets = [NSMutableArray array];
+        }
+        [_removeAssets addObject:asset];
+        //        [_countButton setTitle:[NSString stringWithFormat:NSLocalizedString(@"照片选择完成", nil),[self.selectedAssets count],_maximumNumberOfSelection]
+        //                      forState:UIControlStateNormal];
+    }
+}
 
 
 #pragma mark - UIScrollViewDelegate
@@ -363,6 +480,31 @@ static CGSize AssetGridThumbnailSize;
     return assets;
 }
 
+#pragma mark - Validating Selections
+
+- (BOOL)validateNumberOfSelections:(NSUInteger)numberOfSelections
+{
+    NSUInteger minimumNumberOfSelection = MAX(1, self.minimumNumberOfSelection);
+    BOOL qualifiesMinimumNumberOfSelection = (numberOfSelections >= minimumNumberOfSelection);
+    
+    BOOL qualifiesMaximumNumberOfSelection = YES;
+    if (minimumNumberOfSelection <= self.maximumNumberOfSelection) {
+        qualifiesMaximumNumberOfSelection = (numberOfSelections <= self.maximumNumberOfSelection);
+    }
+    
+    return (qualifiesMinimumNumberOfSelection && qualifiesMaximumNumberOfSelection);
+}
+
+- (BOOL)validateMaximumNumberOfSelections:(NSUInteger)numberOfSelections
+{
+    NSUInteger minimumNumberOfSelection = MAX(1, self.minimumNumberOfSelection);
+    
+    if (minimumNumberOfSelection <= self.maximumNumberOfSelection) {
+        return (numberOfSelections <= self.maximumNumberOfSelection);
+    }
+    
+    return YES;
+}
 
 
 #pragma mark - 图片裁剪
