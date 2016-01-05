@@ -10,7 +10,7 @@
 #import "TFPhotoBrowser.h"
 #import "TFLibraryViewController.h"
 
-@interface ViewController ()<TFPhotoBrowserDelegate>
+@interface ViewController ()<TFPhotoBrowserDelegate,TFLibraryViewControllerDelegate>
 
 @property (nonatomic, strong) NSMutableArray *photos;
 @property (nonatomic, strong) NSMutableArray *thumbs;
@@ -68,6 +68,7 @@
 
 - (void)onViewClick2:(id)sender {
     TFLibraryViewController *viewController = [[TFLibraryViewController alloc] init];
+    viewController.libraryControllerDelegate = self;
     UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:viewController];
     nc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     nc.toolbarHidden = NO;
@@ -126,5 +127,20 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
+
+#pragma mark - TFLibraryViewControllerDelegate
+- (void)didSelectPHAssets:(NSArray<TFAsset *> *)assets
+               removeList:(NSArray<TFAsset *> *)removeList
+                    infos:(NSMutableArray *)infos {
+    NSLog(@"selected assets:%@",assets);
+    for (TFAsset *tfAsset in assets) {
+        NSLog(@"selected tfAsset:%@",tfAsset.fullResolutionImage);
+    }
+    
+}
+
+- (void)didSelectImage:(UIImage *)image {
+    
+}
 
 @end

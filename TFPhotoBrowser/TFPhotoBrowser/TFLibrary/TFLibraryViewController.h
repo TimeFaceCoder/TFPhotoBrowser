@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TFAsset.h"
 
-@class TFAsset;
 @protocol TFLibraryViewControllerDelegate;
 
 @interface TFLibraryViewController : UIViewController

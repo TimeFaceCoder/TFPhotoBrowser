@@ -23,7 +23,6 @@ typedef NS_ENUM(NSInteger, TFAssetType) {
 
 // Properties (Image)
 @property (nonatomic, weak, readonly) UIImage        *thumbnail;
-@property (nonatomic, weak, readonly) UIImage        *aspectRatioThumbnail;
 @property (nonatomic, weak, readonly) UIImage        *fullScreenImage;
 @property (nonatomic, weak, readonly) UIImage        *fullResolutionImage;
 
@@ -44,6 +43,7 @@ typedef NS_ENUM(NSInteger, TFAssetType) {
 
 // Properties (Filter)
 @property (nonatomic, assign, readonly) BOOL           isJPEG;
+@property (nonatomic, assign, readonly) BOOL           isPHAsset;
 @property (nonatomic, assign, readonly) BOOL           isPNG;
 @property (nonatomic, assign, readonly) BOOL           isScreenshot;
 @property (nonatomic, assign, readonly) BOOL           isPhoto;

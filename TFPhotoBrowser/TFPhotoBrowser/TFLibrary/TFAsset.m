@@ -29,7 +29,6 @@
 @property (nonatomic, assign) double         duration;
 
 @property (nonatomic, assign) CGSize         thumbnailSize;
-@property (nonatomic, assign) CGSize         aspectRatioThumbnailSize;
 @property (nonatomic, assign) CGSize         fullScreenSize;
 
 @end
@@ -38,6 +37,7 @@
 #pragma mark Privates (Date formatter)
 static NSDateFormatter          *_dateFormatter       = nil;
 static PHCachingImageManager    *_cachingImageManager = nil;
+static PHImageRequestOptions    *_imageRequestOptions = nil;
 + (void)_setupDateFormatter {
     _dateFormatter = [[NSDateFormatter alloc] init];
     _dateFormatter.calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
@@ -47,20 +47,24 @@ static PHCachingImageManager    *_cachingImageManager = nil;
     _cachingImageManager = [[PHCachingImageManager alloc] init];
 }
 
++ (void)_setupImageRequestOptions {
+    _imageRequestOptions = [[PHImageRequestOptions alloc] init];
+    _imageRequestOptions.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat;
+    _imageRequestOptions.synchronous = YES;
+    _imageRequestOptions.networkAccessAllowed = YES;
+    _imageRequestOptions.progressHandler = ^(double progress, NSError *error, BOOL *stop, NSDictionary *info) {
+        NSLog(@"%f", progress);
+    };
+}
+
 #pragma mark -
 #pragma mark Basics
 - (id)initWithALAsset:(ALAsset *)asset {
     self = super.init;
     if (self) {
-        self.alAsset = asset;
-        NSDate* date = self.date;
-        self.dateTimeInteger = [_dateFormatter stringFromDate:date].integerValue;
-        if (self.dateTimeInteger < 1900000000) {
-            self.dateTimeInteger += 1900000000;
-        }
-        self.timeInterval = date.timeIntervalSince1970;
-        self.type = TFAssetTypeUnInitiliazed;
         self.isPHAsset = NO;
+        self.alAsset = asset;
+        [self initProperty];
     }
     return self;
 }
@@ -69,20 +73,30 @@ static PHCachingImageManager    *_cachingImageManager = nil;
     if (self) {
         self.isPHAsset = YES;
         self.phAsset = asset;
-        NSDate* date = self.date;
-        self.dateTimeInteger = [_dateFormatter stringFromDate:date].integerValue;
-        if (self.dateTimeInteger < 1900000000) {
-            self.dateTimeInteger += 1900000000;
-        }
-        self.timeInterval = date.timeIntervalSince1970;
-        self.type = TFAssetTypeUnInitiliazed;
+        [self initProperty];
     }
     return self;
+}
+
+- (void)initProperty {
+    NSDate* date = self.date;
+    self.dateTimeInteger = [_dateFormatter stringFromDate:date].integerValue;
+    if (self.dateTimeInteger < 1900000000) {
+        self.dateTimeInteger += 1900000000;
+    }
+    self.timeInterval = date.timeIntervalSince1970;
+    self.type = TFAssetTypeUnInitiliazed;
+    
+    CGFloat scale = [[UIScreen mainScreen] scale];
+    _fullScreenSize = CGSizeMake(CGRectGetWidth([[UIScreen mainScreen] bounds]) *scale, CGRectGetHeight([[UIScreen mainScreen] bounds]) *scale);
+    
+    _thumbnailSize = CGSizeMake(240, 240);
 }
 
 + (void)initialize {
     [self _setupDateFormatter];
     [self _setupImageManager];
+    [self _setupImageRequestOptions];
 }
 
 - (NSComparisonResult)compare:(TFAsset *)asset {
@@ -135,68 +149,64 @@ static PHCachingImageManager    *_cachingImageManager = nil;
 #pragma mark -
 #pragma mark Properties (Image)
 - (UIImage*)thumbnail {
+    __block UIImage *image = nil;
     if (self.isPHAsset) {
-        //阻塞线程
         [_cachingImageManager requestImageForAsset:self.phAsset
                                         targetSize:self.thumbnailSize
-                                       contentMode:PHImageContentModeAspectFill
-                                           options:nil
-                                     resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info)
-         {
-         }];
+                                       contentMode:PHImageContentModeDefault
+                                           options:_imageRequestOptions
+                                     resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
+                                         image = result;
+                                     }];
     }
     else {
-        return [UIImage imageWithCGImage:self.alAsset.thumbnail];
+        image =  [UIImage imageWithCGImage:self.alAsset.thumbnail];
     }
-    return nil;
-}
-
-- (UIImage*)aspectRatioThumbnail {
-    if (self.isPHAsset) {
-        
-    }
-    else {
-        return [UIImage imageWithCGImage:self.alAsset.aspectRatioThumbnail];
-    }
-    return nil;
+    return image;
 }
 
 - (UIImage*)fullScreenImage {
+    __block UIImage *image = nil;
     if (self.isPHAsset) {
-        
+        [_cachingImageManager requestImageForAsset:self.phAsset
+                                        targetSize:self.fullScreenSize
+                                       contentMode:PHImageContentModeDefault
+                                           options:_imageRequestOptions
+                                     resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
+                                         image = result;
+                                     }];
     }
     else {
         ALAssetRepresentation* rep = self.alAsset.defaultRepresentation;
         if (rep) {
-            UIImage *image = [UIImage imageWithCGImage:rep.fullScreenImage
-                                                 scale:rep.scale
-                                           orientation:0];
-            return image;
-        } else {
-            // deleted
-            return nil;
+            image = [UIImage imageWithCGImage:rep.fullScreenImage
+                                        scale:rep.scale
+                                  orientation:0];
         }
     }
-    return nil;
+    return image;
 }
 
 - (UIImage*)fullResolutionImage {
+    __block UIImage *image = nil;
     if (self.isPHAsset) {
-        
+        [_cachingImageManager requestImageForAsset:self.phAsset
+                                        targetSize:self.size
+                                       contentMode:PHImageContentModeDefault
+                                           options:_imageRequestOptions
+                                     resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
+                                         image = result;
+                                     }];
     }
     else {
         ALAssetRepresentation* rep = self.alAsset.defaultRepresentation;
         if (rep) {
-            UIImage* image = [UIImage imageWithCGImage:rep.fullResolutionImage
-                                                 scale:rep.scale
-                                           orientation:0];
-            return image;
-        } else {
-            // deleted
-            return nil;
+            image = [UIImage imageWithCGImage:rep.fullResolutionImage
+                                        scale:rep.scale
+                                  orientation:0];
         }
     }
-    return nil;
+    return image;
 }
 
 #pragma mark -

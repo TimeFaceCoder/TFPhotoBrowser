@@ -9,13 +9,18 @@
 #import "TFLibraryCollectionViewCell.h"
 #import "TFLibraryCollectionOverlayView.h"
 #import <pop/POP.h>
+#import <Photos/Photos.h>
+#import "TFCollectionOverlayProgressView.h"
 
-@interface TFLibraryCollectionViewCell()
+@interface TFLibraryCollectionViewCell() {
+    PHImageRequestID _assetRequestID;
+}
 
-@property (nonatomic ,strong) UIImageView                    *imageView;
-@property (nonatomic ,strong) UIImageView                    *livePhotoBadgeImageView;
-@property (nonatomic ,strong) UIButton                       *selectedButton;
-@property (nonatomic ,strong) TFLibraryCollectionOverlayView *overlayView;
+@property (nonatomic ,strong) UIImageView                     *imageView;
+@property (nonatomic ,strong) UIImageView                     *livePhotoBadgeImageView;
+@property (nonatomic ,strong) UIButton                        *selectedButton;
+@property (nonatomic ,strong) TFLibraryCollectionOverlayView  *overlayView;
+@property (nonatomic ,strong) TFCollectionOverlayProgressView *progressView;
 
 @end
 
@@ -26,6 +31,7 @@
         self.opaque                 = NO;
         self.alpha                  = 1;
         self.contentMode            = UIViewContentModeCenter;
+        self.showsOverlayViewWhenSelected = YES;
         [self setupViews];
     }
     
@@ -49,16 +55,22 @@
     self.livePhotoBadgeImageView = livePhotoBadgeImageView;
     [self.contentView addSubview:self.livePhotoBadgeImageView];
     
-    TFLibraryCollectionOverlayView *overlayView = [[TFLibraryCollectionOverlayView alloc] initWithFrame:self.bounds];
+    TFLibraryCollectionOverlayView *overlayView = [[TFLibraryCollectionOverlayView alloc] initWithFrame:self.contentView.bounds];
     overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     self.overlayView = overlayView;
-    [self addSubview:self.overlayView];
+    [self.contentView addSubview:self.overlayView];
     
+    TFCollectionOverlayProgressView *progressView = [[TFCollectionOverlayProgressView alloc] initWithFrame:self.contentView.bounds];
+    progressView.alpha = 0;
+    self.progressView = progressView;
+    [self.contentView addSubview:self.progressView];
+    [self.progressView setProgress:0];
 }
 
 
 - (void)setSelected:(BOOL)selected {
     [super setSelected:selected];
+    //检查iCloud状态
     if (selected && self.showsOverlayViewWhenSelected) {
         [self showOverlayView];
     } else {
@@ -79,7 +91,7 @@
 
 - (void)showOverlayView {
     POPBasicAnimation *backgroundColorAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewBackgroundColor];
-    backgroundColorAnimation.toValue = [UIColor colorWithWhite:1 alpha:0.5];
+    backgroundColorAnimation.toValue = [UIColor colorWithWhite:0 alpha:0.5];
     [self.overlayView pop_addAnimation:backgroundColorAnimation forKey:@"showBackgroundColorAnimation"];
 }
 
@@ -100,5 +112,29 @@
     self.livePhotoBadgeImageView.image = livePhotoBadgeImage;
 }
 
+
+// Load from photos library
+- (void)loadUnderlyingImageAndNotifyWithAsset:(PHAsset *)asset targetSize:(CGSize)targetSize {
+    
+    PHImageManager *imageManager = [PHImageManager defaultManager];
+    
+    PHImageRequestOptions *options = [PHImageRequestOptions new];
+    options.networkAccessAllowed = YES;
+    options.resizeMode = PHImageRequestOptionsResizeModeFast;
+    options.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat;
+    options.synchronous = false;
+    options.progressHandler = ^(double progress, NSError *error, BOOL *stop, NSDictionary *info) {
+        NSLog(@"progress:%f",progress);
+    };
+    
+    _assetRequestID = [imageManager requestImageForAsset:asset
+                                              targetSize:targetSize
+                                             contentMode:PHImageContentModeAspectFit
+                                                 options:options
+                                           resultHandler:^(UIImage *result, NSDictionary *info) {
+                                               //
+                                           }];
+    
+}
 
 @end

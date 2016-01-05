@@ -9,7 +9,6 @@
 #import "TFLibraryViewController.h"
 #import "TFPhotoBrowserConstants.h"
 #import "TFLibraryViewLayout.h"
-#import "TFAsset.h"
 #import <AssetsLibrary/AssetsLibrary.h>
 #import <Photos/Photos.h>
 #import <PhotosUI/PhotosUI.h>
@@ -277,29 +276,35 @@ static CGSize AssetGridThumbnailSize;
 }
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     TFAsset *asset = self.items[indexPath.item];
-    
     // Dequeue an AAPLGridViewCell.
     TFLibraryCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kTFLCollectionLibraryIdentifier forIndexPath:indexPath];
-    cell.representedAssetIdentifier = asset.localIdentifier;
-    
-    // Add a badge to the cell if the PHAsset represents a Live Photo.
-    if (asset.phAsset.mediaSubtypes & PHAssetMediaSubtypePhotoLive) {
-        // Add Badge Image to the cell to denote that the asset is a Live Photo.
-        UIImage *badge = [PHLivePhotoView livePhotoBadgeImageWithOptions:PHLivePhotoBadgeOptionsOverContent];
-        cell.livePhotoBadgeImage = badge;
+    if (asset.isPHAsset) {
+        cell.representedAssetIdentifier = asset.localIdentifier;
+        
+        // Add a badge to the cell if the PHAsset represents a Live Photo.
+        if (asset.phAsset.mediaSubtypes & PHAssetMediaSubtypePhotoLive) {
+            // Add Badge Image to the cell to denote that the asset is a Live Photo.
+            UIImage *badge = [PHLivePhotoView livePhotoBadgeImageWithOptions:PHLivePhotoBadgeOptionsOverContent];
+            cell.livePhotoBadgeImage = badge;
+        }
+        
+        // Request an image for the asset from the PHCachingImageManager.
+        [self.imageManager requestImageForAsset:asset.phAsset
+                                     targetSize:AssetGridThumbnailSize
+                                    contentMode:PHImageContentModeAspectFill
+                                        options:nil
+                                  resultHandler:^(UIImage *result, NSDictionary *info) {
+                                      // Set the cell's thumbnail image if it's still showing the same asset.
+                                      NSLog(@"info:%@",info);
+                                      if ([cell.representedAssetIdentifier isEqualToString:asset.localIdentifier]) {
+                                          cell.thumbnailImage = result;
+                                      }
+                                  }];
+    }
+    else {
+        
     }
     
-    // Request an image for the asset from the PHCachingImageManager.
-    [self.imageManager requestImageForAsset:asset.phAsset
-                                 targetSize:AssetGridThumbnailSize
-                                contentMode:PHImageContentModeAspectFill
-                                    options:nil
-                              resultHandler:^(UIImage *result, NSDictionary *info) {
-                                  // Set the cell's thumbnail image if it's still showing the same asset.
-                                  if ([cell.representedAssetIdentifier isEqualToString:asset.localIdentifier]) {
-                                      cell.thumbnailImage = result;
-                                  }
-                              }];
     
     return cell;
 }
