@@ -211,6 +211,20 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
     return image;
 }
 
+- (NSData*)imageData {
+    __block NSData *data = nil;
+    UIImage *image = self.fullResolutionImage;
+    if (UIImagePNGRepresentation(image) == nil) {
+        
+        data = UIImageJPEGRepresentation(image, 1);
+        
+    } else {
+        
+        data = UIImagePNGRepresentation(image);
+    }
+    return data;
+}
+
 #pragma mark -
 #pragma mark Properties (ALAsset)
 - (NSURL*)url {
@@ -453,6 +467,17 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
          }];
     });
     
+}
+
+#pragma mark - NSCoding
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    _localIdentifier = [aDecoder decodeObjectForKey:@"localIdentifier"];
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [aCoder encodeObject:_localIdentifier forKey:@"localIdentifier"];
 }
 
 @end

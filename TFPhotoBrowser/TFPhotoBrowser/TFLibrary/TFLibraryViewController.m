@@ -228,6 +228,7 @@ static CGSize AssetGridThumbnailSize;
     if ([_libraryControllerDelegate respondsToSelector:@selector(didSelectPHAssets:removeList:infos:)]) {
         [_libraryControllerDelegate didSelectPHAssets:_selectedAssets removeList:_removeAssets infos:nil];
     }
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)updateViewState {

@@ -21,12 +21,13 @@ typedef NS_ENUM(NSInteger, TFAssetType) {
 
 typedef void (^DownloadImageFinined)();
 
-@interface TFAsset : NSObject
+@interface TFAsset : NSObject <NSCoding>
 
 // Properties (Image)
 @property (nonatomic, weak, readonly  ) UIImage        *thumbnail;
 @property (nonatomic, weak, readonly  ) UIImage        *fullScreenImage;
 @property (nonatomic, weak, readonly  ) UIImage        *fullResolutionImage;
+@property (nonatomic, weak, readonly  ) NSData         *imageData;
 
 // Properties (Date number)
 @property (nonatomic, assign, readonly) NSTimeInterval timeInterval;// timeIntervalSince1970
@@ -43,6 +44,7 @@ typedef void (^DownloadImageFinined)();
 @property (nonatomic, assign, readonly) CGSize         size;
 @property (nonatomic, assign, readonly) double         duration;// 0 if photo
 @property (nonatomic, assign, readonly) TFAssetType    type;
+@property (nonatomic, assign, readwrite) NSString      *objectKeyPath;
 
 // Properties (Filter)
 @property (nonatomic, assign, readonly) BOOL           isJPEG;
