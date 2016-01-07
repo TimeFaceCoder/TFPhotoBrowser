@@ -11,13 +11,14 @@
 // These methods must never be called or overridden by other classes.
 //
 
-#import "_ASDisplayLayer.h"
 #import "_AS-objc-internal.h"
 #import "ASDisplayNodeExtraIvars.h"
 #import "ASDisplayNode.h"
 #import "ASSentinel.h"
 #import "ASThread.h"
 #import "ASLayoutOptions.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  Hierarchy state is propogated from nodes to all of their children when certain behaviors are required from the subtree.
@@ -33,22 +34,28 @@
 typedef NS_OPTIONS(NSUInteger, ASHierarchyState)
 {
   /** The node may or may not have a supernode, but no supernode has a special hierarchy-influencing option enabled. */
-  ASHierarchyStateNormal       = 0,
+  ASHierarchyStateNormal                  = 0,
   /** The node has a supernode with .shouldRasterizeDescendants = YES.
       Note: the root node of the rasterized subtree (the one with the property set on it) will NOT have this state set. */
-  ASHierarchyStateRasterized   = 1 << 0,
+  ASHierarchyStateRasterized              = 1 << 0,
   /** The node or one of its supernodes is managed by a class like ASRangeController.  Most commonly, these nodes are
       ASCellNode objects or a subnode of one, and are used in ASTableView or ASCollectionView.
       These nodes also recieve regular updates to the .interfaceState property with more detailed status information. */
-  ASHierarchyStateRangeManaged = 1 << 1,
+  ASHierarchyStateRangeManaged            = 1 << 1,
+  /** Down-propogated version of _flags.visibilityNotificationsDisabled.  This flag is very rarely set, but by having it
+      locally available to nodes, they do not have to walk up supernodes at the critical points it is checked. */
+  ASHierarchyStateTransitioningSupernodes = 1 << 2
 };
 
-@interface ASDisplayNode () <_ASDisplayLayerDelegate>
+@interface ASDisplayNode ()
 {
 @protected
   ASInterfaceState _interfaceState;
   ASHierarchyState _hierarchyState;
 }
+
+// The view class to use when creating a new display node instance. Defaults to _ASDisplayView.
++ (Class)viewClass;
 
 // These methods are recursive, and either union or remove the provided interfaceState to all sub-elements.
 - (void)enterInterfaceState:(ASInterfaceState)interfaceState;
@@ -83,7 +90,7 @@ typedef NS_OPTIONS(NSUInteger, ASHierarchyState)
  * In order to guarantee against deadlocks, this method should only be called on the main thread.
  * It may block on the private queue, [_ASDisplayLayer displayQueue]
  */
-- (void)recursivelyEnsureDisplay;
+- (void)recursivelyEnsureDisplaySynchronously:(BOOL)synchronously;
 
 /**
  * @abstract Allows a node to bypass all ensureDisplay passes.  Defaults to NO.
@@ -101,9 +108,11 @@ typedef NS_OPTIONS(NSUInteger, ASHierarchyState)
 @end
 
 @interface UIView (ASDisplayNodeInternal)
-@property (nonatomic, assign, readwrite) ASDisplayNode *asyncdisplaykit_node;
+@property (nullable, nonatomic, assign, readwrite) ASDisplayNode *asyncdisplaykit_node;
 @end
 
 @interface CALayer (ASDisplayNodeInternal)
-@property (nonatomic, assign, readwrite) ASDisplayNode *asyncdisplaykit_node;
+@property (nullable, nonatomic, assign, readwrite) ASDisplayNode *asyncdisplaykit_node;
 @end
+
+NS_ASSUME_NONNULL_END

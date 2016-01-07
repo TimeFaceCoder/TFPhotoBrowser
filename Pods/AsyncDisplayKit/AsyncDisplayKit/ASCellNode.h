@@ -8,6 +8,8 @@
 
 #import <AsyncDisplayKit/ASDisplayNode.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class ASCellNode;
 
 typedef NSUInteger ASCellNodeAnimation;
@@ -77,10 +79,10 @@ typedef NSUInteger ASCellNodeAnimation;
  * ASCellNode must forward touch events in order for UITableView and UICollectionView tap handling to work. Overriding
  * these methods (e.g. for highlighting) requires the super method be called.
  */
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event ASDISPLAYNODE_REQUIRES_SUPER;
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event ASDISPLAYNODE_REQUIRES_SUPER;
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event ASDISPLAYNODE_REQUIRES_SUPER;
-- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event ASDISPLAYNODE_REQUIRES_SUPER;
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event ASDISPLAYNODE_REQUIRES_SUPER;
+- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event ASDISPLAYNODE_REQUIRES_SUPER;
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event ASDISPLAYNODE_REQUIRES_SUPER;
+- (void)touchesCancelled:(nullable NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event ASDISPLAYNODE_REQUIRES_SUPER;
 
 /**
  * Marks the node as needing layout. Convenience for use whether the view / layer is loaded or not.
@@ -92,6 +94,18 @@ typedef NSUInteger ASCellNodeAnimation;
  * This method can be called inside of an animation block (to animate all of the layout changes).
  */
 - (void)setNeedsLayout;
+
+/**
+ * @abstract Initializes a cell with a given viewControllerBlock.
+ *
+ * @param viewBlock The block that will be used to create the backing view.
+ * @param didLoadBlock The block that will be called after the view created by the viewBlock is loaded
+ *
+ * @return An ASCellNode created using the root view of the view controller provided by the viewControllerBlock.
+ * The view controller's root view is resized to match the calcuated size produced during layout.
+ *
+ */
+- (instancetype)initWithViewControllerBlock:(ASDisplayNodeViewControllerBlock)viewControllerBlock didLoadBlock:(ASDisplayNodeDidLoadBlock)didLoadBlock;
 
 @end
 
@@ -107,3 +121,5 @@ typedef NSUInteger ASCellNodeAnimation;
 @property (nonatomic, copy) NSString *text;
 
 @end
+
+NS_ASSUME_NONNULL_END

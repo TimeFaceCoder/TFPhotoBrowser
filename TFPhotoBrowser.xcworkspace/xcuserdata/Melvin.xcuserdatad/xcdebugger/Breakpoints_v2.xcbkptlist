@@ -9,13 +9,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "TFPhotoBrowser/ViewController.m"
-            timestampString = "473654972.398871"
+            filePath = "TFPhotoBrowser/TFPhotoBrowser/TFLibrary/TFLibraryViewController.m"
+            timestampString = "473849469.891034"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "136"
-            endingLineNumber = "136"
-            landmarkName = "-didSelectPHAssets:removeList:infos:"
+            startingLineNumber = "245"
+            endingLineNumber = "245"
+            landmarkName = "-selectItem:asset:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

@@ -19,12 +19,14 @@ typedef NS_ENUM(NSInteger, TFAssetType) {
     TFAssetTypeAudio         =  3
 };
 
+typedef void (^DownloadImageFinined)();
+
 @interface TFAsset : NSObject
 
 // Properties (Image)
-@property (nonatomic, weak, readonly) UIImage        *thumbnail;
-@property (nonatomic, weak, readonly) UIImage        *fullScreenImage;
-@property (nonatomic, weak, readonly) UIImage        *fullResolutionImage;
+@property (nonatomic, weak, readonly  ) UIImage        *thumbnail;
+@property (nonatomic, weak, readonly  ) UIImage        *fullScreenImage;
+@property (nonatomic, weak, readonly  ) UIImage        *fullResolutionImage;
 
 // Properties (Date number)
 @property (nonatomic, assign, readonly) NSTimeInterval timeInterval;// timeIntervalSince1970
@@ -33,6 +35,7 @@ typedef NS_ENUM(NSInteger, TFAssetType) {
 // Properties (ALAsset or PHAsset property)
 @property (nonatomic, strong, readonly) NSURL          *url;
 @property (nonatomic, strong, readonly) NSString       *localIdentifier;
+@property (nonatomic, assign, readonly) PHImageRequestID imageRequestID;
 @property (nonatomic, strong, readonly) NSString       *md5;
 @property (nonatomic, strong, readonly) CLLocation     *location;
 @property (nonatomic, strong, readonly) NSDate         *date;
@@ -48,10 +51,18 @@ typedef NS_ENUM(NSInteger, TFAssetType) {
 @property (nonatomic, assign, readonly) BOOL           isScreenshot;
 @property (nonatomic, assign, readonly) BOOL           isPhoto;
 @property (nonatomic, assign, readonly) BOOL           isVideo;
+@property (nonatomic, assign, readonly) BOOL           isImageResultIsInCloud;
+
+
+
 
 // APIs (Factories)
 + (TFAsset*)assetFromAL:(ALAsset*)asset;
 + (TFAsset*)assetFromPH:(PHAsset*)asset;
+
+
++ (TFAsset*)assetFromURL:(NSURL *)url;
++ (TFAsset*)assetFromLocalIdentifier:(NSString *)localIdentifier;
 
 // Exports
 @property (nonatomic, strong, readonly) ALAsset* alAsset;
@@ -60,5 +71,8 @@ typedef NS_ENUM(NSInteger, TFAssetType) {
 
 // Etc
 - (NSComparisonResult)compare:(TFAsset*)asset;
+
+- (void)downloadImageFromiCloud:(PHAssetImageProgressHandler)progressHandler
+                        finined:(DownloadImageFinined)finined;
 
 @end

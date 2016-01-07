@@ -7,20 +7,21 @@
 //
 
 #import "TFLibraryCollectionViewCell.h"
-#import "TFLibraryCollectionOverlayView.h"
 #import <pop/POP.h>
 #import <Photos/Photos.h>
 #import "TFCollectionOverlayProgressView.h"
 
 @interface TFLibraryCollectionViewCell() {
-    PHImageRequestID _assetRequestID;
 }
 
 @property (nonatomic ,strong) UIImageView                     *imageView;
 @property (nonatomic ,strong) UIImageView                     *livePhotoBadgeImageView;
+@property (nonatomic ,strong) UIImageView                     *iCloudBadgeImageView;
 @property (nonatomic ,strong) UIButton                        *selectedButton;
-@property (nonatomic ,strong) TFLibraryCollectionOverlayView  *overlayView;
 @property (nonatomic ,strong) TFCollectionOverlayProgressView *progressView;
+@property (nonatomic ,assign) PHImageRequestID                assetRequestID;
+@property (nonatomic ,assign) UIView                          *overlayView;
+
 
 @end
 
@@ -28,9 +29,9 @@
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
-        self.opaque                 = NO;
-        self.alpha                  = 1;
-        self.contentMode            = UIViewContentModeCenter;
+        self.opaque                       = NO;
+        self.alpha                        = 1;
+        self.contentMode                  = UIViewContentModeCenter;
         self.showsOverlayViewWhenSelected = YES;
         [self setupViews];
     }
@@ -41,30 +42,49 @@
 
 - (void)setupViews {
     
+    
+    UIView *overlayView = [[UIView alloc] initWithFrame:self.contentView.bounds];
+    overlayView.backgroundColor = [UIColor clearColor];
+    self.overlayView = overlayView;
+    [self.contentView addSubview:self.overlayView];
+    
     UIImageView *imageView = [[UIImageView alloc] initWithFrame:self.bounds];
     imageView.contentMode = UIViewContentModeScaleAspectFill;
     imageView.clipsToBounds = YES;
-    
     self.imageView = imageView;
     [self.contentView addSubview:self.imageView];
     
     UIImageView *livePhotoBadgeImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 26, 26)];
     livePhotoBadgeImageView.contentMode = UIViewContentModeScaleAspectFill;
     livePhotoBadgeImageView.clipsToBounds = YES;
-    
     self.livePhotoBadgeImageView = livePhotoBadgeImageView;
     [self.contentView addSubview:self.livePhotoBadgeImageView];
     
-    TFLibraryCollectionOverlayView *overlayView = [[TFLibraryCollectionOverlayView alloc] initWithFrame:self.contentView.bounds];
-    overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-    self.overlayView = overlayView;
-    [self.contentView addSubview:self.overlayView];
     
-    TFCollectionOverlayProgressView *progressView = [[TFCollectionOverlayProgressView alloc] initWithFrame:self.contentView.bounds];
-    progressView.alpha = 0;
-    self.progressView = progressView;
+    UIImageView *iCloudBadgeImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 38, 24)];
+    iCloudBadgeImageView.contentMode = UIViewContentModeScaleAspectFill;
+    iCloudBadgeImageView.clipsToBounds = YES;
+    self.iCloudBadgeImageView = iCloudBadgeImageView;
+    [self.contentView addSubview:self.iCloudBadgeImageView];
+    
+    
+    self.progressView = [[TFCollectionOverlayProgressView alloc] initWithFrame:self.contentView.bounds];
+    self.progressView.hidden = YES;
     [self.contentView addSubview:self.progressView];
-    [self.progressView setProgress:0];
+    
+    
+    UIImage *image = [UIImage imageNamed:@"TFLibraryResource.bundle/images/TFLibraryCollectionSelected.png"];
+    CGFloat imageWidth = image.size.width;
+    UIButton *selectedButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [selectedButton setImage:[UIImage imageNamed:@"TFLibraryResource.bundle/images/TFLibraryCollectionUnSelected.png"] forState:UIControlStateNormal];
+    [selectedButton setImage:image forState:UIControlStateHighlighted];
+    [selectedButton setImage:image forState:UIControlStateSelected];
+    selectedButton.frame = CGRectMake(CGRectGetWidth(self.bounds) - 4 - imageWidth,4,  imageWidth, imageWidth);
+    [selectedButton addTarget:self action:@selector(onViewClick:) forControlEvents:UIControlEventTouchUpInside];
+    selectedButton.userInteractionEnabled = NO;
+    self.selectedButton = selectedButton;
+    [self.contentView addSubview:self.selectedButton];
+    
 }
 
 
@@ -76,19 +96,22 @@
     } else {
         [self hideOverlayView];
     }
-    [_overlayView checkMark:selected];
+    self.selectedButton.selected = selected;
+    
 }
 
 - (void)prepareForReuse {
     [super prepareForReuse];
     self.imageView.image = nil;
     self.livePhotoBadgeImageView.image = nil;
-}
-- (void)setShowsOverlayViewWhenSelected:(BOOL)showsOverlayViewWhenSelected {
-    _showsOverlayViewWhenSelected = showsOverlayViewWhenSelected;
-    _overlayView.hidden = !_showsOverlayViewWhenSelected;
+    [[PHImageManager defaultManager] cancelImageRequest:self.assetRequestID];
+    [self.progressView setProgress:0];
+    [self.progressView setHidden:YES];
 }
 
+- (void)onViewClick:(UIButton *)button {
+    [self setSelected:!button.selected];
+}
 - (void)showOverlayView {
     POPBasicAnimation *backgroundColorAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewBackgroundColor];
     backgroundColorAnimation.toValue = [UIColor colorWithWhite:0 alpha:0.5];
@@ -101,40 +124,23 @@
     [self.overlayView pop_addAnimation:backgroundColorAnimation forKey:@"hideBackgroundColorAnimation"];
 }
 
-
-- (void)setThumbnailImage:(UIImage *)thumbnailImage {
-    //    _thumbnailImage = thumbnailImage;
+- (void)setThumbnailImage:(UIImage *)thumbnailImage imageResultIsInCloud:(BOOL)imageResultIsInCloud {
     self.imageView.image = thumbnailImage;
+    self.iCloudBadgeImageView.image = imageResultIsInCloud?[UIImage imageNamed:@"TFLibraryResource.bundle/images/TFLibraryCollectioniCloud.png"]:nil;
 }
 
 - (void)setLivePhotoBadgeImage:(UIImage *)livePhotoBadgeImage {
-    //    _livePhotoBadgeImage = livePhotoBadgeImage;
     self.livePhotoBadgeImageView.image = livePhotoBadgeImage;
 }
 
-
-// Load from photos library
-- (void)loadUnderlyingImageAndNotifyWithAsset:(PHAsset *)asset targetSize:(CGSize)targetSize {
-    
-    PHImageManager *imageManager = [PHImageManager defaultManager];
-    
-    PHImageRequestOptions *options = [PHImageRequestOptions new];
-    options.networkAccessAllowed = YES;
-    options.resizeMode = PHImageRequestOptionsResizeModeFast;
-    options.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat;
-    options.synchronous = false;
-    options.progressHandler = ^(double progress, NSError *error, BOOL *stop, NSDictionary *info) {
-        NSLog(@"progress:%f",progress);
-    };
-    
-    _assetRequestID = [imageManager requestImageForAsset:asset
-                                              targetSize:targetSize
-                                             contentMode:PHImageContentModeAspectFit
-                                                 options:options
-                                           resultHandler:^(UIImage *result, NSDictionary *info) {
-                                               //
-                                           }];
-    
+- (void)updateDownLoadStateByProgress:(double)progress {
+    NSLog(@"updateDownLoadStateByProgress progress:%f",progress);
+    if (self.progressView.hidden) {
+        self.progressView.hidden = NO;
+    }
+    [self.progressView setProgress:progress];
 }
+
+
 
 @end

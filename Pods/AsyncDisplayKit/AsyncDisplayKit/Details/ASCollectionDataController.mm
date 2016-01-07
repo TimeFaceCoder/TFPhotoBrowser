@@ -10,7 +10,7 @@
 
 #import "ASAssert.h"
 #import "ASMultidimensionalArrayUtils.h"
-#import "ASDisplayNode.h"
+#import "ASCellNode.h"
 #import "ASDisplayNodeInternal.h"
 #import "ASDataController+Subclasses.h"
 
@@ -40,8 +40,7 @@
 
 - (void)prepareForReloadData
 {
-  NSArray *kinds = [self supplementaryKinds];
-  for (NSString *kind in kinds) {
+  for (NSString *kind in [self supplementaryKinds]) {
     LOG(@"Populating elements of kind: %@", kind);
     NSMutableArray *indexPaths = [NSMutableArray array];
     NSMutableArray *nodes = [NSMutableArray array];
@@ -83,8 +82,7 @@
 
 - (void)prepareForInsertSections:(NSIndexSet *)sections
 {
-  NSArray *kinds = [self supplementaryKinds];
-  for (NSString *kind in kinds) {
+  for (NSString *kind in [self supplementaryKinds]) {
     LOG(@"Populating elements of kind: %@, for sections: %@", kind, sections);
     NSMutableArray *nodes = [NSMutableArray array];
     NSMutableArray *indexPaths = [NSMutableArray array];
@@ -116,8 +114,7 @@
 
 - (void)willDeleteSections:(NSIndexSet *)sections
 {
-  NSArray *kinds = [self supplementaryKinds];
-  for (NSString *kind in kinds) {
+  for (NSString *kind in [self supplementaryKinds]) {
     NSArray *indexPaths = ASIndexPathsForMultidimensionalArrayAtIndexSet([self editingNodesOfKind:kind], sections);
     
     [self deleteNodesOfKind:kind atIndexPaths:indexPaths completion:nil];
@@ -127,8 +124,7 @@
 
 - (void)prepareForReloadSections:(NSIndexSet *)sections
 {
-  NSArray *kinds = [self supplementaryKinds];
-  for (NSString *kind in kinds) {
+  for (NSString *kind in [self supplementaryKinds]) {
     NSMutableArray *nodes = [NSMutableArray array];
     NSMutableArray *indexPaths = [NSMutableArray array];
     [self _populateSupplementaryNodesOfKind:kind withSections:sections mutableNodes:nodes mutableIndexPaths:indexPaths];
@@ -146,7 +142,9 @@
     NSArray *indexPaths = ASIndexPathsForMultidimensionalArrayAtIndexSet([self editingNodesOfKind:kind], sections);
     [self deleteNodesOfKind:kind atIndexPaths:indexPaths completion:nil];
     // reinsert the elements
-    [self batchLayoutNodes:nodes ofKind:kind atIndexPaths:_pendingIndexPaths[kind] completion:nil];
+    [self batchLayoutNodes:nodes ofKind:kind atIndexPaths:_pendingIndexPaths[kind] completion:^(NSArray *nodes, NSArray *indexPaths) {
+      [self insertNodes:nodes ofKind:kind atIndexPaths:indexPaths completion:nil];
+    }];
     [_pendingNodes removeObjectForKey:kind];
     [_pendingIndexPaths removeObjectForKey:kind];
   }];
@@ -154,8 +152,7 @@
 
 - (void)willMoveSection:(NSInteger)section toSection:(NSInteger)newSection
 {
-  NSArray *kinds = [self supplementaryKinds];
-  for (NSString *kind in kinds) {
+  for (NSString *kind in [self supplementaryKinds]) {
     NSArray *indexPaths = ASIndexPathsForMultidimensionalArrayAtIndexSet([self editingNodesOfKind:kind], [NSIndexSet indexSetWithIndex:section]);
     NSArray *nodes = ASFindElementsInMultidimensionalArrayAtIndexPaths([self editingNodesOfKind:kind], indexPaths);
     [self deleteNodesOfKind:kind atIndexPaths:indexPaths completion:nil];
@@ -192,7 +189,8 @@
     for (NSUInteger i = 0; i < rowNum; i++) {
       NSIndexPath *indexPath = [sectionIndex indexPathByAddingIndex:i];
       [indexPaths addObject:indexPath];
-      [nodes addObject:[self.collectionDataSource dataController:self supplementaryNodeOfKind:kind atIndexPath:indexPath]];
+      ASCellNode *supplementaryNode = [self.collectionDataSource dataController:self supplementaryNodeOfKind:kind atIndexPath:indexPath];
+      [nodes addObject:supplementaryNode];
     }
   }];
 }
@@ -213,7 +211,17 @@
 - (ASCellNode *)supplementaryNodeOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {
   ASDisplayNodeAssertMainThread();
-  return [self completedNodesOfKind:kind][indexPath.section][indexPath.item];
+  NSArray *nodesOfKind = [self completedNodesOfKind:kind];
+  NSInteger section = indexPath.section;
+  if (section < nodesOfKind.count) {
+    NSArray *nodesOfKindInSection = nodesOfKind[section];
+    NSInteger itemIndex = indexPath.item;
+    if (itemIndex < nodesOfKindInSection.count) {
+      return nodesOfKindInSection[itemIndex];
+    }
+  }
+  ASDisplayNodeAssert(NO, @"Supplementary node should exist.  Kind = %@, indexPath = %@, collectionDataSource = %@", kind, indexPath, self.collectionDataSource);
+  return [[ASCellNode alloc] init];
 }
 
 #pragma mark - Private Helpers

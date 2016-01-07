@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Facebook. All rights reserved.
 //
 
-#import "ASTableView.h"
+#import "ASTableNode.h"
 
 @class ASDataController;
 
@@ -26,6 +26,6 @@
  *
  * @param asyncDataFetchingEnabled This option is reserved for future use, and currently a no-op.
  */
-- (instancetype)initWithFrame:(CGRect)frame style:(UITableViewStyle)style dataControllerClass:(Class)dataControllerClass asyncDataFetching:(BOOL)asyncDataFetchingEnabled;
+- (instancetype)_initWithFrame:(CGRect)frame style:(UITableViewStyle)style dataControllerClass:(Class)dataControllerClass ownedByNode:(BOOL)ownedByNode;
 
 @end

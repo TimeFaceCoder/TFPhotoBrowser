@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
+@class PHAsset;
 typedef NS_ENUM (NSInteger, TFCollectionViewType) {
     /**
      *  默认
@@ -27,7 +27,10 @@ typedef NS_ENUM (NSInteger, TFCollectionViewType) {
 @property (nonatomic, copy) NSString *representedAssetIdentifier;
 @property (nonatomic, assign) TFCollectionViewType    viewType;
 @property (nonatomic, assign) BOOL showsOverlayViewWhenSelected;
+@property (nonatomic, assign) BOOL imageDownloadingFromCloud;
 
-- (void)setThumbnailImage:(UIImage *)thumbnailImage;
+- (void)setThumbnailImage:(UIImage *)thumbnailImage imageResultIsInCloud:(BOOL)imageResultIsInCloud;
 - (void)setLivePhotoBadgeImage:(UIImage *)livePhotoBadgeImage;
+- (void)updateDownLoadStateByProgress:(double)progress;
+
 @end

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3AAB0EAD616F3302486DDD59 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B36250858EA58B0E345BDD17 /* libPods.a */; };
+		B0207ACA1C3BABEC0055D0F3 /* TFiCloudDownloadHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = B0207AC91C3BABEC0055D0F3 /* TFiCloudDownloadHelper.m */; };
 		B02CE3161C22D2C7005D6E62 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B02CE3151C22D2C7005D6E62 /* Photos.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B02CE3191C22D443005D6E62 /* TFLibraryViewLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = B02CE3181C22D443005D6E62 /* TFLibraryViewLayout.m */; };
 		B02CE31C1C22D4C4005D6E62 /* NSIndexSet+TFLibrary.m in Sources */ = {isa = PBXBuildFile; fileRef = B02CE31B1C22D4C4005D6E62 /* NSIndexSet+TFLibrary.m */; };
@@ -79,6 +80,8 @@
 
 /* Begin PBXFileReference section */
 		95A751D15D36FFE6F877EDD4 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		B0207AC81C3BABEC0055D0F3 /* TFiCloudDownloadHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFiCloudDownloadHelper.h; sourceTree = "<group>"; };
+		B0207AC91C3BABEC0055D0F3 /* TFiCloudDownloadHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFiCloudDownloadHelper.m; sourceTree = "<group>"; };
 		B02CE3151C22D2C7005D6E62 /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
 		B02CE3171C22D443005D6E62 /* TFLibraryViewLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFLibraryViewLayout.h; sourceTree = "<group>"; };
 		B02CE3181C22D443005D6E62 /* TFLibraryViewLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFLibraryViewLayout.m; sourceTree = "<group>"; };
@@ -356,6 +359,8 @@
 				B0B30AFC1C3A68E7000AA90B /* TFCollectionOverlayProgressView.m */,
 				B0F80A251C3B5D05000DD3FE /* TFLibraryCameraCollectionViewCell.h */,
 				B0F80A261C3B5D05000DD3FE /* TFLibraryCameraCollectionViewCell.m */,
+				B0207AC81C3BABEC0055D0F3 /* TFiCloudDownloadHelper.h */,
+				B0207AC91C3BABEC0055D0F3 /* TFiCloudDownloadHelper.m */,
 			);
 			path = TFLibrary;
 			sourceTree = "<group>";
@@ -574,6 +579,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B02CE31C1C22D4C4005D6E62 /* NSIndexSet+TFLibrary.m in Sources */,
+				B0207ACA1C3BABEC0055D0F3 /* TFiCloudDownloadHelper.m in Sources */,
 				B06A14991B904F850022BCE5 /* TFTapDetectingImageView.m in Sources */,
 				B093BCF71BFC1C2D00754A2D /* TFPhotoCaptionView.m in Sources */,
 				B0B30AFD1C3A68E7000AA90B /* TFCollectionOverlayProgressView.m in Sources */,

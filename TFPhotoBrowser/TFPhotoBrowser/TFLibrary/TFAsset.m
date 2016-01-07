@@ -12,24 +12,27 @@
 
 @interface TFAsset()
 
-@property (nonatomic, strong) ALAsset        * alAsset;
-@property (nonatomic, strong) PHAsset        * phAsset;
+@property (nonatomic, strong) ALAsset        *alAsset;
+@property (nonatomic, strong) PHAsset        *phAsset;
 @property (nonatomic, assign) NSInteger      dateTimeInteger;// yyyyMMddHH < long max:2147483647
 @property (nonatomic, assign) NSTimeInterval timeInterval;
-@property (nonatomic, strong) NSString       * fileExtension;
+@property (nonatomic, strong) NSString       *fileExtension;
 @property (nonatomic, assign) BOOL           isPHAsset;
 
 // Properties (ALAsset or PHAsset)
-@property (nonatomic, strong) NSURL          * url;
-@property (nonatomic, strong) NSString       * localIdentifier;
-@property (nonatomic, strong) NSString       * md5;
-@property (nonatomic, strong) CLLocation     * location;
-@property (nonatomic, strong) NSDate         * date;
+@property (nonatomic, strong) NSURL          *url;
+@property (nonatomic, strong) NSString       *localIdentifier;
+@property (nonatomic, assign) BOOL           isImageResultIsInCloud;
+@property (nonatomic, assign) PHImageRequestID imageRequestID;
+@property (nonatomic, strong) NSString       *md5;
+@property (nonatomic, strong) CLLocation     *location;
+@property (nonatomic, strong) NSDate         *date;
 @property (nonatomic, assign) TFAssetType    type;
 @property (nonatomic, assign) double         duration;
 
-@property (nonatomic, assign) CGSize         thumbnailSize;
-@property (nonatomic, assign) CGSize         fullScreenSize;
+@property (nonatomic, assign) CGSize thumbnailSize;
+@property (nonatomic, assign) CGSize fullScreenSize;
+@property (nonatomic, assign) BOOL   alreadyRequest;
 
 @end
 @implementation TFAsset
@@ -52,9 +55,6 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
     _imageRequestOptions.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat;
     _imageRequestOptions.synchronous = YES;
     _imageRequestOptions.networkAccessAllowed = YES;
-    _imageRequestOptions.progressHandler = ^(double progress, NSError *error, BOOL *stop, NSDictionary *info) {
-        NSLog(@"%f", progress);
-    };
 }
 
 #pragma mark -
@@ -91,6 +91,8 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
     _fullScreenSize = CGSizeMake(CGRectGetWidth([[UIScreen mainScreen] bounds]) *scale, CGRectGetHeight([[UIScreen mainScreen] bounds]) *scale);
     
     _thumbnailSize = CGSizeMake(240, 240);
+    
+    _alreadyRequest = NO;
 }
 
 + (void)initialize {
@@ -153,7 +155,7 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
     if (self.isPHAsset) {
         [_cachingImageManager requestImageForAsset:self.phAsset
                                         targetSize:self.thumbnailSize
-                                       contentMode:PHImageContentModeDefault
+                                       contentMode:PHImageContentModeAspectFill
                                            options:_imageRequestOptions
                                      resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
                                          image = result;
@@ -170,7 +172,7 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
     if (self.isPHAsset) {
         [_cachingImageManager requestImageForAsset:self.phAsset
                                         targetSize:self.fullScreenSize
-                                       contentMode:PHImageContentModeDefault
+                                       contentMode:PHImageContentModeAspectFill
                                            options:_imageRequestOptions
                                      resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
                                          image = result;
@@ -191,7 +193,7 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
     __block UIImage *image = nil;
     if (self.isPHAsset) {
         [_cachingImageManager requestImageForAsset:self.phAsset
-                                        targetSize:self.size
+                                        targetSize:PHImageManagerMaximumSize
                                        contentMode:PHImageContentModeDefault
                                            options:_imageRequestOptions
                                      resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
@@ -355,6 +357,26 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
     return self.type == TFAssetTypePhoto;
 }
 
+- (BOOL)isImageResultIsInCloud {
+    if (_alreadyRequest) {
+        return _isImageResultIsInCloud;
+    }
+    PHImageRequestOptions *options = [[PHImageRequestOptions alloc] init];
+    options.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat;
+    options.synchronous = YES;
+    options.networkAccessAllowed = NO;
+    [_cachingImageManager requestImageForAsset:self.phAsset
+                                    targetSize:PHImageManagerMaximumSize
+                                   contentMode:PHImageContentModeDefault
+                                       options:options
+                                 resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
+                                     _isImageResultIsInCloud = [[info objectForKey:PHImageResultIsInCloudKey] boolValue];
+                                     _alreadyRequest = YES;
+                                 }];
+    
+    return _isImageResultIsInCloud;
+}
+
 - (BOOL)isScreenshot {
     if (self.isPNG) {
         CGSize size = UIScreen.mainScreen.bounds.size;
@@ -364,7 +386,6 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
     }
     return NO;
 }
-
 
 - (NSString *)getMD5StringFromNSString:(NSString *)string {
     NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
@@ -382,8 +403,48 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
 + (TFAsset*)assetFromAL:(ALAsset*)asset {
     return [[self alloc] initWithALAsset:asset];
 }
+
 + (TFAsset*)assetFromPH:(PHAsset*)asset {
     return [[self alloc] initWithPHAsset:asset];
+}
+
++ (TFAsset*)assetFromURL:(NSURL *)url {
+    ALAsset *asset = nil;
+    return [[self alloc] initWithALAsset:asset];
+}
+
++ (TFAsset*)assetFromLocalIdentifier:(NSString *)localIdentifier {
+    PHFetchResult *fetchResult = [PHAsset fetchAssetsWithLocalIdentifiers:@[localIdentifier] options:nil];
+    if ([fetchResult count] > 0) {
+        PHAsset *asset = [fetchResult objectAtIndex:0];
+        return [[self alloc] initWithPHAsset:asset];
+    }
+    return nil;
+}
+
+#pragma mark 从iCloud下载图片
+
+- (void)downloadImageFromiCloud:(PHAssetImageProgressHandler)progressHandler
+                        finined:(DownloadImageFinined)finined {
+    _imageRequestOptions.progressHandler = progressHandler;
+    __weak typeof(self) weakSelf = self;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [[PHImageManager defaultManager] requestImageForAsset:self.phAsset
+                                                   targetSize:PHImageManagerMaximumSize
+                                                  contentMode:PHImageContentModeDefault
+                                                      options:_imageRequestOptions
+                                                resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info)
+         {
+             BOOL downloadFinined = ![[info objectForKey:PHImageCancelledKey] boolValue] && ![info objectForKey:PHImageErrorKey] && ![[info objectForKey:PHImageResultIsDegradedKey] boolValue];
+             if (downloadFinined) {
+                 //图片下载完成
+                 weakSelf.isImageResultIsInCloud = NO;
+                 weakSelf.imageRequestID = [[info objectForKey:PHImageResultRequestIDKey] intValue];
+                 finined();
+             }
+         }];
+    });
+    
 }
 
 @end

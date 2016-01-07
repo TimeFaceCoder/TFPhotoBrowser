@@ -104,36 +104,16 @@ static const CFTimeInterval kTFScaleAnimationDuration = 0.5;
 {
     if ([self pinnedProgress:progress] != _progress) {
         self.progressShape.strokeStart = progress;
-        
         if (_progress == 1.0f && progress < 1.0f) {
             [self.boxShape removeAllAnimations];
         }
-        
         _progress = [self pinnedProgress:progress];
-        
-        if (_progress == 1.0f) {
-            CGFloat minSide = MIN(CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds));
-            
-            CGFloat centerHoleDiameter =  minSide - (kTFCenterHoleInsetRatio * minSide * 2);
-            CGFloat desiredDiameter = 2 * sqrt((powf((CGRectGetWidth(self.bounds) / 2.0f), 2) + powf((CGRectGetHeight(self.bounds) / 2.0f), 2)));
-            CGFloat scaleFactor = desiredDiameter / centerHoleDiameter;
-            
-            CABasicAnimation *scaleAnimation = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
-            scaleAnimation.toValue = @(scaleFactor);
-            scaleAnimation.duration = kTFScaleAnimationDuration;
-            scaleAnimation.removedOnCompletion = NO;
-            scaleAnimation.autoreverses = NO;
-            scaleAnimation.fillMode = kCAFillModeForwards;
-            [self.boxShape addAnimation:scaleAnimation forKey:@"transform.scale"];
-        }
     }
 }
 
-- (float)pinnedProgress:(float)progress
-{
+- (float)pinnedProgress:(float)progress {
     float pinnedProgress = MAX(0.0f, progress);
     pinnedProgress = MIN(1.0f, pinnedProgress);
-    
     return pinnedProgress;
 }
 

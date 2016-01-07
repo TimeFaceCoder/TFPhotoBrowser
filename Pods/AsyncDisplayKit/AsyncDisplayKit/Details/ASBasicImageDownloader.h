@@ -8,6 +8,7 @@
 
 #import <AsyncDisplayKit/ASImageProtocols.h>
 
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  * @abstract Simple NSURLSession-based image downloader.
@@ -16,4 +17,9 @@
 
 + (instancetype)sharedImageDownloader;
 
++ (instancetype)new __attribute__((unavailable("+[ASBasicImageDownloader sharedImageDownloader] must be used.")));
+- (instancetype)init __attribute__((unavailable("+[ASBasicImageDownloader sharedImageDownloader] must be used.")));
+
 @end
+
+NS_ASSUME_NONNULL_END
