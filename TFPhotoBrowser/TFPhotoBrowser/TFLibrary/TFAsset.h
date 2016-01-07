@@ -61,7 +61,6 @@ typedef void (^DownloadImageFinined)();
 + (TFAsset*)assetFromPH:(PHAsset*)asset;
 
 
-+ (TFAsset*)assetFromURL:(NSURL *)url;
 + (TFAsset*)assetFromLocalIdentifier:(NSString *)localIdentifier;
 
 // Exports

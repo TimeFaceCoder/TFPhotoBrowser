@@ -222,7 +222,12 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
 
 - (NSString *)localIdentifier {
     if (_localIdentifier == nil) {
-        _localIdentifier = self.phAsset.localIdentifier;
+        if (self.isPHAsset) {
+            _localIdentifier = self.phAsset.localIdentifier;
+        }
+        else {
+            _localIdentifier = [self.url absoluteString];
+        }
     }
     return _localIdentifier;
 }
@@ -408,16 +413,19 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
     return [[self alloc] initWithPHAsset:asset];
 }
 
-+ (TFAsset*)assetFromURL:(NSURL *)url {
-    ALAsset *asset = nil;
-    return [[self alloc] initWithALAsset:asset];
-}
-
 + (TFAsset*)assetFromLocalIdentifier:(NSString *)localIdentifier {
-    PHFetchResult *fetchResult = [PHAsset fetchAssetsWithLocalIdentifiers:@[localIdentifier] options:nil];
-    if ([fetchResult count] > 0) {
-        PHAsset *asset = [fetchResult objectAtIndex:0];
-        return [[self alloc] initWithPHAsset:asset];
+    NSRange range = [localIdentifier rangeOfString:@"assets-library"];
+    if (range.length > 0) {
+        //assets-library
+        ALAsset *asset = nil;
+        return [[self alloc] initWithALAsset:asset];
+    }
+    else {
+        PHFetchResult *fetchResult = [PHAsset fetchAssetsWithLocalIdentifiers:@[localIdentifier] options:nil];
+        if ([fetchResult count] > 0) {
+            PHAsset *asset = [fetchResult objectAtIndex:0];
+            return [[self alloc] initWithPHAsset:asset];
+        }
     }
     return nil;
 }
