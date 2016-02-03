@@ -10,6 +10,7 @@
 #import <CommonCrypto/CommonDigest.h>
 
 
+
 @interface TFAsset()
 
 @property (nonatomic, strong) ALAsset        *alAsset;
@@ -34,6 +35,8 @@
 @property (nonatomic, assign) CGSize fullScreenSize;
 @property (nonatomic, assign) BOOL   alreadyRequest;
 
+@property (nonatomic, assign) ALAssetsLibrary *libary;
+
 @end
 @implementation TFAsset
 #pragma mark -
@@ -55,6 +58,15 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
     _imageRequestOptions.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat;
     _imageRequestOptions.synchronous = YES;
     _imageRequestOptions.networkAccessAllowed = YES;
+}
+
+-(ALAssetsLibrary *)libary
+{
+    if(!_libary)
+    {
+        _libary = [[ALAssetsLibrary alloc]init];
+    }
+    return _libary;
 }
 
 #pragma mark -
@@ -86,12 +98,12 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
     }
     self.timeInterval = date.timeIntervalSince1970;
     self.type = TFAssetTypeUnInitiliazed;
-    
+
     CGFloat scale = [[UIScreen mainScreen] scale];
     _fullScreenSize = CGSizeMake(CGRectGetWidth([[UIScreen mainScreen] bounds]) *scale, CGRectGetHeight([[UIScreen mainScreen] bounds]) *scale);
-    
+
     _thumbnailSize = CGSizeMake(240, 240);
-    
+
     _alreadyRequest = NO;
 }
 
@@ -210,6 +222,8 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
     }
     return image;
 }
+
+
 
 #pragma mark -
 #pragma mark Properties (ALAsset)
@@ -334,7 +348,17 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
     if (_fileExtension == nil) {
         if (self.isPHAsset) {
             //
-            //            _fileExtension = self.phAsset
+            _fileExtension = @"JPEG";
+
+//            [_cachingImageManager requestImageForAsset:self.phAsset
+//                                            targetSize:CGSizeMake(10, 10)
+//                                           contentMode:PHImageContentModeDefault
+//                                               options:_imageRequestOptions
+//                                         resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
+//                                             NSString *infoStr = [info objectForKey:@"PHImageFileUTIKey"];
+//                                             NSArray *array = [infoStr componentsSeparatedByString:@"."];
+//                                             _fileExtension = array[1];
+//                                         }];
         }
         else {
             _fileExtension = self.url.pathExtension.uppercaseString;
@@ -378,7 +402,7 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
                                      _isImageResultIsInCloud = [[info objectForKey:PHImageResultIsInCloudKey] boolValue];
                                      _alreadyRequest = YES;
                                  }];
-    
+
     return _isImageResultIsInCloud;
 }
 
@@ -413,12 +437,43 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
     return [[self alloc] initWithPHAsset:asset];
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 + (TFAsset*)assetFromLocalIdentifier:(NSString *)localIdentifier {
     NSRange range = [localIdentifier rangeOfString:@"assets-library"];
     if (range.length > 0) {
         //assets-library
-        ALAsset *asset = nil;
-        return [[self alloc] initWithALAsset:asset];
+        __block TFAsset *tfAsset = nil;
+
+        ALAssetsLibrary *libary = [[ALAssetsLibrary alloc]init];
+        
+        __block dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
+            [libary assetForURL:[NSURL URLWithString:localIdentifier] resultBlock:^(ALAsset *asset){
+                tfAsset = [[TFAsset alloc]initWithALAsset:asset];
+                
+                NSLog(@"%@", tfAsset.localIdentifier);
+                
+                dispatch_semaphore_signal(semaphore);
+            }failureBlock:^(NSError *error){
+                dispatch_semaphore_signal(semaphore);
+            }];
+        });
+        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+        
+        return tfAsset;
     }
     else {
         PHFetchResult *fetchResult = [PHAsset fetchAssetsWithLocalIdentifiers:@[localIdentifier] options:nil];
@@ -452,7 +507,20 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
              }
          }];
     });
-    
+
+}
+
+
+
+#pragma mark - NSCoding
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    _localIdentifier = [aDecoder decodeObjectForKey:@"localIdentifier"];
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [aCoder encodeObject:_localIdentifier forKey:@"localIdentifier"];
 }
 
 @end

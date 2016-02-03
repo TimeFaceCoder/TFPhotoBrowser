@@ -17,13 +17,14 @@
 #import "TFLibraryCollectionViewCell.h"
 #import "TFLibraryCameraCollectionViewCell.h"
 #import <SVProgressHUD/SVProgressHUD.h>
+#import "TFImageCropViewController.h"
 
 
 static NSString * const kTFLCollectionIdentifier        = @"kTFLCollectionIdentifier";
 static NSString * const kTFLCollectionCameraIdentifier  = @"kTFLCollectionCameraIdentifier";
 static NSString * const kTFLCollectionLibraryIdentifier = @"kTFLCollectionLibraryIdentifier";
 
-@interface TFLibraryViewController ()<UICollectionViewDelegate,UICollectionViewDataSource,PHPhotoLibraryChangeObserver>
+@interface TFLibraryViewController ()<UICollectionViewDelegate,UICollectionViewDataSource,PHPhotoLibraryChangeObserver,UIImagePickerControllerDelegate>
 
 @property (nonatomic, strong) NSMutableArray        *items;
 @property (nonatomic, strong) PHFetchResult         *assetsFetchResults;
@@ -31,8 +32,9 @@ static NSString * const kTFLCollectionLibraryIdentifier = @"kTFLCollectionLibrar
 @property (nonatomic, strong) PHCachingImageManager *imageManager;
 @property (nonatomic, strong) PHImageRequestOptions *imageOptions;
 @property (nonatomic, strong) UICollectionView      *collectionView;
-@property (nonatomic, strong) NSMutableArray        *selectedAssets;
 @property (nonatomic, strong) NSMutableArray        *removeAssets;
+
+@property (nonatomic, strong) TFImageCropViewController *editorViewController;
 
 @property (nonatomic, strong) UIBarButtonItem       *doneButtonItem;
 @property (nonatomic, strong) UIButton *selectedButton;
@@ -54,10 +56,11 @@ static CGSize AssetGridThumbnailSize;
         self.imageOptions.deliveryMode = PHImageRequestOptionsDeliveryModeOpportunistic;
         self.imageOptions.networkAccessAllowed = NO;
         [self resetCachedAssets];
-        [[PHPhotoLibrary sharedPhotoLibrary] registerChangeObserver:self];
+//        [[PHPhotoLibrary sharedPhotoLibrary] registerChangeObserver:self];
         _items = [NSMutableArray array];
         _selectedAssets = [NSMutableArray array];
         _allowsMultipleSelection = YES;
+        _barButtonColor = [UIColor colorWithRed:6/255.f green:155/255.f blue:242/255.f alpha:1];
     }
     return self;
 }
@@ -102,6 +105,7 @@ static CGSize AssetGridThumbnailSize;
             allPhotosOptions.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:NO]];
             weakSelf.assetsFetchResults = [PHAsset fetchAssetsWithOptions:allPhotosOptions];
             [weakSelf.assetsFetchResults indexOfObject:[NSNull null] inRange:NSMakeRange(0, 1)];
+            [_items addObject:[NSNull null]];
             for (PHAsset *asset in weakSelf.assetsFetchResults) {
                 if (asset.mediaType == PHAssetMediaTypeImage) {
                     TFAsset *tfAsset = [TFAsset assetFromPH:asset];
@@ -115,6 +119,7 @@ static CGSize AssetGridThumbnailSize;
         dispatch_async(dispatch_get_main_queue(), ^{
             weakSelf.navigationItem.title = NSLocalizedString(@"All Photos", @"");
             [weakSelf.collectionView reloadData];
+            [self updateViewState];
         });
     });
     
@@ -124,7 +129,28 @@ static CGSize AssetGridThumbnailSize;
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:self.collectionView];
+    
+    
+    UIBarButtonItem *barButtonSpacer = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+    [barButtonSpacer setWidth:0];
+    
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    [button setTitle:NSLocalizedString(@"取消", nil) forState:UIControlStateNormal];
+    [button setTitleColor:[UIColor whiteColor]forState:UIControlStateNormal];
+    [button sizeToFit];
+    [button addTarget:self action:@selector(onLeftNacClick: ) forControlEvents:UIControlEventTouchUpInside];
+    
+    
+    UIBarButtonItem *barButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
+    
+    self.navigationItem.leftBarButtonItems = @[barButtonSpacer,barButtonItem];
+    
+    
     [self setupToolBar];
+}
+
+- (void)onLeftNacClick:(id)sender {
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)dealloc {
@@ -201,11 +227,11 @@ static CGSize AssetGridThumbnailSize;
         _selectedButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_selectedButton setBackgroundImage:[self createImageWithColor:self.barButtonColor] forState:UIControlStateSelected];
         [_selectedButton setBackgroundImage:[self createImageWithColor:[UIColor lightGrayColor]] forState:UIControlStateNormal];
-        [[_selectedButton titleLabel] setFont:[UIFont systemFontOfSize:16]];
+        [[_selectedButton titleLabel] setFont:[UIFont systemFontOfSize:14]];
         _selectedButton.layer.masksToBounds = YES;
         _selectedButton.layer.cornerRadius = 4;
         [_selectedButton setTitle:@"完成" forState:UIControlStateNormal];
-        [_selectedButton setFrame:CGRectMake(0, 0, 76, 32)];
+        [_selectedButton setFrame:CGRectMake(0, 0, 85, 32)];
         [_selectedButton addTarget:self action:@selector(onViewClick:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _selectedButton;
@@ -228,13 +254,17 @@ static CGSize AssetGridThumbnailSize;
     if ([_libraryControllerDelegate respondsToSelector:@selector(didSelectPHAssets:removeList:infos:)]) {
         [_libraryControllerDelegate didSelectPHAssets:_selectedAssets removeList:_removeAssets infos:nil];
     }
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)updateViewState {
     NSInteger count = [self.selectedAssets count];
     _selectedButton.selected = count > 0;
-    [_selectedButton setTitle:count > 0?[NSString stringWithFormat:@"完成(%@)",@([self.selectedAssets count])]:@"完成"
-                     forState:UIControlStateNormal];
+    BOOL isM = count && _maximumNumberOfSelection;
+//    [_selectedButton setTitle:count > 0?[NSString stringWithFormat:@"完成(%@)",@([self.selectedAssets count])]:@"完成"
+//                     forState:UIControlStateNormal];
+    [_selectedButton setTitle:isM ? [NSString stringWithFormat:NSLocalizedString(@"照片选择完成", nil),[self.selectedAssets count],_maximumNumberOfSelection]:@"完成"
+                  forState:UIControlStateNormal];
 }
 
 - (void)updateCollectionViewCell:(NSIndexPath *)indexPath progress:(double)progress {
@@ -351,6 +381,10 @@ static CGSize AssetGridThumbnailSize;
     else {
         [cell setThumbnailImage:asset.thumbnail imageResultIsInCloud:NO];
     }
+    if ([_selectedAssets containsObject:asset]) {
+        [cell setSelected:YES];
+        [collectionView selectItemAtIndexPath:indexPath animated:NO scrollPosition:UICollectionViewScrollPositionNone];
+    }
     return cell;
 }
 
@@ -365,7 +399,7 @@ static CGSize AssetGridThumbnailSize;
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section == 0 && indexPath.item == 0) {
-        return NO;
+        return YES;
     }
     return [self validateMaximumNumberOfSelections:([self.selectedAssets count] + 1)];
 }
@@ -376,6 +410,24 @@ static CGSize AssetGridThumbnailSize;
         if (!self.selectedAssets) {
             _selectedAssets = [NSMutableArray array];
         }
+        
+        if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])  {
+            UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+            imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
+            imagePickerController.delegate = self;
+            
+            [self presentViewController:imagePickerController
+                               animated:YES
+                             completion:^{
+                                 TFLibraryCameraCollectionViewCell *item = [collectionView dequeueReusableCellWithReuseIdentifier:kTFLCollectionCameraIdentifier
+                                                                                                                  forIndexPath:indexPath];
+                                 [item removeCamera];
+                             }];
+        }
+        else {
+            [SVProgressHUD showImage:nil status:@"不支持相机"];
+        }
+        
         [collectionView deselectItemAtIndexPath:indexPath animated:NO];
     } else {
         TFAsset *asset = [self.items objectAtIndex:indexPath.item];
@@ -414,10 +466,16 @@ static CGSize AssetGridThumbnailSize;
             } else {
                 if ( _allowsImageCrop) {
                     //打开裁剪界面
+                    TFAsset *asset = [self.items objectAtIndex:indexPath.item];
+                    [self cropImageByALAsset:asset];
+                    
+                    
+                
                 } else {
                     //选择完成
                     if ([_libraryControllerDelegate respondsToSelector:@selector(didSelectPHAssets:removeList:infos:)]) {
                         [_libraryControllerDelegate didSelectPHAssets:@[asset] removeList:nil infos:nil];
+                        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
                     }
                 }
             }
@@ -444,6 +502,66 @@ static CGSize AssetGridThumbnailSize;
         [self updateViewState];
     }
 }
+
+- (void)cropImageByALAsset:(TFAsset *)asset {
+    //使用图片剪裁功能
+    __weak typeof(self) blockSelf = self;
+    UIImage *previewImage = nil;
+    UIImage *sourceImage = nil;
+    if (asset.isPHAsset) {
+        previewImage = asset.thumbnail;
+        sourceImage = asset.fullScreenImage;
+    }else {
+        previewImage = [UIImage imageWithCGImage:[asset.alAsset aspectRatioThumbnail]];
+        sourceImage = [UIImage imageWithCGImage:[asset.alAsset.defaultRepresentation fullScreenImage]];
+    }
+    
+    
+    //    [UIImage imageWithCGImage:[asset.defaultRepresentation fullResolutionImage]
+    //                        scale:[asset.defaultRepresentation scale]
+    //                  orientation:(UIImageOrientation)[asset.defaultRepresentation orientation]]
+    
+    
+    
+    //裁图控件
+    if (!_editorViewController) {
+        _editorViewController = [[TFImageCropViewController alloc] init];
+        _editorViewController.checkBounds = YES;
+        _editorViewController.rotateEnabled = YES;
+        if ([self.libraryControllerDelegate respondsToSelector:@selector(sizeOfImageCrop)]) {
+            CGSize size = [self.libraryControllerDelegate sizeOfImageCrop];
+            [_editorViewController setCropSize:size];
+        }
+        _editorViewController.minimumScale = 0.2;
+        _editorViewController.maximumScale = 10;
+    }
+    _editorViewController.sourceImage = sourceImage;
+    _editorViewController.previewImage = previewImage;
+    [_editorViewController reset:NO];
+    
+    
+    _editorViewController.doneCallback = ^(UIImage *image ,BOOL canceled) {
+        if ([blockSelf.libraryControllerDelegate respondsToSelector:@selector(didSelectImage:)]) {
+            [blockSelf.libraryControllerDelegate didSelectImage:image];
+        }
+    };
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.navigationController presentViewController:_editorViewController
+                                                animated:YES
+                                              completion:^{
+                                                  if ([self.libraryControllerDelegate respondsToSelector:@selector(sizeOfImageCrop)])
+                                                  {
+                                                      CGSize size = [self.libraryControllerDelegate sizeOfImageCrop];
+                                                      [_editorViewController setCropSize:size];
+                                                  }
+                                                  [_editorViewController reset:YES];
+                                              }];
+    });
+    
+    
+}
+
 
 
 #pragma mark - UIScrollViewDelegate
@@ -545,12 +663,64 @@ static CGSize AssetGridThumbnailSize;
     }
     NSMutableArray *assets = [NSMutableArray arrayWithCapacity:indexPaths.count];
     for (NSIndexPath *indexPath in indexPaths) {
-        if (indexPath.item > 0) {
+        if (indexPath.item > 0 && indexPath.item < indexPaths.count) {
             PHAsset *asset = self.assetsFetchResults[indexPath.item];
             [assets addObject:asset];
         }
     }
     return assets;
+}
+
+#pragma mark -  UIImagePickerControllerDelegate
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info {
+    __weak typeof(self) blockSelf = self;
+//    if (blockSelf.allowsMultipleSelection) {
+        UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
+        
+        __block PHObjectPlaceholder *placeholderAsset = nil;
+        [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
+            PHAssetChangeRequest *newAssetRequest = [PHAssetChangeRequest creationRequestForAssetFromImage:image];
+            placeholderAsset = newAssetRequest.placeholderForCreatedAsset;
+        } completionHandler:^(BOOL success, NSError *error) {
+            if(success){
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [blockSelf.navigationController dismissViewControllerAnimated:YES
+                                                                       completion:nil];
+                });
+
+                TFAsset *asset = [TFAsset assetFromLocalIdentifier:placeholderAsset.localIdentifier];
+                
+                if (blockSelf.allowsMultipleSelection) {
+                    [_selectedAssets addObject:asset];
+                }else {
+                    if ( _allowsImageCrop) {
+                        //打开裁剪界面
+                        
+                        [self cropImageByALAsset:asset];
+                        
+                        
+                        
+                    } else {
+                        //选择完成
+                        if ([_libraryControllerDelegate respondsToSelector:@selector(didSelectPHAssets:removeList:infos:)]) {
+                            [_libraryControllerDelegate didSelectPHAssets:@[asset] removeList:nil infos:nil];
+                            [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+                        }
+                    }
+
+                }
+                
+                [self updateViewState];
+                
+                
+            } else {
+                //            failureBlock(error);
+            }
+        }];
+
+    
 }
 
 #pragma mark - Validating Selections

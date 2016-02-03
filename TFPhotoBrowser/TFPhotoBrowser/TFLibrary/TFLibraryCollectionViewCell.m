@@ -32,7 +32,7 @@
         self.opaque                       = NO;
         self.alpha                        = 1;
         self.contentMode                  = UIViewContentModeCenter;
-        self.showsOverlayViewWhenSelected = YES;
+        self.showsOverlayViewWhenSelected = NO;
         [self setupViews];
     }
     

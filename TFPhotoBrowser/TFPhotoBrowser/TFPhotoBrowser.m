@@ -308,6 +308,17 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     
 }
 
+-(UIView*)customToolBarView
+{
+    if(!_customToolBarView)
+    {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(photoBrowser:toolBarViewForPhotoAtIndex:)]) {
+            _customToolBarView = [self.delegate photoBrowser:self toolBarViewForPhotoAtIndex:self.currentIndex];
+        }
+    }
+    return _customToolBarView;
+}
+
 // Release any retained subviews of the main view.
 - (void)viewDidUnload {
     _currentPageIndex = 0;
