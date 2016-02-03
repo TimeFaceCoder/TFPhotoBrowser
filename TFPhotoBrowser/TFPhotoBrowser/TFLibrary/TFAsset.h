@@ -29,6 +29,7 @@ typedef void (^DownloadImageFinined)();
 @property (nonatomic, weak, readonly  ) UIImage        *fullResolutionImage;
 @property (nonatomic, weak, readonly  ) NSData         *imageData;
 
+
 // Properties (Date number)
 @property (nonatomic, assign, readonly) NSTimeInterval timeInterval;// timeIntervalSince1970
 @property (nonatomic, assign, readonly) NSInteger      dateTimeInteger;// yyyyMMddHH

@@ -28,6 +28,10 @@
 @property (nonatomic, assign) CGSize                            imageCropSize;
 @property (nonatomic, strong) UIColor                           *barButtonColor;
 /**
+ *  已选择的图片数组
+ */
+@property (nonatomic, strong) NSMutableArray                    *selectedAssets;
+/**
  *  最多可选图片数量
  */
 @property (nonatomic, assign) NSInteger                         maxSelectedCount;
@@ -46,6 +50,14 @@
                removeList:(NSArray<TFAsset *> *)removeList
                     infos:(NSMutableArray *)infos;
 - (void)didSelectImage:(UIImage *)image;
+
+/**
+ *  图片检测尺寸
+ *
+ *  @return
+ */
+- (CGSize)sizeOfImageCrop;
+
 
 
 @end
