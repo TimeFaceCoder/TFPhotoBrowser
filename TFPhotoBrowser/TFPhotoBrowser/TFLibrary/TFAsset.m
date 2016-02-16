@@ -346,18 +346,12 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
 - (NSString*)fileExtension {
     if (_fileExtension == nil) {
         if (self.isPHAsset) {
-            //
             _fileExtension = @"JPEG";
-
-//            [_cachingImageManager requestImageForAsset:self.phAsset
-//                                            targetSize:CGSizeMake(10, 10)
-//                                           contentMode:PHImageContentModeDefault
-//                                               options:_imageRequestOptions
-//                                         resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
-//                                             NSString *infoStr = [info objectForKey:@"PHImageFileUTIKey"];
-//                                             NSArray *array = [infoStr componentsSeparatedByString:@"."];
-//                                             _fileExtension = array[1];
-//                                         }];
+            NSString * filename = [self.phAsset valueForKey:@"filename"];
+            if (filename.length) {
+                _fileExtension = [filename pathExtension];
+                
+            }
         }
         else {
             _fileExtension = self.url.pathExtension.uppercaseString;
