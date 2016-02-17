@@ -9,8 +9,8 @@
 #import "ViewController.h"
 #import "TFPhotoBrowser.h"
 #import "TFLibraryViewController.h"
-
-@interface ViewController ()<TFPhotoBrowserDelegate,TFLibraryViewControllerDelegate>
+#import "TFImagePickerController.h"
+@interface ViewController ()<TFPhotoBrowserDelegate,TFLibraryViewControllerDelegate,TFImagePickerControllerDelegate>
 
 @property (nonatomic, strong) NSMutableArray *photos;
 @property (nonatomic, strong) NSMutableArray *thumbs;
@@ -67,8 +67,12 @@
 
 
 - (void)onViewClick2:(id)sender {
-    TFLibraryViewController *viewController = [[TFLibraryViewController alloc] init];
-    viewController.libraryControllerDelegate = self;
+    //    TFLibraryViewController *viewController = [[TFLibraryViewController alloc] init];
+    TFImagePickerController *viewController = [[TFImagePickerController alloc] init];
+    viewController.mediaTypes = @[ (id)kUTTypeImage ];
+    viewController.delegate = self;
+    viewController.allowsMultipleSelection = YES;
+    viewController.maxSelectedCount = 9;
     UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:viewController];
     nc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     nc.toolbarHidden = NO;
@@ -141,6 +145,15 @@
 
 - (void)didSelectImage:(UIImage *)image {
     
+}
+
+
+- (void)imagePickerController:(TFImagePickerController *)picker
+       didFinishPickingAssets:(NSArray<PHAsset *> *)assets {
+    [self dismissViewControllerAnimated:YES completion:nil];
+    for (PHAsset *asset in assets) {
+        NSLog(@"asset :%@",asset.fileExtension);
+    }
 }
 
 @end

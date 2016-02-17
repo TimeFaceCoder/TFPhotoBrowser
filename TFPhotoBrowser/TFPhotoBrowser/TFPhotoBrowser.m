@@ -14,6 +14,7 @@
 #import <SVProgressHUD/SVProgressHUD.h>
 #import <SDWebImage/SDWebImageManager.h>
 #import "TFPhotoBrowserPrivate.h"
+#import "TFPhotoBrowserBundle.h"
 
 @interface TFPhotoBrowser() {
     
@@ -199,20 +200,20 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     [self performPresentAnimation];
     
     // Toolbar
-    _toolbar = [[UIToolbar alloc] initWithFrame:[self frameForToolbarAtOrientation:self.interfaceOrientation]];
+    _toolbar = [[UIToolbar alloc] initWithFrame:[self frameForToolbarAtOrientation:[[UIApplication sharedApplication] statusBarOrientation]]];
     _toolbar.tintColor = [UIColor whiteColor];
     _toolbar.barTintColor = nil;
     [_toolbar setBackgroundImage:nil forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsDefault];
-    [_toolbar setBackgroundImage:nil forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsLandscapePhone];
+    [_toolbar setBackgroundImage:nil forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsCompact];
     _toolbar.barStyle = UIBarStyleBlackTranslucent;
     _toolbar.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
     
     _navigationItem = [UINavigationItem new];
-    _navigationBar = [[UINavigationBar alloc] initWithFrame:[self frameForNavbarAtOrientation:self.interfaceOrientation]];
+    _navigationBar = [[UINavigationBar alloc] initWithFrame:[self frameForNavbarAtOrientation:[[UIApplication sharedApplication] statusBarOrientation]]];
     _navigationBar.tintColor = [UIColor whiteColor];
     _navigationBar.barTintColor = nil;
     [_navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
-    [_navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsLandscapePhone];
+    [_navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsCompact];
     _navigationBar.barStyle = UIBarStyleBlackTranslucent;
     _navigationBar.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
     
@@ -747,7 +748,7 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     _performingLayout = YES;
     
     // Toolbar
-    _toolbar.frame = [self frameForToolbarAtOrientation:self.interfaceOrientation];
+    _toolbar.frame = [self frameForToolbarAtOrientation:[[UIApplication sharedApplication] statusBarOrientation]];
     
     // Remember index
     NSUInteger indexPriorToLayout = _currentPageIndex;
@@ -1077,8 +1078,8 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
             // Add play button if needed
             if (page.displayingVideo) {
                 UIButton *playButton = [UIButton buttonWithType:UIButtonTypeCustom];
-                [playButton setImage:[UIImage imageForResourcePath:@"TFPhotoBrowser.bundle/PlayButtonOverlayLarge" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]] forState:UIControlStateNormal];
-                [playButton setImage:[UIImage imageForResourcePath:@"TFPhotoBrowser.bundle/PlayButtonOverlayLargeTap" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]] forState:UIControlStateHighlighted];
+                [playButton setImage:[UIImage imageForResourcePath:@"TFLibraryResource.bundle/images/PlayButtonOverlayLarge" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]] forState:UIControlStateNormal];
+                [playButton setImage:[UIImage imageForResourcePath:@"TFLibraryResource.bundle/images/PlayButtonOverlayLargeTap" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]] forState:UIControlStateHighlighted];
                 [playButton addTarget:self action:@selector(playButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
                 [playButton sizeToFit];
                 playButton.frame = [self frameForPlayButton:playButton atIndex:index];
@@ -1088,13 +1089,15 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
             
             // Add selected button
             if (self.displaySelectionButtons) {
+                //TFLibraryCollectionUnSelected
                 UIButton *selectedButton = [UIButton buttonWithType:UIButtonTypeCustom];
-                [selectedButton setImage:[UIImage imageForResourcePath:@"TFPhotoBrowser.bundle/ImageSelectedOff" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]] forState:UIControlStateNormal];
+                [selectedButton setImage:TFPhotoBrowserImageNamed(@"TFLibraryCollectionUnSelected")
+                                forState:UIControlStateNormal];
                 UIImage *selectedOnImage;
                 if (self.customImageSelectedIconName) {
                     selectedOnImage = [UIImage imageNamed:self.customImageSelectedIconName];
                 } else {
-                    selectedOnImage = [UIImage imageForResourcePath:@"TFPhotoBrowser.bundle/ImageSelectedOn" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]];
+                    selectedOnImage = TFPhotoBrowserImageNamed(@"TFLibraryCollectionSelected");
                 }
                 [selectedButton setImage:selectedOnImage forState:UIControlStateSelected];
                 [selectedButton sizeToFit];
@@ -1567,7 +1570,7 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     if ([self areControlsHidden] && !hidden && animated) {
         
         // Toolbar
-        _toolbar.frame = CGRectOffset([self frameForToolbarAtOrientation:self.interfaceOrientation], 0, animatonOffset);
+        _toolbar.frame = CGRectOffset([self frameForToolbarAtOrientation:[[UIApplication sharedApplication] statusBarOrientation]], 0, animatonOffset);
         
         // Captions
         for (TFZoomingScrollView *page in _visiblePages) {
@@ -1587,13 +1590,13 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
         
         // Nav bar slides up on it's own on iOS 7+
         // NavigationBar
-        _navigationBar.frame = [self frameForNavbarAtOrientation:self.interfaceOrientation];
+        _navigationBar.frame = [self frameForNavbarAtOrientation:[[UIApplication sharedApplication] statusBarOrientation]];
         if (hidden) _navigationBar.frame = CGRectOffset(_navigationBar.frame, 0, -animatonOffset);
         _navigationBar.alpha = alpha;
         
         
         // Toolbar
-        _toolbar.frame = [self frameForToolbarAtOrientation:self.interfaceOrientation];
+        _toolbar.frame = [self frameForToolbarAtOrientation:[[UIApplication sharedApplication] statusBarOrientation]];
         if (hidden) _toolbar.frame = CGRectOffset(_toolbar.frame, 0, animatonOffset);
         _toolbar.alpha = alpha;
         

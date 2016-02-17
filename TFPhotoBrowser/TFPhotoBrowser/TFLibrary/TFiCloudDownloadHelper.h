@@ -9,9 +9,19 @@
 #import <Foundation/Foundation.h>
 #import <Photos/Photos.h>
 
+typedef void (^DownloadImageFinined)();
+
 @interface TFiCloudDownloadHelper : NSObject
 
 + (instancetype)sharedHelper;
 
-- (void)cancelImageRequest:(PHImageRequestID)imageRequestID;
+- (void)cancelImageRequest:(NSString *)localIdentifier;
+
+
+- (PHAssetImageProgressHandler)imageDownloadingFromiCloud:(NSString *)localIdentifier;
+
+- (void)startDownLoadWithAsset:(PHAsset *)asset
+               progressHandler:(PHAssetImageProgressHandler)progressHandler
+                       finined:(DownloadImageFinined)finined;
+
 @end

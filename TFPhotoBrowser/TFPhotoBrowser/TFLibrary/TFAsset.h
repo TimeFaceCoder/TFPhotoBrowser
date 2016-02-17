@@ -53,7 +53,7 @@ typedef void (^DownloadImageFinined)();
 @property (nonatomic, assign, readonly) BOOL           isScreenshot;
 @property (nonatomic, assign, readonly) BOOL           isPhoto;
 @property (nonatomic, assign, readonly) BOOL           isVideo;
-@property (nonatomic, assign, readonly) BOOL           isImageResultIsInCloud;
+@property (nonatomic, assign) BOOL           isImageResultIsInCloud;
 
 
 

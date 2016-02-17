@@ -23,7 +23,6 @@
 // Properties (ALAsset or PHAsset)
 @property (nonatomic, strong) NSURL          *url;
 @property (nonatomic, strong) NSString       *localIdentifier;
-@property (nonatomic, assign) BOOL           isImageResultIsInCloud;
 @property (nonatomic, assign) PHImageRequestID imageRequestID;
 @property (nonatomic, strong) NSString       *md5;
 @property (nonatomic, strong) CLLocation     *location;
@@ -60,10 +59,8 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
     _imageRequestOptions.networkAccessAllowed = YES;
 }
 
--(ALAssetsLibrary *)libary
-{
-    if(!_libary)
-    {
+-(ALAssetsLibrary *)libary {
+    if(!_libary) {
         _libary = [[ALAssetsLibrary alloc]init];
     }
     return _libary;
@@ -98,12 +95,12 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
     }
     self.timeInterval = date.timeIntervalSince1970;
     self.type = TFAssetTypeUnInitiliazed;
-
+    
     CGFloat scale = [[UIScreen mainScreen] scale];
     _fullScreenSize = CGSizeMake(CGRectGetWidth([[UIScreen mainScreen] bounds]) *scale, CGRectGetHeight([[UIScreen mainScreen] bounds]) *scale);
-
+    
     _thumbnailSize = CGSizeMake(240, 240);
-
+    
     _alreadyRequest = NO;
 }
 
@@ -347,35 +344,28 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
 - (NSString*)fileExtension {
     if (_fileExtension == nil) {
         if (self.isPHAsset) {
-            //
-            _fileExtension = @"JPEG";
-
-//            [_cachingImageManager requestImageForAsset:self.phAsset
-//                                            targetSize:CGSizeMake(10, 10)
-//                                           contentMode:PHImageContentModeDefault
-//                                               options:_imageRequestOptions
-//                                         resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
-//                                             NSString *infoStr = [info objectForKey:@"PHImageFileUTIKey"];
-//                                             NSArray *array = [infoStr componentsSeparatedByString:@"."];
-//                                             _fileExtension = array[1];
-//                                         }];
+            _fileExtension = @"jpg";
+            NSString * filename = [self.phAsset valueForKey:@"filename"];
+            if (filename.length) {
+                _fileExtension = [filename pathExtension];
+            }
         }
         else {
-            _fileExtension = self.url.pathExtension.uppercaseString;
+            _fileExtension = self.url.pathExtension.lowercaseString;
         }
     }
-    return _fileExtension;
+    return [_fileExtension lowercaseString];
 }
 
 #pragma mark -
 #pragma mark Properties (Attribute)
 - (BOOL)isJPEG {
     NSString* fileExtension = self.fileExtension;
-    return [fileExtension isEqualToString:@"JPG"] | [fileExtension isEqualToString:@"JPEG"];
+    return [fileExtension isEqualToString:@"jpg"] | [fileExtension isEqualToString:@"jpeg"];
 }
 
 - (BOOL)isPNG {
-    return [self.fileExtension isEqualToString:@"PNG"];
+    return [self.fileExtension isEqualToString:@"png"];
 }
 
 - (BOOL)isVideo {
@@ -394,15 +384,12 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
     options.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat;
     options.synchronous = YES;
     options.networkAccessAllowed = NO;
-    [_cachingImageManager requestImageForAsset:self.phAsset
-                                    targetSize:PHImageManagerMaximumSize
-                                   contentMode:PHImageContentModeDefault
-                                       options:options
-                                 resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
-                                     _isImageResultIsInCloud = [[info objectForKey:PHImageResultIsInCloudKey] boolValue];
-                                     _alreadyRequest = YES;
-                                 }];
-
+    [_cachingImageManager requestImageDataForAsset:self.phAsset options:options resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
+        _isImageResultIsInCloud = [[info objectForKey:PHImageResultIsInCloudKey] boolValue];
+        _alreadyRequest = YES;
+    }];
+    
+    
     return _isImageResultIsInCloud;
 }
 
@@ -437,26 +424,12 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
     return [[self alloc] initWithPHAsset:asset];
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 + (TFAsset*)assetFromLocalIdentifier:(NSString *)localIdentifier {
     NSRange range = [localIdentifier rangeOfString:@"assets-library"];
     if (range.length > 0) {
         //assets-library
         __block TFAsset *tfAsset = nil;
-
+        
         ALAssetsLibrary *libary = [[ALAssetsLibrary alloc]init];
         
         __block dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -498,6 +471,7 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
                                                       options:_imageRequestOptions
                                                 resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info)
          {
+             
              BOOL downloadFinined = ![[info objectForKey:PHImageCancelledKey] boolValue] && ![info objectForKey:PHImageErrorKey] && ![[info objectForKey:PHImageResultIsDegradedKey] boolValue];
              if (downloadFinined) {
                  //图片下载完成
@@ -507,7 +481,7 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
              }
          }];
     });
-
+    
 }
 
 

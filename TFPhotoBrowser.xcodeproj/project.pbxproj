@@ -58,6 +58,24 @@
 		B0B30AFA1C3A551C000AA90B /* ALAssetRepresentation+TFMD5.m in Sources */ = {isa = PBXBuildFile; fileRef = B0B30AF91C3A551C000AA90B /* ALAssetRepresentation+TFMD5.m */; };
 		B0B30AFD1C3A68E7000AA90B /* TFCollectionOverlayProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = B0B30AFC1C3A68E7000AA90B /* TFCollectionOverlayProgressView.m */; };
 		B0C5D6C31C2D413400ADF607 /* TFPhotoBrowserLocalizations.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B0C5D6C21C2D413400ADF607 /* TFPhotoBrowserLocalizations.bundle */; };
+		B0D8F8391C71B94B000778EE /* TFImageCropViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F8361C71B94B000778EE /* TFImageCropViewController.m */; };
+		B0D8F83A1C71B94B000778EE /* TFImageEditorFrameView.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F8381C71B94B000778EE /* TFImageEditorFrameView.m */; };
+		B0D8F83D1C730267000778EE /* TFCollectionsTitleButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F83C1C730267000778EE /* TFCollectionsTitleButton.m */; };
+		B0D8F8411C7306EC000778EE /* NSDate+TFFormattedDay.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F8401C7306EC000778EE /* NSDate+TFFormattedDay.m */; };
+		B0D8F8441C730733000778EE /* PHCollection+TFThumbnail.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F8431C730733000778EE /* PHCollection+TFThumbnail.m */; };
+		B0D8F8471C730809000778EE /* UIImage+TFAspectDraw.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F8461C730809000778EE /* UIImage+TFAspectDraw.m */; };
+		B0D8F84A1C73083B000778EE /* PHPhotoLibrary+TFBlockObservers.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F8491C73083B000778EE /* PHPhotoLibrary+TFBlockObservers.m */; };
+		B0D8F84D1C7308E5000778EE /* PHImageManager+TFRequestImages.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F84C1C7308E5000778EE /* PHImageManager+TFRequestImages.m */; };
+		B0D8F8511C730C54000778EE /* TFAssetImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F8501C730C54000778EE /* TFAssetImageView.m */; };
+		B0D8F8541C730CD5000778EE /* TFPhotoBrowserBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F8531C730CD5000778EE /* TFPhotoBrowserBundle.m */; };
+		B0D8F8571C730E36000778EE /* TFAssetCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F8561C730E36000778EE /* TFAssetCell.m */; };
+		B0D8F85A1C7310C2000778EE /* TFCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F8591C7310C2000778EE /* TFCollectionCell.m */; };
+		B0D8F8601C731338000778EE /* TFMomentHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F85F1C731338000778EE /* TFMomentHeaderView.m */; };
+		B0D8F8631C731390000778EE /* TFImageZoomView.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F8621C731390000778EE /* TFImageZoomView.m */; };
+		B0D8F8661C7313F4000778EE /* TFCollectionViewFloatingHeaderFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F8651C7313F4000778EE /* TFCollectionViewFloatingHeaderFlowLayout.m */; };
+		B0D8F86C1C7314FF000778EE /* TFCollectionPickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F86B1C7314FF000778EE /* TFCollectionPickerController.m */; };
+		B0D8F86F1C731645000778EE /* TFImagePickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F86E1C731645000778EE /* TFImagePickerController.m */; };
+		B0D8F8721C73FCA8000778EE /* PHAsset+TFExpand.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F8711C73FCA8000778EE /* PHAsset+TFExpand.m */; };
 		B0F80A271C3B5D05000DD3FE /* TFLibraryCameraCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B0F80A261C3B5D05000DD3FE /* TFLibraryCameraCollectionViewCell.m */; };
 /* End PBXBuildFile section */
 
@@ -162,6 +180,42 @@
 		B0C5D6C21C2D413400ADF607 /* TFPhotoBrowserLocalizations.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = TFPhotoBrowserLocalizations.bundle; sourceTree = "<group>"; };
 		B0C5D6C41C2D418300ADF607 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
 		B0C5D6C51C2D418300ADF607 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
+		B0D8F8351C71B94B000778EE /* TFImageCropViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFImageCropViewController.h; sourceTree = "<group>"; };
+		B0D8F8361C71B94B000778EE /* TFImageCropViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFImageCropViewController.m; sourceTree = "<group>"; };
+		B0D8F8371C71B94B000778EE /* TFImageEditorFrameView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFImageEditorFrameView.h; sourceTree = "<group>"; };
+		B0D8F8381C71B94B000778EE /* TFImageEditorFrameView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFImageEditorFrameView.m; sourceTree = "<group>"; };
+		B0D8F83B1C730267000778EE /* TFCollectionsTitleButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFCollectionsTitleButton.h; sourceTree = "<group>"; };
+		B0D8F83C1C730267000778EE /* TFCollectionsTitleButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFCollectionsTitleButton.m; sourceTree = "<group>"; };
+		B0D8F83F1C7306EC000778EE /* NSDate+TFFormattedDay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+TFFormattedDay.h"; sourceTree = "<group>"; };
+		B0D8F8401C7306EC000778EE /* NSDate+TFFormattedDay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+TFFormattedDay.m"; sourceTree = "<group>"; };
+		B0D8F8421C730733000778EE /* PHCollection+TFThumbnail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PHCollection+TFThumbnail.h"; sourceTree = "<group>"; };
+		B0D8F8431C730733000778EE /* PHCollection+TFThumbnail.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PHCollection+TFThumbnail.m"; sourceTree = "<group>"; };
+		B0D8F8451C730809000778EE /* UIImage+TFAspectDraw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+TFAspectDraw.h"; sourceTree = "<group>"; };
+		B0D8F8461C730809000778EE /* UIImage+TFAspectDraw.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+TFAspectDraw.m"; sourceTree = "<group>"; };
+		B0D8F8481C73083B000778EE /* PHPhotoLibrary+TFBlockObservers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PHPhotoLibrary+TFBlockObservers.h"; sourceTree = "<group>"; };
+		B0D8F8491C73083B000778EE /* PHPhotoLibrary+TFBlockObservers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PHPhotoLibrary+TFBlockObservers.m"; sourceTree = "<group>"; };
+		B0D8F84B1C7308E5000778EE /* PHImageManager+TFRequestImages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PHImageManager+TFRequestImages.h"; sourceTree = "<group>"; };
+		B0D8F84C1C7308E5000778EE /* PHImageManager+TFRequestImages.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PHImageManager+TFRequestImages.m"; sourceTree = "<group>"; };
+		B0D8F84F1C730C54000778EE /* TFAssetImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFAssetImageView.h; sourceTree = "<group>"; };
+		B0D8F8501C730C54000778EE /* TFAssetImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFAssetImageView.m; sourceTree = "<group>"; };
+		B0D8F8521C730CD5000778EE /* TFPhotoBrowserBundle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFPhotoBrowserBundle.h; sourceTree = "<group>"; };
+		B0D8F8531C730CD5000778EE /* TFPhotoBrowserBundle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFPhotoBrowserBundle.m; sourceTree = "<group>"; };
+		B0D8F8551C730E36000778EE /* TFAssetCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFAssetCell.h; sourceTree = "<group>"; };
+		B0D8F8561C730E36000778EE /* TFAssetCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFAssetCell.m; sourceTree = "<group>"; };
+		B0D8F8581C7310C2000778EE /* TFCollectionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFCollectionCell.h; sourceTree = "<group>"; };
+		B0D8F8591C7310C2000778EE /* TFCollectionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFCollectionCell.m; sourceTree = "<group>"; };
+		B0D8F85E1C731338000778EE /* TFMomentHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFMomentHeaderView.h; sourceTree = "<group>"; };
+		B0D8F85F1C731338000778EE /* TFMomentHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFMomentHeaderView.m; sourceTree = "<group>"; };
+		B0D8F8611C731390000778EE /* TFImageZoomView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFImageZoomView.h; sourceTree = "<group>"; };
+		B0D8F8621C731390000778EE /* TFImageZoomView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFImageZoomView.m; sourceTree = "<group>"; };
+		B0D8F8641C7313F4000778EE /* TFCollectionViewFloatingHeaderFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFCollectionViewFloatingHeaderFlowLayout.h; sourceTree = "<group>"; };
+		B0D8F8651C7313F4000778EE /* TFCollectionViewFloatingHeaderFlowLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFCollectionViewFloatingHeaderFlowLayout.m; sourceTree = "<group>"; };
+		B0D8F86A1C7314FF000778EE /* TFCollectionPickerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFCollectionPickerController.h; sourceTree = "<group>"; };
+		B0D8F86B1C7314FF000778EE /* TFCollectionPickerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFCollectionPickerController.m; sourceTree = "<group>"; };
+		B0D8F86D1C731645000778EE /* TFImagePickerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFImagePickerController.h; sourceTree = "<group>"; };
+		B0D8F86E1C731645000778EE /* TFImagePickerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFImagePickerController.m; sourceTree = "<group>"; };
+		B0D8F8701C73FCA8000778EE /* PHAsset+TFExpand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PHAsset+TFExpand.h"; sourceTree = "<group>"; };
+		B0D8F8711C73FCA8000778EE /* PHAsset+TFExpand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PHAsset+TFExpand.m"; sourceTree = "<group>"; };
 		B0F80A251C3B5D05000DD3FE /* TFLibraryCameraCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFLibraryCameraCollectionViewCell.h; sourceTree = "<group>"; };
 		B0F80A261C3B5D05000DD3FE /* TFLibraryCameraCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFLibraryCameraCollectionViewCell.m; sourceTree = "<group>"; };
 		B36250858EA58B0E345BDD17 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -302,9 +356,15 @@
 			children = (
 				B06A14921B904AEE0022BCE5 /* TFPhotoBrowserConstants.h */,
 				B06A14961B904B350022BCE5 /* TFPhotoProtocol.h */,
+				B0D8F8521C730CD5000778EE /* TFPhotoBrowserBundle.h */,
+				B0D8F8531C730CD5000778EE /* TFPhotoBrowserBundle.m */,
 				B09C3C461C2015B3009C6CF0 /* TFLibrary */,
 				B06A148A1B903AEB0022BCE5 /* TFImageEditor */,
 				B04C0B4B1BF5C05F0012B7D8 /* TFPhotoBrowserPrivate.h */,
+				B0D8F8351C71B94B000778EE /* TFImageCropViewController.h */,
+				B0D8F8361C71B94B000778EE /* TFImageCropViewController.m */,
+				B0D8F8371C71B94B000778EE /* TFImageEditorFrameView.h */,
+				B0D8F8381C71B94B000778EE /* TFImageEditorFrameView.m */,
 				B06A148E1B903BA60022BCE5 /* TFPhotoBrowser.h */,
 				B06A148F1B903BA60022BCE5 /* TFPhotoBrowser.m */,
 				B06A14931B904B080022BCE5 /* TFPhoto.h */,
@@ -339,8 +399,14 @@
 		B09C3C461C2015B3009C6CF0 /* TFLibrary */ = {
 			isa = PBXGroup;
 			children = (
+				B0D8F84E1C730C41000778EE /* Views */,
+				B0D8F83E1C7306B5000778EE /* Additions */,
 				B09C3C471C2015C9009C6CF0 /* TFLibraryViewController.h */,
 				B09C3C481C2015C9009C6CF0 /* TFLibraryViewController.m */,
+				B0D8F86A1C7314FF000778EE /* TFCollectionPickerController.h */,
+				B0D8F86B1C7314FF000778EE /* TFCollectionPickerController.m */,
+				B0D8F86D1C731645000778EE /* TFImagePickerController.h */,
+				B0D8F86E1C731645000778EE /* TFImagePickerController.m */,
 				B02CE3171C22D443005D6E62 /* TFLibraryViewLayout.h */,
 				B02CE3181C22D443005D6E62 /* TFLibraryViewLayout.m */,
 				B02CE31D1C22D51E005D6E62 /* TFLibraryCollectionViewCell.h */,
@@ -363,6 +429,46 @@
 				B0207AC91C3BABEC0055D0F3 /* TFiCloudDownloadHelper.m */,
 			);
 			path = TFLibrary;
+			sourceTree = "<group>";
+		};
+		B0D8F83E1C7306B5000778EE /* Additions */ = {
+			isa = PBXGroup;
+			children = (
+				B0D8F83F1C7306EC000778EE /* NSDate+TFFormattedDay.h */,
+				B0D8F8401C7306EC000778EE /* NSDate+TFFormattedDay.m */,
+				B0D8F8421C730733000778EE /* PHCollection+TFThumbnail.h */,
+				B0D8F8431C730733000778EE /* PHCollection+TFThumbnail.m */,
+				B0D8F8451C730809000778EE /* UIImage+TFAspectDraw.h */,
+				B0D8F8461C730809000778EE /* UIImage+TFAspectDraw.m */,
+				B0D8F8481C73083B000778EE /* PHPhotoLibrary+TFBlockObservers.h */,
+				B0D8F8491C73083B000778EE /* PHPhotoLibrary+TFBlockObservers.m */,
+				B0D8F84B1C7308E5000778EE /* PHImageManager+TFRequestImages.h */,
+				B0D8F84C1C7308E5000778EE /* PHImageManager+TFRequestImages.m */,
+				B0D8F8701C73FCA8000778EE /* PHAsset+TFExpand.h */,
+				B0D8F8711C73FCA8000778EE /* PHAsset+TFExpand.m */,
+			);
+			name = Additions;
+			sourceTree = "<group>";
+		};
+		B0D8F84E1C730C41000778EE /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B0D8F84F1C730C54000778EE /* TFAssetImageView.h */,
+				B0D8F8501C730C54000778EE /* TFAssetImageView.m */,
+				B0D8F8551C730E36000778EE /* TFAssetCell.h */,
+				B0D8F8561C730E36000778EE /* TFAssetCell.m */,
+				B0D8F8581C7310C2000778EE /* TFCollectionCell.h */,
+				B0D8F8591C7310C2000778EE /* TFCollectionCell.m */,
+				B0D8F85E1C731338000778EE /* TFMomentHeaderView.h */,
+				B0D8F85F1C731338000778EE /* TFMomentHeaderView.m */,
+				B0D8F8611C731390000778EE /* TFImageZoomView.h */,
+				B0D8F8621C731390000778EE /* TFImageZoomView.m */,
+				B0D8F83B1C730267000778EE /* TFCollectionsTitleButton.h */,
+				B0D8F83C1C730267000778EE /* TFCollectionsTitleButton.m */,
+				B0D8F8641C7313F4000778EE /* TFCollectionViewFloatingHeaderFlowLayout.h */,
+				B0D8F8651C7313F4000778EE /* TFCollectionViewFloatingHeaderFlowLayout.m */,
+			);
+			name = Views;
 			sourceTree = "<group>";
 		};
 		CED89CBE8042308A1B7DF0F6 /* Frameworks */ = {
@@ -579,27 +685,45 @@
 			buildActionMask = 2147483647;
 			files = (
 				B02CE31C1C22D4C4005D6E62 /* NSIndexSet+TFLibrary.m in Sources */,
+				B0D8F8541C730CD5000778EE /* TFPhotoBrowserBundle.m in Sources */,
+				B0D8F8661C7313F4000778EE /* TFCollectionViewFloatingHeaderFlowLayout.m in Sources */,
+				B0D8F8471C730809000778EE /* UIImage+TFAspectDraw.m in Sources */,
 				B0207ACA1C3BABEC0055D0F3 /* TFiCloudDownloadHelper.m in Sources */,
+				B0D8F86F1C731645000778EE /* TFImagePickerController.m in Sources */,
+				B0D8F83D1C730267000778EE /* TFCollectionsTitleButton.m in Sources */,
 				B06A14991B904F850022BCE5 /* TFTapDetectingImageView.m in Sources */,
+				B0D8F8601C731338000778EE /* TFMomentHeaderView.m in Sources */,
+				B0D8F8511C730C54000778EE /* TFAssetImageView.m in Sources */,
 				B093BCF71BFC1C2D00754A2D /* TFPhotoCaptionView.m in Sources */,
 				B0B30AFD1C3A68E7000AA90B /* TFCollectionOverlayProgressView.m in Sources */,
+				B0D8F8411C7306EC000778EE /* NSDate+TFFormattedDay.m in Sources */,
 				B0420DB71B953FE2002CAF13 /* TFZoomingScrollView.m in Sources */,
+				B0D8F8391C71B94B000778EE /* TFImageCropViewController.m in Sources */,
 				B0B30AF51C3A43E8000AA90B /* TFLibraryCollectionOverlayView.m in Sources */,
 				B06A145E1B9039810022BCE5 /* ViewController.m in Sources */,
 				B06A14531B9039810022BCE5 /* AppDelegate.m in Sources */,
 				B02CE3241C22D5B0005D6E62 /* UICollectionView+TFLibrary.m in Sources */,
+				B0D8F84A1C73083B000778EE /* PHPhotoLibrary+TFBlockObservers.m in Sources */,
 				B0689C281BF7081A00C46CCA /* UIScrollView+ScrollIndicator.m in Sources */,
 				B06A14501B9039810022BCE5 /* main.m in Sources */,
 				B06A14901B903BA60022BCE5 /* TFPhotoBrowser.m in Sources */,
+				B0D8F8571C730E36000778EE /* TFAssetCell.m in Sources */,
+				B0D8F83A1C71B94B000778EE /* TFImageEditorFrameView.m in Sources */,
 				B04C0B4A1BF5B8140012B7D8 /* UIImage+TFPhotoBrowser.m in Sources */,
+				B0D8F8721C73FCA8000778EE /* PHAsset+TFExpand.m in Sources */,
+				B0D8F8441C730733000778EE /* PHCollection+TFThumbnail.m in Sources */,
 				B0689C231BF6DF6600C46CCA /* TFPhotoToolBar.m in Sources */,
 				B02CE31F1C22D51E005D6E62 /* TFLibraryCollectionViewCell.m in Sources */,
 				B06A14951B904B080022BCE5 /* TFPhoto.m in Sources */,
 				B09C3C491C2015C9009C6CF0 /* TFLibraryViewController.m in Sources */,
+				B0D8F8631C731390000778EE /* TFImageZoomView.m in Sources */,
 				B08D61BC1C224CBC00335903 /* TFAsset.m in Sources */,
+				B0D8F84D1C7308E5000778EE /* PHImageManager+TFRequestImages.m in Sources */,
 				B02CE3191C22D443005D6E62 /* TFLibraryViewLayout.m in Sources */,
 				B0420DB11B953376002CAF13 /* TFTapDetectingView.m in Sources */,
 				B0B30AFA1C3A551C000AA90B /* ALAssetRepresentation+TFMD5.m in Sources */,
+				B0D8F85A1C7310C2000778EE /* TFCollectionCell.m in Sources */,
+				B0D8F86C1C7314FF000778EE /* TFCollectionPickerController.m in Sources */,
 				B0F80A271C3B5D05000DD3FE /* TFLibraryCameraCollectionViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -693,7 +817,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -730,7 +854,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;

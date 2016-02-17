@@ -100,6 +100,11 @@
     
 }
 
+- (void)setImageDownloadingFromCloud:(BOOL)imageDownloadingFromCloud {
+    _imageDownloadingFromCloud = imageDownloadingFromCloud;
+    self.progressView.hidden = !_imageDownloadingFromCloud;
+}
+
 - (void)prepareForReuse {
     [super prepareForReuse];
     self.imageView.image = nil;
@@ -127,10 +132,15 @@
 - (void)setThumbnailImage:(UIImage *)thumbnailImage imageResultIsInCloud:(BOOL)imageResultIsInCloud {
     self.imageView.image = thumbnailImage;
     self.iCloudBadgeImageView.image = imageResultIsInCloud?[UIImage imageNamed:@"TFLibraryResource.bundle/images/TFLibraryCollectioniCloud.png"]:nil;
+    
 }
 
 - (void)setLivePhotoBadgeImage:(UIImage *)livePhotoBadgeImage {
     self.livePhotoBadgeImageView.image = livePhotoBadgeImage;
+}
+
+- (void)startDownloadImageFromiCloud {
+    
 }
 
 - (void)updateDownLoadStateByProgress:(double)progress {
@@ -139,6 +149,10 @@
         self.progressView.hidden = NO;
     }
     [self.progressView setProgress:progress];
+    if (progress >=1) {
+        //下载完成
+        self.progressView.hidden = YES;
+    }
 }
 
 
