@@ -221,7 +221,7 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
                                                                 target:self
                                                                 action:@selector(doneButtonPressed:)];
     
-    _backButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneButtonPressed:)];
+    _backButton = [[UIBarButtonItem alloc]initWithTitle:NSLocalizedString(@"返回", nil) style:UIBarButtonItemStyleDone target:self action:@selector(doneButtonPressed:)];
     
     // Toolbar Items
     if (self.displayActionButton) {
@@ -272,6 +272,7 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     [items addObject:_actionButton];
     
     
+    _toolbar.items = nil;
     if (self.customToolBarView) {
         UIBarButtonItem *customItem = [[UIBarButtonItem alloc] initWithCustomView:self.customToolBarView];
         [_toolbar setItems:@[flexSpace,customItem,flexSpace]];
@@ -282,7 +283,8 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     }
     
     
-    _navigationItem.rightBarButtonItems = @[_doneButton,fixedSpace];
+//    _navigationItem.rightBarButtonItems = @[_doneButton,fixedSpace];
+    _navigationItem.leftBarButtonItems = @[_backButton];
     BOOL hideToolbar = YES;
     for (UIBarButtonItem* item in _toolbar.items) {
         if (item != fixedSpace && item != flexSpace) {
@@ -1693,7 +1695,7 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
 
 - (void)doneButtonPressed:(id)sender {
     // Only if we're modal and there's a done button
-    if (_doneButton) {
+    if (_backButton) {
         if (_senderViewForAnimation && _currentPageIndex == _initalPageIndex) {
             TFZoomingScrollView *scrollView = [self pageDisplayedAtIndex:_currentPageIndex];
             [self performCloseAnimationWithScrollView:scrollView];
