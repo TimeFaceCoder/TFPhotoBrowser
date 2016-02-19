@@ -69,6 +69,8 @@
 - (void)onViewClick2:(id)sender {
     //    TFLibraryViewController *viewController = [[TFLibraryViewController alloc] init];
     TFImagePickerController *viewController = [[TFImagePickerController alloc] init];
+    //    TFImagePickerController *viewController = [[TFImagePickerController alloc] init];
+    
     viewController.mediaTypes = @[ (id)kUTTypeImage ];
     viewController.delegate = self;
     viewController.allowsMultipleSelection = YES;
