@@ -12,7 +12,6 @@
 static const CGFloat kTFCenterHoleInsetRatio          = 0.2f;
 static const CGFloat kTFProgressShapeInsetRatio       = 0.03f;
 static const CGFloat kTFDefaultAlpha                  = 0.45f;
-static const CFTimeInterval kTFScaleAnimationDuration = 0.5;
 
 @interface TFCollectionOverlayProgressView() {
     
