@@ -27,6 +27,7 @@ typedef void (^DownloadImageFinined)();
 @property (nonatomic, weak, readonly  ) UIImage        *thumbnail;
 @property (nonatomic, weak, readonly  ) UIImage        *fullScreenImage;
 @property (nonatomic, weak, readonly  ) UIImage        *fullResolutionImage;
+@property (nonatomic, weak, readonly  ) NSData         *imageData;
 
 
 // Properties (Date number)

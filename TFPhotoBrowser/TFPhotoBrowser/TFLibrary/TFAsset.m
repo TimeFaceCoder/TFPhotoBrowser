@@ -221,7 +221,6 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
 }
 
 
-
 #pragma mark -
 #pragma mark Properties (ALAsset)
 - (NSURL*)url {
@@ -483,6 +482,8 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
     });
     
 }
+
+
 
 
 
