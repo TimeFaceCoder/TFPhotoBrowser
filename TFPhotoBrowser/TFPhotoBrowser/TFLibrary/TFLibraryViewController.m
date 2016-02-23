@@ -131,6 +131,7 @@ static CGSize AssetGridThumbnailSize;
     UIBarButtonItem *rightButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
                                                                                      target:self
                                                                                      action:@selector(onRightNavClick:)];
+    rightButtonItem.tintColor  = [UIColor whiteColor];
     self.navigationItem.rightBarButtonItem = rightButtonItem;
     [self setupToolBar];
 }
