@@ -8,7 +8,18 @@
 
 #import <Photos/Photos.h>
 
+typedef void (^PHAssetBoolBlock)(BOOL success);
+typedef void (^PHAssetMetadataBlock)(NSDictionary *metadata);
+typedef void (^PHAssetAssetBoolBlock)(PHAsset *asset, BOOL success);
+
 @interface PHAsset (TFExpand)
+
+-(void)saveToAlbum:(NSString*)title completionBlock:(PHAssetBoolBlock)completionBlock;
+-(void)requestMetadataWithCompletionBlock:(PHAssetMetadataBlock)completionBlock;
+-(void)updateLocation:(CLLocation*)location creationDate:(NSDate*)creationDate completionBlock:(PHAssetBoolBlock)completionBlock;
++(void)saveImageToCameraRoll:(UIImage*)image location:(CLLocation*)location completionBlock:(PHAssetAssetBoolBlock)completionBlock;
++(void)saveVideoAtURL:(NSURL*)url location:(CLLocation*)location completionBlock:(PHAssetAssetBoolBlock)completionBlock;
+
 
 @property (nonatomic, weak, readonly) UIImage  *thumbnail;
 @property (nonatomic, weak, readonly) UIImage  *fullScreenImage;
