@@ -201,6 +201,7 @@
                                                      if (error) {
                                                          TFPLog(@"SDWebImage failed to download image: %@", error);
                                                      }
+                                                     image = [TFPhoto compressImageWith:image];
                                                      _webImageOperation = nil;
                                                      self.underlyingImage = image;
                                                      dispatch_async(dispatch_get_main_queue(), ^{
@@ -212,6 +213,37 @@
         _webImageOperation = nil;
         [self imageLoadingComplete];
     }
+}
+
+
++(UIImage *)compressImageWith:(UIImage *)image
+{
+    float imageWidth = image.size.width;
+    float imageHeight = image.size.height;
+    float width = [[UIApplication sharedApplication] keyWindow].frame.size.width ;
+    float height = image.size.height/(image.size.width/width);
+    
+    float widthScale = imageWidth /width;
+    float heightScale = imageHeight /height;
+    
+    // 创建一个bitmap的context
+    // 并把它设置成为当前正在使用的context
+    UIGraphicsBeginImageContext(CGSizeMake(width, height));
+    
+    if (widthScale > heightScale) {
+        [image drawInRect:CGRectMake(0, 0, imageWidth /heightScale , height)];
+    }
+    else {
+        [image drawInRect:CGRectMake(0, 0, width , imageHeight /widthScale)];
+    }
+    
+    // 从当前context中创建一个改变大小后的图片
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    // 使当前的context出堆栈
+    UIGraphicsEndImageContext();
+    
+    return newImage;
+    
 }
 
 // Load from local file
