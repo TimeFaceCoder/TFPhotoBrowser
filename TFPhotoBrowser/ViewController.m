@@ -25,6 +25,7 @@
     // Do any additional setup after loading the view, typically from a nib.
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     [button setTitle:@"测试相册" forState:UIControlStateNormal];
+    [button setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
     [button addTarget:self action:@selector(onViewClick:) forControlEvents:UIControlEventTouchUpInside];
     [button setFrame:CGRectMake(100, 100, 60, 40)];
     button.layer.borderWidth = 1;
@@ -47,7 +48,8 @@
     
     
     button = [UIButton buttonWithType:UIButtonTypeCustom];
-    [button setTitle:@"测试相册" forState:UIControlStateNormal];
+    [button setTitle:@"测试相册2" forState:UIControlStateNormal];
+    [button setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
     [button addTarget:self action:@selector(onViewClick2:) forControlEvents:UIControlEventTouchUpInside];
     [button setFrame:CGRectMake(100, 200, 60, 40)];
     button.layer.borderWidth = 1;
@@ -75,6 +77,7 @@
     viewController.delegate = self;
     viewController.allowsMultipleSelection = YES;
     viewController.maxSelectedCount = 9;
+    viewController.showAllSelectButton = YES;
     UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:viewController];
     nc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     nc.toolbarHidden = NO;

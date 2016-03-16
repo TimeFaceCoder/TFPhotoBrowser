@@ -60,6 +60,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL      allowsMultipleSelection;
 @property (nonatomic, assign) NSInteger maxSelectedCount;
 
+@property (nonatomic, assign) BOOL      showAllSelectButton;
+
 /** The asset collection the picker will display to the user.
  
  The user can change this, but you can set this as a default. nil (the default) will cause the picker to display the user's moments.

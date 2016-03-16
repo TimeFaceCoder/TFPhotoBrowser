@@ -454,7 +454,7 @@ static CGSize AssetGridThumbnailSize;
                     //选择完成
                     if ([_libraryControllerDelegate respondsToSelector:@selector(didSelectPHAssets:removeList:infos:)]) {
                         [_libraryControllerDelegate didSelectPHAssets:@[asset] removeList:nil infos:nil];
-                        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+//                        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
                     }
                 }
             }

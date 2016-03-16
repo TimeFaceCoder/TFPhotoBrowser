@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly) UILabel *secondaryLabel;
 @property (nonatomic, strong, readonly) UILabel *detailLabel;
 @property (nonatomic, strong, readonly) UIButton *selectedButton;
+@property (nonatomic, strong) NSIndexPath  *indexPath;
+@property (nonatomic, assign) BOOL  showAllSelectButton;
 
 @end
 NS_ASSUME_NONNULL_END

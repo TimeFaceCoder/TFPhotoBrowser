@@ -39,6 +39,7 @@
     TFCollectionPickerController *_collectionPicker;
     CGSize _fullScreenSize;
     UIView *_browserToolBarView;
+    NSMutableDictionary  *headerViewDictionary;
 }
 
 @end
@@ -196,6 +197,8 @@
     });
 }
 
+
+
 - (void)_updateToolbarItems:(BOOL)animated {
     NSMutableArray *items = [NSMutableArray new];
     
@@ -275,6 +278,7 @@
     [self _updateDoneButton];
     [self _updateSelectAllButton];
     [self _updateToolbarItems:NO];
+    headerViewDictionary = [[NSMutableDictionary alloc]init];
     
     _browserToolBarView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), 44)];
     _browserToolBarView.backgroundColor = [UIColor darkTextColor];
@@ -306,6 +310,7 @@
 - (void)dealloc
 {
     [[PHPhotoLibrary sharedPhotoLibrary] unregisterChangeObserver:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NOTICE_RELOAD_COLLECTION_INDEXPATH" object:nil];
 }
 
 
@@ -323,7 +328,12 @@
     UILongPressGestureRecognizer *recognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(showAsset:)];
     recognizer.minimumPressDuration = 0.5;
     [self.collectionView addGestureRecognizer:recognizer];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionForReloadNotification:) name:@"NOTICE_RELOAD_COLLECTION_INDEXPATH" object:nil];
+    
 }
+
+
+
 
 - (void)viewDidLayoutSubviews {
     if (self.view.window && !_windowLoaded) {
@@ -561,8 +571,56 @@
     }];
 }
 
+- (void)updateHeaderView:(NSIndexPath*)indexPath {
+    //    UICollectionReusableView
+    NSLog(@"index.section = %@, item = %@",@(indexPath.section),@(indexPath.row));
+
+    TFMomentHeaderView *headerView = [headerViewDictionary objectForKey:[NSString stringWithFormat:@"%@",@(indexPath.section)]];
+
+    __block BOOL allSelected = _moments[indexPath.section] != nil;
+    
+    PHAssetCollection *collection = _moments[indexPath.section];
+    PHFetchResult *fetchResult = [self _assetsForMoment:collection];
+    NSSet *selectedAssets = [_selectedAssets copy];
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [fetchResult enumerateObjectsUsingBlock:^(PHAsset *asset, NSUInteger idx, BOOL *stop) {
+            allSelected &= [selectedAssets containsObject:asset];
+            *stop = !allSelected;
+        }];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            headerView.selectedButton.selected = allSelected;
+        });
+        
+    });
+    
+}
+
+
+
 
 #pragma mark - Notifications
+
+- (void)actionForReloadNotification:(NSNotification*)notification {
+    NSDictionary *userInfo = notification.userInfo;
+    NSIndexPath *path = (NSIndexPath*)[userInfo objectForKey:@"indexPath"];
+    BOOL state = [[userInfo objectForKey:@"state"] boolValue];
+    PHAssetCollection *collection = _moments[path.section];
+    PHFetchResult *fetchResult = [self _assetsForMoment:collection];
+    for (PHAsset *asset in fetchResult) {
+        if (state) {
+            if (![_selectedAssets containsObject:asset]) {
+                [self selectAsset:asset];
+            }
+        }else {
+            if ([_selectedAssets containsObject:asset]) {
+                [self deselectAsset:asset];
+            }
+        }
+        
+    }
+}
+
 
 - (void)pasteboardChanged:(NSNotification *)notification {
     [self _updateToolbarItems:YES];
@@ -661,13 +719,17 @@
            viewForSupplementaryElementOfKind:(NSString *)kind
                                  atIndexPath:(NSIndexPath *)indexPath {
     TFMomentHeaderView *headerView = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"HeaderView" forIndexPath:indexPath];
+    [headerViewDictionary setObject:headerView forKey:[NSString stringWithFormat:@"%@",@(indexPath.section)]];
+    headerView.indexPath = indexPath;
     
     if (_moments != nil) {
         PHAssetCollection *collection = _moments[indexPath.section];
         
         
-        NSString *dateString = [collection.startDate tf_localizedDay];
-        
+//        NSString *dateString = [collection.startDate tf_localizedDay];
+        NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+        [formatter setDateFormat:@"yyyy.MM.dd"];
+        NSString *dateString = [formatter stringFromDate:collection.startDate];
         
         if (collection.localizedTitle != nil) {
             headerView.primaryLabel.text = collection.localizedTitle;
@@ -678,6 +740,29 @@
             headerView.secondaryLabel.text = nil;
             headerView.detailLabel.text = nil;
         }
+        headerView.selectedButton.hidden = !_showAllSelectButton;
+        if (!_showAllSelectButton) {
+            return headerView;
+        }
+        
+        __block BOOL allSelected = _moments[indexPath.section] != nil;
+        
+//        PHAssetCollection *collection = _moments[indexPath.section];
+        PHFetchResult *fetchResult = [self _assetsForMoment:collection];
+        NSSet *selectedAssets = [_selectedAssets copy];
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [fetchResult enumerateObjectsUsingBlock:^(PHAsset *asset, NSUInteger idx, BOOL *stop) {
+                allSelected &= [selectedAssets containsObject:asset];
+                *stop = !allSelected;
+            }];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                headerView.selectedButton.selected = allSelected;
+            });
+            
+        });
+        
+        
     }
     
     return headerView;
@@ -720,6 +805,14 @@
     } else {
         [self selectAsset:asset];
     }
+    if (_showAllSelectButton) {
+        [self updateHeaderView:indexPath];
+    }
+    
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didEndDisplayingSupplementaryView:(UICollectionReusableView *)view forElementOfKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath {
+    [headerViewDictionary removeObjectForKey:[NSString stringWithFormat:@"%@",@(indexPath.section)]];
 }
 
 - (void)_scrollToBottomAnimated:(BOOL)animated {
