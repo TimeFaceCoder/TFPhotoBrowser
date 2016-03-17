@@ -78,6 +78,37 @@ static CGSize AssetGridThumbnailSize;
             [self performLoadAssets];
         } else if (status == PHAuthorizationStatusDenied) {
             //没有权限
+            
+            //没有访问权限
+            UILabel *label = [[UILabel alloc] init];
+            label.backgroundColor = [UIColor clearColor];
+            label.text = NSLocalizedString(@"打开相册隐私设置", nil);
+            label.textColor = [UIColor colorWithRed:81/255.0f green:81/255.0f blue:81/255.0f alpha:1];
+            label.font = [UIFont systemFontOfSize:18];
+            label.numberOfLines = 2;
+            label.textAlignment = NSTextAlignmentCenter;
+            [label sizeToFit];
+            CGFloat left = (self.view.frame.size.width - label.frame.size.width) / 2;
+            CGFloat top = (self.view.frame.size.height - label.frame.size.height)/ 2;
+            label.frame = CGRectMake(left, top, label.frame.size.width,label.frame.size.height);
+            [self.view addSubview:label];
+            
+            UIButton *button = [[UIButton alloc]init];
+            button.backgroundColor = [UIColor colorWithRed:6/255.0f green:155/255.0f blue:242/255.0f alpha:1];
+            [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+            button.titleLabel.font = [UIFont systemFontOfSize:18];
+            [button setTitle:NSLocalizedString(@"去设置", nil) forState:UIControlStateNormal];
+            CGFloat buttonWidth = 100;
+            CGFloat buttonHeight = 30;
+            CGFloat buttonLeft = (self.view.frame.size.width - buttonWidth) / 2;
+            CGFloat buttonTop = label.frame.origin.y + label.frame.size.height + 10;
+            button.frame = CGRectMake(buttonLeft, buttonTop, buttonWidth, buttonHeight);
+            button.layer.cornerRadius = 4;
+            [button addTarget:self action:@selector(actionForSettingButton:) forControlEvents:UIControlEventTouchUpInside];
+            [self.view addSubview:button];
+            
+            self.navigationItem.title = NSLocalizedString(@"请求相册权限", nil);
+            return;
         }
         
     } else {
@@ -85,6 +116,10 @@ static CGSize AssetGridThumbnailSize;
         [self performLoadAssets];
         
     }
+}
+
+- (void)actionForSettingButton:(id)sender {
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
 }
 
 
@@ -552,8 +587,12 @@ static CGSize AssetGridThumbnailSize;
 
 #pragma mark - Asset Caching
 - (void)resetCachedAssets {
-    [self.imageManager stopCachingImagesForAllAssets];
-    self.previousPreheatRect = CGRectZero;
+    PHAuthorizationStatus status = [PHPhotoLibrary authorizationStatus];
+    if (status == PHAuthorizationStatusAuthorized) {
+        [self.imageManager stopCachingImagesForAllAssets];
+        self.previousPreheatRect = CGRectZero;
+    }
+    
 }
 
 - (void)updateCachedAssets {
