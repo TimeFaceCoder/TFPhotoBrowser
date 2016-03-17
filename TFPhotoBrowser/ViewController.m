@@ -69,15 +69,15 @@
 
 
 - (void)onViewClick2:(id)sender {
-        TFLibraryViewController *viewController = [[TFLibraryViewController alloc] init];
-//    TFImagePickerController *viewController = [[TFImagePickerController alloc] init];
+//        TFLibraryViewController *viewController = [[TFLibraryViewController alloc] init];
+    TFImagePickerController *viewController = [[TFImagePickerController alloc] init];
     //    TFImagePickerController *viewController = [[TFImagePickerController alloc] init];
     
-//    viewController.mediaTypes = @[ (id)kUTTypeImage ];
-//    viewController.delegate = self;
+    viewController.mediaTypes = @[ (id)kUTTypeImage ];
+    viewController.delegate = self;
     viewController.allowsMultipleSelection = YES;
     viewController.maxSelectedCount = 9;
-//    viewController.showAllSelectButton = YES;
+    viewController.showAllSelectButton = YES;
     UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:viewController];
     nc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     nc.toolbarHidden = NO;
