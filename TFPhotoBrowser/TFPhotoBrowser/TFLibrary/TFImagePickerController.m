@@ -25,7 +25,7 @@
 #define TFObjectSpacing 1.0
 
 
-@interface TFImagePickerController () <UIPopoverPresentationControllerDelegate, TFCollectionPickerControllerDelegate, PHPhotoLibraryChangeObserver, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIViewControllerRestoration,TFPhotoBrowserDelegate>
+@interface TFImagePickerController () <UIPopoverPresentationControllerDelegate, TFCollectionPickerControllerDelegate, PHPhotoLibraryChangeObserver, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIViewControllerRestoration,TFPhotoBrowserDelegate,TFAssetCellDelegate>
 {
     NSMutableOrderedSet *_selectedAssets;
     
@@ -742,7 +742,9 @@
     
     cell.asset = asset;
     cell.assetSelected = [_selectedAssets containsObject:asset];
-    cell.selectedBadgeImageView.image = _selectedAssetBadgeImage;
+    cell.indexPath = indexPath;
+    cell.tfAssetCellDelegate = self;
+//    cell.selectedBadgeImageView.image = _selectedAssetBadgeImage;
     
     return cell;
 }
@@ -838,14 +840,27 @@
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    PHAsset *asset = [self _assetAtIndexPath:indexPath];
-    if ([_selectedAssets containsObject:asset]) {
-        [self deselectAsset:asset];
-    } else {
-        [self selectAsset:asset];
-    }
-    if (_showAllSelectButton) {
-        [self updateHeaderView:indexPath];
+//    PHAsset *asset = [self _assetAtIndexPath:indexPath];
+//    if ([_selectedAssets containsObject:asset]) {
+//        [self deselectAsset:asset];
+//    } else {
+//        [self selectAsset:asset];
+//    }
+//    if (_showAllSelectButton) {
+//        [self updateHeaderView:indexPath];
+//    }
+    
+    if (indexPath != nil) {
+        TFPhotoBrowser *photoBrowser = [[TFPhotoBrowser alloc] initWithDelegate:self];
+        [photoBrowser setCurrentPhotoIndex:indexPath.row];
+        [photoBrowser setDisplaySelectionButtons:YES];
+        [photoBrowser setDisplayActionButton:YES];
+        [photoBrowser setIndexPath:indexPath];
+        photoBrowser.zoomPhotosToFill = YES;
+        photoBrowser.usePopAnimation = YES;
+        photoBrowser.enableSwipeToDismiss = YES;
+        
+        [self presentViewController:photoBrowser animated:YES completion:NULL];
     }
     
 }
@@ -862,6 +877,20 @@
     [self.collectionView setContentOffset:contentOffset animated:animated];
 }
 
+#pragma mark - TFAssetCellDelegate
+
+- (void)assetCellViewClick:(TFAssetCellClickType)type indexPath:(NSIndexPath *)indexPath {
+    PHAsset *asset = [self _assetAtIndexPath:indexPath];
+    if ([_selectedAssets containsObject:asset]) {
+        [self deselectAsset:asset];
+    } else {
+        [self selectAsset:asset];
+    }
+    if (_showAllSelectButton) {
+        [self updateHeaderView:indexPath];
+    }
+}
+
 #pragma mark - TFPhotoBrowserDelegate
 - (NSUInteger)numberOfPhotosInPhotoBrowser:(TFPhotoBrowser *)photoBrowser {
     if (_moments != nil) {
@@ -874,9 +903,20 @@
 }
 
 - (id <TFPhoto>)photoBrowser:(TFPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index {
-    TFPhoto *photo = [TFPhoto photoWithAsset:[_fetchResult objectAtIndex:index]
-                                  targetSize:_fullScreenSize];
-    return photo;
+    
+    if (_moments != nil) {
+        PHAssetCollection *collection = _moments[photoBrowser.indexPath.section];
+        PHFetchResult *fetchResult = [self _assetsForMoment:collection];
+        TFPhoto *photo = [TFPhoto photoWithAsset:[fetchResult objectAtIndex:index]
+                                      targetSize:_fullScreenSize];
+        return photo;
+    } else {
+        TFPhoto *photo = [TFPhoto photoWithAsset:[_fetchResult objectAtIndex:index]
+                                      targetSize:_fullScreenSize];
+        return photo;
+    }
+    
+
 }
 
 - (void)photoBrowser:(TFPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index selectedChanged:(BOOL)selected {

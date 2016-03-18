@@ -35,7 +35,8 @@ const static CGFloat kPadding = 8.0f;
 - (void)setAssetSelected:(BOOL)assetSelected {
     _assetSelected = assetSelected;
     
-    self.selectedBadgeImageView.hidden = !_assetSelected;
+//    self.selectedBadgeImageView.hidden = !_assetSelected;
+    _selectedBadgeButton.selected = _assetSelected;
     
     [self _updateAccessibility];
 }
@@ -54,9 +55,15 @@ const static CGFloat kPadding = 8.0f;
     _imageView.layer.borderColor = [UIColor colorWithRed:0.401 green:0.682 blue:0.017 alpha:1.000].CGColor;
     [self.contentView addSubview:_imageView];
     
-    _selectedBadgeImageView = [[UIImageView alloc] init];
-    _selectedBadgeImageView.hidden = YES;
-    [self.contentView addSubview:_selectedBadgeImageView];
+    _selectedBadgeButton = [[UIButton alloc] init];
+    _selectedBadgeButton.backgroundColor = [UIColor clearColor];
+    [_selectedBadgeButton addTarget:self
+                             action:@selector(actionForSelecteButton:)
+                   forControlEvents:UIControlEventTouchUpInside];
+    [_selectedBadgeButton setImage:[UIImage imageNamed:@"TFLibraryResource.bundle/images/TFLibraryCollectionUnSelected.png"] forState:UIControlStateNormal];
+    [_selectedBadgeButton setImage:[UIImage imageNamed:@"TFLibraryResource.bundle/images/TFLibraryCollectionSelected.png"] forState:UIControlStateSelected];
+    _selectedBadgeButton.contentMode = UIViewContentModeCenter;
+    [self.contentView addSubview:_selectedBadgeButton];
     
     
     self.isAccessibilityElement = YES;
@@ -82,9 +89,18 @@ const static CGFloat kPadding = 8.0f;
     [super layoutSubviews];
     
     _imageView.frame = self.contentView.bounds;
+    CGFloat width = 30;
+    CGFloat height = 30;
+
     
-    CGFloat x = CGRectGetWidth(self.contentView.bounds) - kPadding - _selectedBadgeImageView.image.size.width;
-    _selectedBadgeImageView.frame = CGRectMake(x, kPadding, _selectedBadgeImageView.image.size.width, _selectedBadgeImageView.image.size.height);
+    CGFloat x = CGRectGetWidth(self.contentView.bounds) - kPadding - width;
+    _selectedBadgeButton.frame = CGRectMake(x, kPadding, width, height);
+}
+
+- (void)actionForSelecteButton:(id)sender {
+    if (self.tfAssetCellDelegate && [self.tfAssetCellDelegate respondsToSelector:@selector(assetCellViewClick:indexPath:)]) {
+        [self.tfAssetCellDelegate assetCellViewClick:TFAssetCellClickTypeSelect indexPath:self.indexPath];
+    }
 }
 
 - (void)_updateAccessibility {

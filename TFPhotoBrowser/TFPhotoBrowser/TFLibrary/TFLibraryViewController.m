@@ -267,7 +267,7 @@ static CGSize AssetGridThumbnailSize;
         _selectedButton.layer.masksToBounds = YES;
         _selectedButton.layer.cornerRadius = 4;
         [_selectedButton setTitle:@"完成" forState:UIControlStateNormal];
-        [_selectedButton setFrame:CGRectMake(0, 0, 85, 32)];
+        [_selectedButton setFrame:CGRectMake(0, 0, 100, 32)];
         [_selectedButton addTarget:self action:@selector(onViewClick:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _selectedButton;
@@ -296,11 +296,11 @@ static CGSize AssetGridThumbnailSize;
 - (void)updateViewState {
     NSInteger count = [self.selectedAssets count];
     _selectedButton.selected = count > 0;
-    [_selectedButton setTitle:count > 0?[NSString stringWithFormat:@"完成(%@)",@([self.selectedAssets count])]:@"完成"
-                     forState:UIControlStateNormal];
-    //    BOOL isM = count && _maximumNumberOfSelection;
-    //    [_selectedButton setTitle:isM ? [NSString stringWithFormat:NSLocalizedString(@"照片选择完成", nil),[self.selectedAssets count],_maximumNumberOfSelection]:@"完成"
-    //                     forState:UIControlStateNormal];
+//    [_selectedButton setTitle:count > 0?[NSString stringWithFormat:@"完成(%@)",@([self.selectedAssets count])]:@"完成"
+//                     forState:UIControlStateNormal];
+        BOOL isM = count && _maximumNumberOfSelection;
+        [_selectedButton setTitle:isM ? [NSString stringWithFormat:NSLocalizedString(@"照片选择完成", nil),[self.selectedAssets count],_maximumNumberOfSelection]:@"完成"
+                         forState:UIControlStateNormal];
 }
 
 - (void)updateCollectionViewCell:(NSIndexPath *)indexPath progress:(double)progress {
