@@ -8,6 +8,7 @@
 
 #import "TFAssetsLibrary.h"
 
+
 @interface TFAssetsLibrary ()
 
 - (void)addAssetURL:(NSURL *)assetURL toAlbum:(NSString *)albumName resultBlock:(TFAssetsResultCompletion)resultBlock failureBlock:(TFAssetsFailureCompletion)failureBlock;
@@ -108,15 +109,37 @@
 
 - (void)saveImage:(UIImage *)image withAlbumName:(NSString *)albumName resultBlock:(TFAssetsResultCompletion)resultBlock failureBlock:(TFAssetsFailureCompletion)failureBlock;
 {
-    [self writeImageToSavedPhotosAlbum:[image CGImage] orientation:(ALAssetOrientation)image.imageOrientation
-                       completionBlock:^(NSURL *assetURL, NSError *error) {
-                           if (error && failureBlock) {
-                               failureBlock(error);
-                               return;
-                           }
-                           
-                           [self addAssetURL:assetURL toAlbum:albumName resultBlock:resultBlock failureBlock:failureBlock];
-                       }];
+//    [self writeImageToSavedPhotosAlbum:[image CGImage] orientation:(ALAssetOrientation)image.imageOrientation
+//                       completionBlock:^(NSURL *assetURL, NSError *error) {
+//                           if (error && failureBlock) {
+//                               failureBlock(error);
+//                               return;
+//                           }
+//                           
+//                           [self addAssetURL:assetURL toAlbum:albumName resultBlock:resultBlock failureBlock:failureBlock];
+//                       }];
+    
+    __block PHObjectPlaceholder *placeholderAsset = nil;
+    [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
+        PHAssetChangeRequest *newAssetRequest = [PHAssetChangeRequest creationRequestForAssetFromImage:image];
+        placeholderAsset = newAssetRequest.placeholderForCreatedAsset;
+    } completionHandler:^(BOOL success, NSError *error) {
+        if(success){
+//            PHFetchResult *fetchResult = [PHAsset fetchAssetsWithLocalIdentifiers:placeholderAsset.localIdentifier options:nil];
+//            if ([fetchResult count] > 0) {
+//                PHAsset *asset = [fetchResult objectAtIndex:0];
+//                resultBlock(
+//            }else {
+//                completionBlock(nil, YES);
+//            }
+            resultBlock([NSURL URLWithString:placeholderAsset.localIdentifier]);
+            
+        } else {
+            failureBlock(error);
+        }
+    }];
+    
+    
 }
 
 - (void)saveJPGImageAtDocumentDirectory:(UIImage *)image resultBlock:(TFAssetsResultCompletion)resultBlock failureBlock:(TFAssetsFailureCompletion)failureBlock

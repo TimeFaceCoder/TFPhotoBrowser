@@ -96,6 +96,25 @@ NS_ASSUME_NONNULL_BEGIN
 @optional
 
 /**
+ * Notification that the image node started to load
+ *
+ * @param imageNode The sender.
+ *
+ * @discussion Called on a background queue.
+ */
+- (void)imageNodeDidStartFetchingData:(ASNetworkImageNode *)imageNode;
+
+/**
+ * Notification that the image node failed to download the image.
+ *
+ * @param imageNode The sender.
+ * @param error The error with details.
+ *
+ * @discussion Called on a background queue.
+ */
+- (void)imageNode:(ASNetworkImageNode *)imageNode didFailWithError:(NSError *)error;
+
+/**
  * Notification that the image node finished decoding an image.
  *
  * @param imageNode The sender.

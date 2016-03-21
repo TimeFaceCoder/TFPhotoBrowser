@@ -6,8 +6,9 @@
 //  Copyright © 2015 Melvin. All rights reserved.
 //
 
-@import AssetsLibrary;
-@import UIKit;
+#import <AssetsLibrary/AssetsLibrary.h>
+#import <UIKit/UIKit.h>
+#import <Photos/Photos.h>
 #import "TFAssetImageFile.h"
 
 typedef void(^TFAssetsResultCompletion)(NSURL *assetURL);

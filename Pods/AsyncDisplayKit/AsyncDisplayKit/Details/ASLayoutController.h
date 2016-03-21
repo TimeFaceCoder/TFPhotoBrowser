@@ -21,18 +21,17 @@ typedef struct {
   CGFloat trailingBufferScreenfuls;
 } ASRangeTuningParameters;
 
+FOUNDATION_EXPORT ASRangeTuningParameters const ASRangeTuningParametersZero;
+
+FOUNDATION_EXPORT BOOL ASRangeTuningParametersEqualToRangeTuningParameters(ASRangeTuningParameters lhs, ASRangeTuningParameters rhs);
+
 @protocol ASLayoutController <NSObject>
 
-/**
- * Tuning parameters for the range.
- *
- * Defaults to a trailing buffer of one screenful and a leading buffer of two screenfuls.
- */
-- (ASRangeTuningParameters)tuningParametersForRangeType:(ASLayoutRangeType)rangeType;
+- (void)setTuningParameters:(ASRangeTuningParameters)tuningParameters forRangeMode:(ASLayoutRangeMode)rangeMode rangeType:(ASLayoutRangeType)rangeType;
 
-- (BOOL)shouldUpdateForVisibleIndexPaths:(NSArray<NSIndexPath *> *)indexPaths viewportSize:(CGSize)viewportSize rangeType:(ASLayoutRangeType)rangeType;
+- (ASRangeTuningParameters)tuningParametersForRangeMode:(ASLayoutRangeMode)rangeMode rangeType:(ASLayoutRangeType)rangeType;
 
-- (NSSet *)indexPathsForScrolling:(ASScrollDirection)scrollDirection viewportSize:(CGSize)viewportSize rangeType:(ASLayoutRangeType)rangeType;
+- (NSSet *)indexPathsForScrolling:(ASScrollDirection)scrollDirection rangeMode:(ASLayoutRangeMode)rangeMode rangeType:(ASLayoutRangeType)rangeType;
 
 @optional
 
@@ -45,6 +44,9 @@ typedef struct {
 - (void)deleteSectionsAtIndexSet:(NSIndexSet *)indexSet;
 
 - (void)setVisibleNodeIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
+
+- (void)setViewportSize:(CGSize)viewportSize;
+- (CGSize)viewportSize;
 
 @end
 

@@ -205,7 +205,7 @@
     } else if (_selectedAssets.count > 0) {
         title = [NSString stringWithFormat:NSLocalizedString(@"照片选择完成", nil),[self.selectedAssets count],_maxSelectedCount];
     } else {
-        title = NSLocalizedString(@"Done", nil);
+        title = NSLocalizedString(@"完成", nil);
     }
     
     _doneButton.title = title;
@@ -243,7 +243,15 @@
     
     if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
         [items addObject:_cameraButton];
+        if (_showScanButton) {
+            UIBarButtonItem *fixedSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:self action:nil];
+            fixedSpace.width = 20; // To balance action button
+            [items addObject:fixedSpace];
+            [items addObject: _scanButton];
+        }
+        
     }
+    
     
     if ([[UIPasteboard generalPasteboard] containsPasteboardTypes:@[(NSString *)kUTTypeImage]] && [UIPasteboard generalPasteboard].changeCount != _pasteChangeCount) {
         if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
@@ -289,12 +297,16 @@
     _selectedAssetBadgeImage = TFPhotoBrowserImageNamed(@"TFLibraryCollectionSelected");
     
     _cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel:)];
+    _cancelButton.tintColor = [UIColor whiteColor];
     self.navigationItem.rightBarButtonItem = _cancelButton;
     
     _doneButton = [[UIBarButtonItem alloc] initWithTitle:nil style:UIBarButtonItemStyleDone target:self action:@selector(done:)];
     //    self.navigationItem.rightBarButtonItem = _doneButton;
     
-    _cameraButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCamera target:self action:@selector(takePicture:)];
+//    _cameraButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCamera target:self action:@selector(takePicture:)];
+    _cameraButton = [[UIBarButtonItem alloc]initWithImage:TFPhotoBrowserImageNamed(@"TFImagePickCameraIcon") style:UIBarButtonItemStylePlain target:self action:@selector(takePicture:)];
+    
+    _scanButton = [[UIBarButtonItem alloc]initWithImage:TFPhotoBrowserImageNamed(@"TFImagePickScanIcon") style:UIBarButtonItemStylePlain target:self action:@selector(takeScan:)];
     
     _pasteButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Paste", @"Button to paste a photo") style:UIBarButtonItemStylePlain target:self action:@selector(paste:)];
     
@@ -307,6 +319,7 @@
     _collectionButton = [TFCollectionsTitleButton buttonWithType:UIButtonTypeSystem];
     [_collectionButton addTarget:self action:@selector(changeCollection:) forControlEvents:UIControlEventTouchUpInside];
     _collectionButton.titleLabel.font = [UIFont boldSystemFontOfSize:17.0];
+    _collectionButton.tintColor = [UIColor whiteColor];
     _collectionButton.imageEdgeInsets = UIEdgeInsetsMake(0.0, 3.0, 0.0, 0.0);
     [_collectionButton setImage:[TFPhotoBrowserImageNamed(@"TFLibraryCollectionNavDisclosure") imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
     [_collectionButton sizeToFit];
@@ -430,6 +443,12 @@
     
     if (viewController != nil) {
         [self presentViewController:imagePicker animated:YES completion:nil];
+    }
+}
+
+- (void)takeScan:(id)sender {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(imagePickerControllerDidScan:)]) {
+        [self.delegate imagePickerControllerDidScan:self];
     }
 }
 

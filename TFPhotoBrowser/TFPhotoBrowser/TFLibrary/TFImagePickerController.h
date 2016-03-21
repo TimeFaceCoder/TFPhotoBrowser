@@ -36,6 +36,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString *)imagePickerControllerTitleForDoneButton:(TFImagePickerController *)picker;
 
+- (void)imagePickerControllerDidScan:(TFImagePickerController *)picker;
+
 @end
 
 
@@ -50,6 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) UIBarButtonItem *cancelButton;
 @property (nonatomic, readonly) UIBarButtonItem *doneButton;
 @property (nonatomic, readonly) UIBarButtonItem *cameraButton;
+@property (nonatomic, readonly) UIBarButtonItem *scanButton;
 @property (nonatomic, readonly) UIBarButtonItem *pasteButton;
 @property (nonatomic, readonly) UIBarButtonItem *selectAllButton;
 
@@ -61,6 +64,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) NSInteger maxSelectedCount;
 
 @property (nonatomic, assign) BOOL      showAllSelectButton;
+
+@property (nonatomic, assign) BOOL      showScanButton;
 
 /** The asset collection the picker will display to the user.
  

@@ -56,29 +56,57 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithFrame:(CGRect)frame style:(UITableViewStyle)style asyncDataFetching:(BOOL)asyncDataFetchingEnabled;
 
 /**
- * Tuning parameters for a range.
+ * Tuning parameters for a range type in full mode.
  *
- * @param rangeType The range to get the tuning parameters for.
+ * @param rangeType The range type to get the tuning parameters for.
  *
- * @returns A tuning parameter value for the given range.
+ * @returns A tuning parameter value for the given range type in full mode.
  *
- * Defaults to the render range having one sceenful both leading and trailing and the preload range having two 
- * screenfuls in both directions.
+ * @see ASLayoutRangeMode
+ * @see ASLayoutRangeType
  */
 - (ASRangeTuningParameters)tuningParametersForRangeType:(ASLayoutRangeType)rangeType;
 
 /**
- * Set the tuning parameters for a range.
+ * Set the tuning parameters for a range type in full mode.
  *
- * @param tuningParameters The tuning parameters to store for a range.
- * @param rangeType The range to set the tuning parameters for.
+ * @param tuningParameters The tuning parameters to store for a range type.
+ * @param rangeType The range type to set the tuning parameters for.
+ *
+ * @see ASLayoutRangeMode
+ * @see ASLayoutRangeType
  */
 - (void)setTuningParameters:(ASRangeTuningParameters)tuningParameters forRangeType:(ASLayoutRangeType)rangeType;
 
 /**
+ * Tuning parameters for a range type in the specified mode.
+ *
+ * @param rangeMode The range mode to get the runing parameters for.
+ * @param rangeType The range type to get the tuning parameters for.
+ *
+ * @returns A tuning parameter value for the given range type in the given mode.
+ *
+ * @see ASLayoutRangeMode
+ * @see ASLayoutRangeType
+ */
+- (ASRangeTuningParameters)tuningParametersForRangeMode:(ASLayoutRangeMode)rangeMode rangeType:(ASLayoutRangeType)rangeType;
+
+/**
+ * Set the tuning parameters for a range type in the specigied mode.
+ *
+ * @param tuningParameters The tuning parameters to store for a range type.
+ * @param rangeMode The range mode to set the runing parameters for.
+ * @param rangeType The range type to set the tuning parameters for.
+ *
+ * @see ASLayoutRangeMode
+ * @see ASLayoutRangeType
+ */
+- (void)setTuningParameters:(ASRangeTuningParameters)tuningParameters forRangeMode:(ASLayoutRangeMode)rangeMode rangeType:(ASLayoutRangeType)rangeType;
+
+/**
  * The number of screens left to scroll before the delegate -tableView:beginBatchFetchingWithContext: is called.
  *
- * Defaults to one screenful.
+ * Defaults to two screenfuls.
  */
 @property (nonatomic, assign) CGFloat leadingScreensForBatching;
 
@@ -287,6 +315,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @protocol ASTableDataSource <ASCommonTableViewDataSource, NSObject>
 
+@optional
+
 /**
  * Similar to -tableView:cellForRowAtIndexPath:.
  *
@@ -294,13 +324,25 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param indexPath The index path of the requested node.
  *
- * @returns a node for display at this indexpath.  Must be thread-safe (can be called on the main thread or a background
- * queue) and should not implement reuse (it will be called once per row).  Unlike UITableView's version, this method
+ * @returns a node for display at this indexpath. This will be called on the main thread and should not implement reuse (it will be called once per row). Unlike UITableView's version, this method
  * is not called when the row is about to display.
  */
 - (ASCellNode *)tableView:(ASTableView *)tableView nodeForRowAtIndexPath:(NSIndexPath *)indexPath;
 
-@optional
+
+/**
+ * Similar to -tableView:nodeForRowAtIndexPath:
+ * This method takes precedence over tableView:nodeForRowAtIndexPath: if implemented.
+ * @param tableView The sender.
+ *
+ * @param indexPath The index path of the requested node.
+ *
+ * @returns a block that creates the node for display at this indexpath.  
+ *   Must be thread-safe (can be called on the main thread or a background
+ *   queue) and should not implement reuse (it will be called once per row).
+ */
+
+- (ASCellNodeBlock)tableView:(ASTableView *)tableView nodeBlockForRowAtIndexPath:(NSIndexPath *)indexPath;
 
 /**
  * Indicator to lock the data source for data fetching in async mode.
@@ -336,7 +378,17 @@ NS_ASSUME_NONNULL_BEGIN
 @optional
 
 - (void)tableView:(ASTableView *)tableView willDisplayNodeForRowAtIndexPath:(NSIndexPath *)indexPath;
-- (void)tableView:(ASTableView *)tableView didEndDisplayingNodeForRowAtIndexPath:(NSIndexPath *)indexPath;
+
+/**
+ * Informs the delegate that the table view did remove the provided node from the view hierarchy.
+ * This may be caused by the node scrolling out of view, or by deleting the row
+ * or its containing section with @c deleteRowsAtIndexPaths:withRowAnimation: or @c deleteSections:withRowAnimation: .
+ *
+ * @param tableView The sender.
+ * @param node The node which was removed from the view hierarchy.
+ * @param indexPath The index path at which the node was located before the removal.
+ */
+- (void)tableView:(ASTableView *)tableView didEndDisplayingNode:(ASCellNode *)node forRowAtIndexPath:(NSIndexPath *)indexPath;
 
 /**
  * Receive a message that the tableView is near the end of its data set and more data should be fetched if necessary.
@@ -364,6 +416,14 @@ NS_ASSUME_NONNULL_BEGIN
  * should occur.
  */
 - (BOOL)shouldBatchFetchForTableView:(ASTableView *)tableView;
+
+/**
+ * Informs the delegate that the table view did remove the node which was previously
+ * at the given index path from the view hierarchy.
+ *
+ * This method is deprecated. Use @c tableView:didEndDisplayingNode:forRowAtIndexPath: instead.
+ */
+- (void)tableView:(ASTableView *)tableView didEndDisplayingNodeForRowAtIndexPath:(NSIndexPath *)indexPath ASDISPLAYNODE_DEPRECATED;
 
 @end
 

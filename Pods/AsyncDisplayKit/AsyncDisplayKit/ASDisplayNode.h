@@ -38,6 +38,11 @@ typedef CALayer * _Nonnull(^ASDisplayNodeLayerBlock)();
 typedef void (^ASDisplayNodeDidLoadBlock)(ASDisplayNode * _Nonnull node);
 
 /**
+ * ASDisplayNode will / did render node content in context.
+ */
+typedef void (^ASDisplayNodeContextModifier)(_Nonnull CGContextRef context);
+
+/**
  Interface state is available on ASDisplayNode and ASViewController, and
  allows checking whether a node is in an interface situation where it is prudent to trigger certain
  actions: measurement, data fetching, display, and visibility (the latter for animations or other onscreen-only effects).
@@ -66,7 +71,10 @@ typedef NS_OPTIONS(NSUInteger, ASInterfaceState)
   ASInterfaceStateInHierarchy   = ASInterfaceStateMeasureLayout | ASInterfaceStateFetchData | ASInterfaceStateDisplay | ASInterfaceStateVisible,
 };
 
-
+/**
+ * Default drawing priority for display node
+ */
+extern NSInteger const ASDefaultDrawingPriority;
 
 /**
  * An `ASDisplayNode` is an abstraction over `UIView` and `CALayer` that allows you to perform calculations about a view
@@ -439,7 +447,6 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @see displaySuspended and setNeedsDisplay
  */
-
 - (void)recursivelyClearContents;
 
 /**
@@ -463,6 +470,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)recursivelyFetchData;
 
 /**
+ * @abstract Triggers a recursive call to fetchData when the node has an interfaceState of ASInterfaceStateFetchData
+ */
+- (void)setNeedsDataFetch;
+
+/**
  * @abstract Toggle displaying a placeholder over the node that covers content until the node and all subnodes are
  * displayed.
  *
@@ -477,6 +489,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, assign) NSTimeInterval placeholderFadeDuration;
 
+/**
+ * @abstract Determines drawing priority of the node. Nodes with higher priority will be drawn earlier.
+ *
+ * @discussion Defaults to ASDefaultDrawingPriority. There may be multiple drawing threads, and some of them may
+ * decide to perform operations in queued order (regardless of drawingPriority)
+ */
+@property (nonatomic, assign) NSInteger drawingPriority;
 
 /** @name Hit Testing */
 
@@ -551,7 +570,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (CGRect)convertRect:(CGRect)rect fromNode:(nullable ASDisplayNode *)node;
 
 @end
-
 
 /**
  * Convenience methods for debugging.
@@ -643,7 +661,9 @@ NS_ASSUME_NONNULL_END
 @property (atomic, assign)           UIViewContentMode contentMode;         // default=UIViewContentModeScaleToFill
 
 @property (atomic, assign, getter=isUserInteractionEnabled) BOOL userInteractionEnabled; // default=YES (NO for layer-backed nodes)
+#if TARGET_OS_IOS
 @property (atomic, assign, getter=isExclusiveTouch) BOOL exclusiveTouch;    // default=NO
+#endif
 @property (atomic, assign, nullable) CGColorRef shadowColor;                // default=opaque rgb black
 @property (atomic, assign)           CGFloat shadowOpacity;                 // default=0.0
 @property (atomic, assign)           CGSize shadowOffset;                   // default=(0, -3)
@@ -659,6 +679,16 @@ NS_ASSUME_NONNULL_END
 - (BOOL)resignFirstResponder;                                               // default==NO (no-op)
 - (BOOL)isFirstResponder;
 - (BOOL)canPerformAction:(nonnull SEL)action withSender:(nonnull id)sender;
+
+#if TARGET_OS_TV
+//Focus Engine
+- (void)setNeedsFocusUpdate;
+- (BOOL)canBecomeFocused;
+- (void)updateFocusIfNeeded;
+- (void)didUpdateFocusInContext:(nonnull UIFocusUpdateContext *)context withAnimationCoordinator:(nonnull UIFocusAnimationCoordinator *)coordinator;
+- (BOOL)shouldUpdateFocusInContext:(nonnull UIFocusUpdateContext *)context;
+- (nullable UIView *)preferredFocusedView;
+#endif
 
 // Accessibility support
 @property (atomic, assign)           BOOL isAccessibilityElement;

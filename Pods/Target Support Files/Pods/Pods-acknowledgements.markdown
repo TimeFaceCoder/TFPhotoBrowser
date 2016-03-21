@@ -7,7 +7,7 @@ BSD License
 
 For AsyncDisplayKit software
 
-Copyright (c) 2014, Facebook, Inc. All rights reserved.
+Copyright (c) 2014-present, Facebook, Inc. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
@@ -65,7 +65,7 @@ THE SOFTWARE.
 
 The MIT License (MIT)
 
-Copyright (c) 2014-2015 Flipboard
+Copyright (c) 2014-2016 Flipboard
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -315,7 +315,7 @@ limitations under the License.
 
 ## PINRemoteImage
 
-Copyright (c) 2015 Pinterest, Inc.
+Copyright (c) 2015-2016 Pinterest, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

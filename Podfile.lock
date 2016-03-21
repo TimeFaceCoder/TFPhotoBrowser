@@ -1,24 +1,29 @@
 PODS:
-  - AsyncDisplayKit (1.9.4):
-    - AsyncDisplayKit/ASDealloc2MainObject (= 1.9.4)
-  - AsyncDisplayKit/ASDealloc2MainObject (1.9.4)
+  - AsyncDisplayKit (1.9.7):
+    - AsyncDisplayKit/PINRemoteImage (= 1.9.7)
+  - AsyncDisplayKit/ASDealloc2MainObject (1.9.7)
+  - AsyncDisplayKit/PINRemoteImage (1.9.7):
+    - AsyncDisplayKit/ASDealloc2MainObject
+    - PINRemoteImage/iOS (>= 2)
   - DACircularProgress (2.3.1)
-  - FLAnimatedImage (1.0.10)
+  - FLAnimatedImage (1.0.12)
   - Masonry (0.6.4)
-  - PINCache (2.1.2)
-  - PINRemoteImage (1.2.2):
-    - PINRemoteImage/FLAnimatedImage (= 1.2.2)
-  - PINRemoteImage/Core (1.2.2):
+  - PINCache (2.2.2)
+  - PINRemoteImage (2.1.1):
+    - PINRemoteImage/FLAnimatedImage (= 2.1.1)
+  - PINRemoteImage/Core (2.1.1):
     - PINCache (>= 2.1)
-  - PINRemoteImage/FLAnimatedImage (1.2.2):
+  - PINRemoteImage/FLAnimatedImage (2.1.1):
     - FLAnimatedImage (>= 1.0)
     - PINRemoteImage/Core
-  - pop (1.0.8)
-  - SDWebImage (3.7.3):
-    - SDWebImage/Core (= 3.7.3)
-  - SDWebImage/Core (3.7.3)
+  - PINRemoteImage/iOS (2.1.1):
+    - PINRemoteImage/Core
+  - pop (1.0.9)
+  - SDWebImage (3.7.5):
+    - SDWebImage/Core (= 3.7.5)
+  - SDWebImage/Core (3.7.5)
   - SVProgressHUD (1.1.3)
-  - TFCamera (0.0.1):
+  - TFCamera (0.0.4):
     - Masonry
     - pop
 
@@ -37,19 +42,19 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   TFCamera:
-    :commit: d352ae3876e1f90d7928480e05945185261b9571
+    :commit: a34e3482546d10baba8a2f08cbcd66070e1a79fe
     :git: https://github.com/TimeFaceCoder/TFCamera.git
 
 SPEC CHECKSUMS:
-  AsyncDisplayKit: 0932ff6f78364130a195039ab9a1c2ff63adc665
+  AsyncDisplayKit: eb762d3bfd3896b2901909ebc24b54c97f32d43c
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
-  FLAnimatedImage: e16a1e1cef08e4c509b47e4acbe3923f65c16135
+  FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
   Masonry: 281802d04d787ea2973179ee8bcb50500579ede2
-  PINCache: 9e70271f1bdd60c0465b7208adcc4b6acc1fc376
-  PINRemoteImage: 9f6f484bbceee15e2df5aee0beeac2e261e4ac81
-  pop: bb773ae2c791ca2629de13b347e7a8b450fa6a57
-  SDWebImage: 1d2b1a1efda1ade1b00b6f8498865f8ddedc8a84
+  PINCache: 078426d356ab95ef875e9e62e5c35a2ea3333c28
+  PINRemoteImage: 0c620b392a2a41a0a14f143107bbb0596f73dd23
+  pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
+  SDWebImage: 69c6303e3348fba97e03f65d65d4fbc26740f461
   SVProgressHUD: 748080e4f36e603f6c02aec292664239df5279c1
-  TFCamera: 57db663d3d3d8948dea7f5f7249682a57c2b0cd6
+  TFCamera: e2db7e6d153a05f4afc43434336952a2d0f0fbb1
 
 COCOAPODS: 0.39.0
