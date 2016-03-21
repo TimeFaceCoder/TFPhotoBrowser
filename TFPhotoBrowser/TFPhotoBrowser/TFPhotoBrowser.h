@@ -25,10 +25,11 @@
 - (NSString *)photoBrowser:(TFPhotoBrowser *)photoBrowser titleForPhotoAtIndex:(NSUInteger)index;
 - (void)photoBrowser:(TFPhotoBrowser *)photoBrowser didDisplayPhotoAtIndex:(NSUInteger)index;
 - (void)photoBrowser:(TFPhotoBrowser *)photoBrowser actionButtonPressedForPhotoAtIndex:(NSUInteger)index;
-- (BOOL)photoBrowser:(TFPhotoBrowser *)photoBrowser isPhotoSelectedAtIndex:(NSUInteger)index;
-- (void)photoBrowser:(TFPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index selectedChanged:(BOOL)selected;
+- (BOOL)photoBrowser:(TFPhotoBrowser *)photoBrowser isPhotoSelectedAtIndex:(NSUInteger)index section:(NSInteger)section;
+- (void)photoBrowser:(TFPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index section:(NSInteger)section selectedChanged:(BOOL)selected;
 - (void)photoBrowserDidFinishModalPresentation:(TFPhotoBrowser *)photoBrowser;
 - (UIView *)photoBrowser:(TFPhotoBrowser *)photoBrowser toolBarViewForPhotoAtIndex:(NSUInteger)index;
+- (NSDictionary*)photoBrowserSelecteNum;
 @end
 
 

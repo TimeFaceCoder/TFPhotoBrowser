@@ -203,7 +203,7 @@
     if ([self.delegate respondsToSelector:@selector(imagePickerControllerTitleForDoneButton:)]) {
         title = [self.delegate imagePickerControllerTitleForDoneButton:self];
     } else if (_selectedAssets.count > 0) {
-        title = [NSString localizedStringWithFormat:NSLocalizedString(@"Done (%d)", @"Title for photo picker done button (short)."), _selectedAssets.count];
+        title = [NSString stringWithFormat:NSLocalizedString(@"照片选择完成", nil),[self.selectedAssets count],_maxSelectedCount];
     } else {
         title = NSLocalizedString(@"Done", nil);
     }
@@ -852,13 +852,14 @@
     
     if (indexPath != nil) {
         TFPhotoBrowser *photoBrowser = [[TFPhotoBrowser alloc] initWithDelegate:self];
-        [photoBrowser setCurrentPhotoIndex:indexPath.row];
+        
         [photoBrowser setDisplaySelectionButtons:YES];
         [photoBrowser setDisplayActionButton:YES];
         [photoBrowser setIndexPath:indexPath];
         photoBrowser.zoomPhotosToFill = YES;
         photoBrowser.usePopAnimation = YES;
         photoBrowser.enableSwipeToDismiss = YES;
+        [photoBrowser setCurrentPhotoIndex:indexPath.row];
         
         [self presentViewController:photoBrowser animated:YES completion:NULL];
     }
@@ -919,8 +920,8 @@
 
 }
 
-- (void)photoBrowser:(TFPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index selectedChanged:(BOOL)selected {
-    PHAsset *asset = [self _assetAtIndexPath:[NSIndexPath indexPathForItem:index inSection:0]];
+- (void)photoBrowser:(TFPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index section:(NSInteger)section selectedChanged:(BOOL)selected {
+    PHAsset *asset = [self _assetAtIndexPath:[NSIndexPath indexPathForRow:index inSection:section]];
     if (asset) {
         if (selected) {
             [self selectAsset:asset];
@@ -929,14 +930,23 @@
             [self deselectAsset:asset];
         }
     }
+    if (_showAllSelectButton) {
+        [self updateHeaderView:[NSIndexPath indexPathForRow:index inSection:section]];
+    }
 }
 
-- (BOOL)photoBrowser:(TFPhotoBrowser *)photoBrowser isPhotoSelectedAtIndex:(NSUInteger)index {
-    PHAsset *asset = [self _assetAtIndexPath:[NSIndexPath indexPathForItem:index inSection:0]];
+- (BOOL)photoBrowser:(TFPhotoBrowser *)photoBrowser isPhotoSelectedAtIndex:(NSUInteger)index  section:(NSInteger)section{
+    PHAsset *asset = [self _assetAtIndexPath:[NSIndexPath indexPathForItem:index inSection:section]];
     return [_selectedAssets containsObject:asset];
 }
 
-
+- (NSDictionary*)photoBrowserSelecteNum {
+    NSDictionary *dic = @{
+                          @"total" : [NSString stringWithFormat:@"%@",@(_maxSelectedCount)],
+                          @"current" : [NSString stringWithFormat:@"%@",@(_selectedAssets.count)]
+                          };
+    return dic;
+}
 
 
 #pragma mark - TFCollectionPickerControllerDelegate

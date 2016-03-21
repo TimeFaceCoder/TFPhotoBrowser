@@ -218,11 +218,20 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     _navigationBar.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
     
     _navigationBar.items = @[_navigationItem];
-    _doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
-                                                                target:self
-                                                                action:@selector(doneButtonPressed:)];
+//    _doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+//                                                                target:self
+//                                                                action:@selector(doneButtonPressed:)];
+    NSInteger total;
+    NSInteger current;
+    if (self.delegate && [self.delegate respondsToSelector:@selector(photoBrowserSelecteNum)]) {
+        NSDictionary *dic = [self.delegate photoBrowserSelecteNum];
+        total = [[dic objectForKey:@"total"] integerValue];
+        current = [[dic objectForKey:@"current"] integerValue];
+    }
     
-    _backButton = [[UIBarButtonItem alloc]initWithTitle:NSLocalizedString(@"返回", nil) style:UIBarButtonItemStyleDone target:self action:@selector(doneButtonPressed:)];
+    _doneButton = [[UIBarButtonItem alloc]initWithTitle:[NSString stringWithFormat:@"完成%@/%@",@(current),@(total)] style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonPressed:)];
+    
+    _backButton = [[UIBarButtonItem alloc]initWithTitle:NSLocalizedString(@"返回", nil) style:UIBarButtonItemStyleDone target:self action:@selector(backButtonPressed:)];
     
     // Toolbar Items
     if (self.displayActionButton) {
@@ -283,8 +292,9 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
         [_toolbar setItems:items];
     }
     
-    
-//    _navigationItem.rightBarButtonItems = @[_doneButton,fixedSpace];
+    if (_displaySelectionButtons) {
+       _navigationItem.rightBarButtonItems = @[_doneButton,fixedSpace];
+    }
     _navigationItem.leftBarButtonItems = @[_backButton];
     BOOL hideToolbar = YES;
     for (UIBarButtonItem* item in _toolbar.items) {
@@ -545,7 +555,7 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
             self.view.backgroundColor = [UIColor colorWithWhite:0 alpha:0];
             [UIView commitAnimations];
             
-            [self performSelector:@selector(doneButtonPressed:) withObject:self afterDelay:animationDuration];
+            [self performSelector:@selector(backButtonPressed:) withObject:self afterDelay:animationDuration];
         }
         else // Continue Showing View
         {
@@ -946,8 +956,8 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
 - (BOOL)photoIsSelectedAtIndex:(NSUInteger)index {
     BOOL value = NO;
     if (_displaySelectionButtons) {
-        if ([self.delegate respondsToSelector:@selector(photoBrowser:isPhotoSelectedAtIndex:)]) {
-            value = [self.delegate photoBrowser:self isPhotoSelectedAtIndex:index];
+        if ([self.delegate respondsToSelector:@selector(photoBrowser:isPhotoSelectedAtIndex:section:)]) {
+            value = [self.delegate photoBrowser:self isPhotoSelectedAtIndex:index section:self.indexPath.section];
         }
     }
     return value;
@@ -955,8 +965,8 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
 
 - (void)setPhotoSelected:(BOOL)selected atIndex:(NSUInteger)index {
     if (_displaySelectionButtons) {
-        if ([self.delegate respondsToSelector:@selector(photoBrowser:photoAtIndex:selectedChanged:)]) {
-            [self.delegate photoBrowser:self photoAtIndex:index selectedChanged:selected];
+        if ([self.delegate respondsToSelector:@selector(photoBrowser:photoAtIndex:section:selectedChanged:)]) {
+            [self.delegate photoBrowser:self photoAtIndex:index section:self.indexPath.section selectedChanged:selected];
         }
     }
 }
@@ -1102,7 +1112,9 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
                     selectedOnImage = TFPhotoBrowserImageNamed(@"TFLibraryCollectionSelected");
                 }
                 [selectedButton setImage:selectedOnImage forState:UIControlStateSelected];
-                [selectedButton sizeToFit];
+//                [selectedButton sizeToFit];
+                selectedButton.frame = CGRectMake(0, 0, 40, 40);
+                selectedButton.layer.borderWidth = 1;
                 selectedButton.adjustsImageWhenHighlighted = NO;
                 [selectedButton addTarget:self action:@selector(selectedButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
                 selectedButton.frame = [self frameForSelectedButton:selectedButton atIndex:index];
@@ -1410,6 +1422,14 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     if (index != NSUIntegerMax) {
         [self setPhotoSelected:selectedButton.selected atIndex:index];
     }
+    if (self.delegate && [self.delegate respondsToSelector:@selector(photoBrowserSelecteNum)]) {
+        NSDictionary *dic = [self.delegate photoBrowserSelecteNum];
+        NSInteger total = [[dic objectForKey:@"total"] integerValue];
+        NSInteger current = [[dic objectForKey:@"current"] integerValue];
+        if (_doneButton) {
+            [_doneButton setTitle:[NSString stringWithFormat:@"完成%@/%@",@(current),@(total)]];
+        }
+    }
 }
 
 - (void)playButtonTapped:(id)sender {
@@ -1697,6 +1717,10 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
 #pragma mark - Misc
 
 - (void)doneButtonPressed:(id)sender {
+    
+}
+
+- (void)backButtonPressed:(id)sender {
     // Only if we're modal and there's a done button
     if (_backButton) {
         if (_senderViewForAnimation && _currentPageIndex == _initalPageIndex) {

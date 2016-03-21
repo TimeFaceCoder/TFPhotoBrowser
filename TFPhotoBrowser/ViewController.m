@@ -117,7 +117,7 @@
     NSLog(@"Did start viewing photo at index %lu", (unsigned long)index);
 }
 
-- (BOOL)photoBrowser:(TFPhotoBrowser *)photoBrowser isPhotoSelectedAtIndex:(NSUInteger)index {
+- (BOOL)photoBrowser:(TFPhotoBrowser *)photoBrowser isPhotoSelectedAtIndex:(NSUInteger)index section:(NSInteger)section {
     return [[_selections objectAtIndex:index] boolValue];
 }
 
@@ -125,7 +125,7 @@
 //    return [NSString stringWithFormat:@"Photo %lu", (unsigned long)index+1];
 //}
 
-- (void)photoBrowser:(TFPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index selectedChanged:(BOOL)selected {
+- (void)photoBrowser:(TFPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index section:(NSInteger)section selectedChanged:(BOOL)selected {
     [_selections replaceObjectAtIndex:index withObject:[NSNumber numberWithBool:selected]];
     NSLog(@"Photo at index %lu selected %@", (unsigned long)index, selected ? @"YES" : @"NO");
 }
