@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "TFPhotoBrowser"
-  s.version      = "0.1.7"
+  s.version      = "0.1.8"
   s.summary      = "时光流影iOS照片浏览框架"
   s.homepage     = "https://github.com/TimeFaceCoder/TFPhotoBrowser"
   s.license      = "Copyright (C) 2015 TimeFace, Inc.  All rights reserved."
