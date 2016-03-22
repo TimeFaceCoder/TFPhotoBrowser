@@ -47,6 +47,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil NS_UNAVAILABLE;
 - (instancetype)initWithCollectionViewLayout:(UICollectionViewLayout *)layout NS_UNAVAILABLE;
 
+- (instancetype)initWithScanButton NS_DESIGNATED_INITIALIZER;
+
 @property (nonatomic, weak, nullable) id<TFImagePickerControllerDelegate> delegate;
 
 @property (nonatomic, readonly) UIBarButtonItem *cancelButton;
@@ -65,7 +67,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign) BOOL      showAllSelectButton;
 
-@property (nonatomic, assign) BOOL      showScanButton;
+@property (nonatomic, assign, readonly) BOOL      showScanButton;
 
 /** The asset collection the picker will display to the user.
  

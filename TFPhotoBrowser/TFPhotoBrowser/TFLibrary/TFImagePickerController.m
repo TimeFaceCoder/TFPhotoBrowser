@@ -359,6 +359,18 @@
     return self;
 }
 
+- (instancetype)initWithScanButton {
+    UICollectionViewFlowLayout *layout = [[TFCollectionViewFloatingHeaderFlowLayout alloc] init];
+    layout.minimumLineSpacing = TFObjectSpacing;
+    layout.minimumInteritemSpacing = 0.0;
+    self = [super initWithCollectionViewLayout:layout];
+    if (self) {
+        _showScanButton = YES;
+        [self _init];
+    }
+    return self;
+}
+
 - (void)dealloc
 {
     [[PHPhotoLibrary sharedPhotoLibrary] unregisterChangeObserver:self];

@@ -70,7 +70,7 @@
 
 - (void)onViewClick2:(id)sender {
 //        TFLibraryViewController *viewController = [[TFLibraryViewController alloc] init];
-    TFImagePickerController *viewController = [[TFImagePickerController alloc] init];
+    TFImagePickerController *viewController = [[TFImagePickerController alloc] initWithScanButton];
     //    TFImagePickerController *viewController = [[TFImagePickerController alloc] init];
     
     viewController.mediaTypes = @[ (id)kUTTypeImage ];
@@ -78,6 +78,7 @@
     viewController.allowsMultipleSelection = YES;
     viewController.maxSelectedCount = 9;
     viewController.showAllSelectButton = YES;
+//    viewController.showScanButton = YES;
     UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:viewController];
     nc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     nc.toolbarHidden = NO;

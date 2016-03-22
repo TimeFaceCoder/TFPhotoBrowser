@@ -1114,7 +1114,6 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
                 [selectedButton setImage:selectedOnImage forState:UIControlStateSelected];
 //                [selectedButton sizeToFit];
                 selectedButton.frame = CGRectMake(0, 0, 40, 40);
-                selectedButton.layer.borderWidth = 1;
                 selectedButton.adjustsImageWhenHighlighted = NO;
                 [selectedButton addTarget:self action:@selector(selectedButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
                 selectedButton.frame = [self frameForSelectedButton:selectedButton atIndex:index];
@@ -1717,7 +1716,17 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
 #pragma mark - Misc
 
 - (void)doneButtonPressed:(id)sender {
-    
+    if (_doneButton) {
+        if (_senderViewForAnimation && _currentPageIndex == _initalPageIndex) {
+            TFZoomingScrollView *scrollView = [self pageDisplayedAtIndex:_currentPageIndex];
+            [self performCloseAnimationWithScrollView:scrollView];
+        }
+        else {
+            _senderViewForAnimation.hidden = NO;
+            [self prepareForClosePhotoBrowser];
+            [self dismissPhotoBrowserAnimated:YES];
+        }
+    }
 }
 
 - (void)backButtonPressed:(id)sender {
