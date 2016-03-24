@@ -677,8 +677,10 @@
     BOOL state = [[userInfo objectForKey:@"state"] boolValue];
     PHAssetCollection *collection = _moments[path.section];
     PHFetchResult *fetchResult = [self _assetsForMoment:collection];
+    NSMutableArray *array = [NSMutableArray array];
     for (PHAsset *asset in fetchResult) {
         if (state) {
+            [array addObject:asset];
             if (![_selectedAssets containsObject:asset]) {
                 [self selectAsset:asset];
             }
@@ -688,6 +690,9 @@
             }
         }
         
+    }
+    if (self.delegate && [self.delegate respondsToSelector:@selector(imagePickerController:didSelectedPickingAssets:)]) {
+        [self.delegate imagePickerController:self didSelectedPickingAssets:array];
     }
 }
 
@@ -913,10 +918,14 @@
 
 - (void)assetCellViewClick:(TFAssetCellClickType)type indexPath:(NSIndexPath *)indexPath {
     PHAsset *asset = [self _assetAtIndexPath:indexPath];
+    
     if ([_selectedAssets containsObject:asset]) {
         [self deselectAsset:asset];
     } else {
         [self selectAsset:asset];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(imagePickerController:didSelectedPickingAssets:)]) {
+            [self.delegate imagePickerController:self didSelectedPickingAssets:@[asset]];
+        }
     }
     if (_showAllSelectButton) {
         [self updateHeaderView:indexPath];
@@ -956,6 +965,9 @@
     if (asset) {
         if (selected) {
             [self selectAsset:asset];
+            if (self.delegate && [self.delegate respondsToSelector:@selector(imagePickerController:didSelectedPickingAssets:)]) {
+                [self.delegate imagePickerController:self didSelectedPickingAssets:@[asset]];
+            }
         }
         else {
             [self deselectAsset:asset];

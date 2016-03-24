@@ -38,6 +38,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)imagePickerControllerDidScan:(TFImagePickerController *)picker;
 
+- (void)imagePickerController:(TFImagePickerController *)picker didSelectedPickingAssets:(NSArray<PHAsset *> *)assets;
+
 @end
 
 
