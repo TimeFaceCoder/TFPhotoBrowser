@@ -30,6 +30,12 @@
 - (void)photoBrowserDidFinishModalPresentation:(TFPhotoBrowser *)photoBrowser;
 - (UIView *)photoBrowser:(TFPhotoBrowser *)photoBrowser toolBarViewForPhotoAtIndex:(NSUInteger)index;
 - (NSDictionary*)photoBrowserSelecteNum;
+//tag
+- (NSMutableArray *)photoBrowser:(TFPhotoBrowser *)photoBrowser tagInfosAtIndex:(NSUInteger)index;
+- (void)photoBrowser:(TFPhotoBrowser *)photoBrowser updateTagInfo:(NSDictionary *)info index:(NSUInteger)index;
+- (void)photoBrowser:(TFPhotoBrowser *)photoBrowser infos:(NSMutableArray *)infos;
+- (void)updatePhotoInfos:(NSMutableArray *)array photoAtIndex:(NSUInteger)index;
+- (void)photoBrowser:(TFPhotoBrowser *)photoBrowser didSelectTagAtIndex:(NSInteger)index tagId:(NSString*)tagId;
 @end
 
 
@@ -59,6 +65,10 @@
 @property (nonatomic) BOOL usePopAnimation;
 @property (nonatomic) float animationDuration;
 
+//tag
+@property (nonatomic, strong  ) NSMutableArray *tagInfos;
+@property (nonatomic, strong  ) NSDictionary   *expandData;
+
 
 // Init
 - (id)initWithPhotos:(NSArray *)photosArray;
@@ -67,6 +77,13 @@
 
 - (id)initWithPhotos:(NSArray *)photosArray animatedFromView:(UIView*)view;
 - (id)initWithDelegate:(id <TFPhotoBrowserDelegate>)delegate animatedFromView:(UIView*)view;
+
+/**
+ *  配置当前page tag view
+ *
+ *  @param index
+ */
+- (void)configurePageTag:(NSUInteger)index;
 
 // Reloads the photo browser and refetches data
 - (void)reloadData;

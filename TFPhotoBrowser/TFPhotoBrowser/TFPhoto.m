@@ -11,6 +11,19 @@
 #import <SDWebImage/SDWebImageManager.h>
 #import <AssetsLibrary/AssetsLibrary.h>
 
+
+@implementation TFPhotoTag
+
++(TFPhotoTag*)photoTagWithRect:(CGRect)rect tagId:(NSString *)tagId tagName:(NSString *)tagName {
+    TFPhotoTag *tag = [[TFPhotoTag alloc]init];
+    tag.tagRect = rect;
+    tag.tagId = tagId;
+    tag.tagName = tagName;
+    return tag;
+}
+
+@end
+
 @interface TFPhoto() {
     BOOL _loadingInProgress;
     id <SDWebImageOperation> _webImageOperation;

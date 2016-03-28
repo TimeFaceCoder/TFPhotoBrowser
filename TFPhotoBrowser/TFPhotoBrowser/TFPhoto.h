@@ -10,6 +10,22 @@
 #import <Photos/Photos.h>
 #import "TFPhotoProtocol.h"
 
+@interface TFPhotoTag : NSObject
+
+@property (nonatomic, assign) CGRect     tagRect;
+
+@property (nonatomic, strong) NSString   *tagName;
+
+@property (nonatomic, strong) NSString   *tagId;
+
+@property (nonatomic, assign) BOOL       selected;
+
++(TFPhotoTag *)photoTagWithRect:(CGRect)rect tagId:(NSString*)tagId tagName:(NSString*)tagName;
+
+@end
+
+@protocol TFPhotoTag;
+
 @interface TFPhoto : NSObject <TFPhoto>
 
 typedef void (^TFProgressUpdateBlock)(CGFloat progress);
@@ -20,6 +36,8 @@ typedef void (^TFProgressUpdateBlock)(CGFloat progress);
 @property (nonatomic) BOOL emptyImage;
 @property (nonatomic) BOOL isVideo;
 @property (nonatomic, strong) UIImage *placeholderImage;
+
+@property (nonatomic, strong) NSMutableArray<TFPhotoTag>  *tagArray;
 
 
 + (TFPhoto *)photoWithImage:(UIImage *)image;

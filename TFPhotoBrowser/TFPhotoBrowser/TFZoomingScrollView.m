@@ -17,6 +17,7 @@
 #import "UIScrollView+ScrollIndicator.h"
 #import <CoreMotion/CoreMotion.h>
 #import <pop/POP.h>
+#import "TFPhotoTagView.h"
 
 #define isLandscape UIDeviceOrientationIsLandscape([[UIDevice currentDevice] orientation])
 
@@ -28,7 +29,6 @@ static const CGFloat TFMotionViewRotationFactor = 4.0f;
 @interface TFZoomingScrollView()<UIScrollViewDelegate,TFTapDetectingViewDelegate,TFTapDetectingImageViewDelegate> {
     TFPhotoBrowser __weak   *_photoBrowser;
     TFTapDetectingView      *_tapView; // for background taps
-    TFTapDetectingImageView *_photoImageView;
     DACircularProgressView  *_loadingIndicator;
     UIImageView             *_loadingError;
     CMMotionManager         *_motionManager;
@@ -522,6 +522,76 @@ static const CGFloat TFMotionViewRotationFactor = 4.0f;
     [_motionManager stopGyroUpdates];
     _motionManager = nil;
 }
+
+- (CGPoint)normalizedPositionForPoint:(CGPoint)point {
+    return   [self normalizedPositionForPoint:point inFrame:[self frameForImage]];
+}
+
+- (CGPoint)normalizedPositionForPoint:(CGPoint)point inFrame:(CGRect)frame
+{
+    CGFloat startX = self.frame.origin.x;
+    if (startX > 10) {
+        startX = 10;
+    }
+    point.x -= (frame.origin.x - startX);
+    point.y -= (frame.origin.y - self.frame.origin.y);
+    
+    CGPoint normalizedPoint = CGPointMake(point.x / frame.size.width,
+                                          point.y / frame.size.height);
+    
+    return normalizedPoint;
+}
+- (CGRect)frameForImage
+{
+    if(_photoImageView.image == nil){
+        return CGRectZero;
+    }
+    //    return _photoImageView.frame;
+    
+    
+    NSLog(@"image frame:%@",NSStringFromCGRect(_photoImageView.frame));
+    NSLog(@"image bounds:%@",NSStringFromCGRect(_photoImageView.bounds));
+    
+    CGRect photoDisplayedFrame;
+    if(_photoImageView.contentMode == UIViewContentModeScaleAspectFit){
+        photoDisplayedFrame = AVMakeRectWithAspectRatioInsideRect(_photoImageView.image.size, _photoImageView.frame);
+    } else if(_photoImageView.contentMode == UIViewContentModeCenter) {
+        CGPoint photoOrigin = CGPointZero;
+        photoOrigin.x = (_photoImageView.frame.size.width - (_photoImageView.image.size.width * self.zoomScale)) * 0.5;
+        photoOrigin.y = (_photoImageView.frame.size.height - (_photoImageView.image.size.height * self.zoomScale)) * 0.5;
+        photoDisplayedFrame = CGRectMake(photoOrigin.x,
+                                         photoOrigin.y,
+                                         _photoImageView.image.size.width*self.zoomScale,
+                                         _photoImageView.image.size.height*self.zoomScale);
+    } else {
+        NSAssert(0, @"Don't know how to generate frame for photo with current content mode.");
+    }
+    
+    return photoDisplayedFrame;
+}
+
+- (void)startNewTagPopover:(TFPhotoTagView *)popover
+         atNormalizedPoint:(CGPoint)normalizedPoint
+              pointOnImage:(CGPoint)pointOnImage
+{
+    //    NSAssert(((normalizedPoint.x >= 0.0 && normalizedPoint.x <= 1.0) &&
+    //              (normalizedPoint.y >= 0.0 && normalizedPoint.y <= 1.0)),
+    //             @"Point is outside of photo.");
+    
+    CGRect photoFrame = [self frameForImage];
+    
+    CGPoint tagLocation =
+    CGPointMake(photoFrame.origin.x + (photoFrame.size.width * normalizedPoint.x),
+                photoFrame.origin.y + (photoFrame.size.height * normalizedPoint.y));
+    
+    [popover presentPopoverFromPoint:tagLocation inView:self animated:YES];
+    [popover setNormalizedArrowPoint:normalizedPoint];
+    [popover setPointOnImage:pointOnImage];
+    if (!popover.text.length) {
+        [popover becomeFirstResponder];
+    }
+}
+
 
 
 

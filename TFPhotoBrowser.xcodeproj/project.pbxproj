@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3AAB0EAD616F3302486DDD59 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B36250858EA58B0E345BDD17 /* libPods.a */; };
+		6CFD503A1CA52453003586D5 /* TFPhotoTagView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CFD50391CA52453003586D5 /* TFPhotoTagView.m */; };
 		B0207ACA1C3BABEC0055D0F3 /* TFiCloudDownloadHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = B0207AC91C3BABEC0055D0F3 /* TFiCloudDownloadHelper.m */; };
 		B02CE3161C22D2C7005D6E62 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B02CE3151C22D2C7005D6E62 /* Photos.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B02CE3191C22D443005D6E62 /* TFLibraryViewLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = B02CE3181C22D443005D6E62 /* TFLibraryViewLayout.m */; };
@@ -101,6 +102,8 @@
 		6CF2BD541C6193C4009AF2C1 /* TFImageCropViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFImageCropViewController.m; sourceTree = "<group>"; };
 		6CF2BD551C6193C4009AF2C1 /* TFImageEditorFrameView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFImageEditorFrameView.h; sourceTree = "<group>"; };
 		6CF2BD561C6193C4009AF2C1 /* TFImageEditorFrameView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFImageEditorFrameView.m; sourceTree = "<group>"; };
+		6CFD50381CA52453003586D5 /* TFPhotoTagView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFPhotoTagView.h; sourceTree = "<group>"; };
+		6CFD50391CA52453003586D5 /* TFPhotoTagView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFPhotoTagView.m; sourceTree = "<group>"; };
 		95A751D15D36FFE6F877EDD4 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		B0207AC81C3BABEC0055D0F3 /* TFiCloudDownloadHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFiCloudDownloadHelper.h; sourceTree = "<group>"; };
 		B0207AC91C3BABEC0055D0F3 /* TFiCloudDownloadHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFiCloudDownloadHelper.m; sourceTree = "<group>"; };
@@ -382,6 +385,8 @@
 				B0D8F8381C71B94B000778EE /* TFImageEditorFrameView.m */,
 				B06A148E1B903BA60022BCE5 /* TFPhotoBrowser.h */,
 				B06A148F1B903BA60022BCE5 /* TFPhotoBrowser.m */,
+				6CFD50381CA52453003586D5 /* TFPhotoTagView.h */,
+				6CFD50391CA52453003586D5 /* TFPhotoTagView.m */,
 				B06A14931B904B080022BCE5 /* TFPhoto.h */,
 				B06A14941B904B080022BCE5 /* TFPhoto.m */,
 				B06A14971B904F850022BCE5 /* TFTapDetectingImageView.h */,
@@ -712,6 +717,7 @@
 				B06A14531B9039810022BCE5 /* AppDelegate.m in Sources */,
 				B02CE3241C22D5B0005D6E62 /* UICollectionView+TFLibrary.m in Sources */,
 				B0D8F84A1C73083B000778EE /* PHPhotoLibrary+TFBlockObservers.m in Sources */,
+				6CFD503A1CA52453003586D5 /* TFPhotoTagView.m in Sources */,
 				B0689C281BF7081A00C46CCA /* UIScrollView+ScrollIndicator.m in Sources */,
 				B06A14501B9039810022BCE5 /* main.m in Sources */,
 				B06A14901B903BA60022BCE5 /* TFPhotoBrowser.m in Sources */,
