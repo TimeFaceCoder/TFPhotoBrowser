@@ -48,7 +48,7 @@ typedef void(^TFPhotoTagViewVDisplayCallback)(TFPhotoTagView *tagView);
 @property (nonatomic, assign ) NSInteger                        maximumTextLength;
 @property (nonatomic, strong)  NSString                         *tagId;
 
-- (id)initWithDelegate:(id<TFPhotoTagViewDelegate>)delegate;
+- (id)initWithDelegate:(id<TFPhotoTagViewDelegate>)delegate frame:(CGRect)frame;
 - (id)initWithTag:(id<TFPhotoTagViewDataSource>)aTag;
 
 - (NSString *)text;

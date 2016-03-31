@@ -20,6 +20,8 @@
 
 @property (nonatomic, assign) BOOL       selected;
 
+@property (nonatomic, assign) NSInteger  imageOption;
+
 +(TFPhotoTag *)photoTagWithRect:(CGRect)rect tagId:(NSString*)tagId tagName:(NSString*)tagName;
 
 @end
