@@ -47,6 +47,8 @@ typedef void(^TFPhotoTagViewVDisplayCallback)(TFPhotoTagView *tagView);
 @property (nonatomic, assign ) CGSize                           minimumTextFieldSizeWhileEditing;
 @property (nonatomic, assign ) NSInteger                        maximumTextLength;
 @property (nonatomic, strong)  NSString                         *tagId;
+@property (nonatomic, strong) NSString                          *faceId;
+@property (nonatomic, weak) UITextField *tagTextField;
 
 - (id)initWithDelegate:(id<TFPhotoTagViewDelegate>)delegate frame:(CGRect)frame;
 - (id)initWithTag:(id<TFPhotoTagViewDataSource>)aTag;

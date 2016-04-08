@@ -12,7 +12,7 @@
 
 @property (nonatomic, weak) UIView *contentView;
 @property (nonatomic, weak) UIImageView *bgImageView;
-@property (nonatomic, weak) UITextField *tagTextField;
+
 @property (assign, getter = isCanceled) BOOL canceled;
 @property (nonatomic, assign) CGRect       tagFrame;
 
@@ -35,7 +35,9 @@
     if (self) {
         NSAssert([(NSObject *)delegate conformsToProtocol:@protocol(TFPhotoTagViewDelegate)],
                  @"A tag popover's delegate must conform to the TFPhotoTagViewDelegate.");
-        _tagFrame = frame;
+        CGFloat imageSize = MAX(frame.size.width, frame.size.height);
+        _tagFrame = CGRectMake(frame.origin.x, frame.origin.y, imageSize, imageSize);
+        
         [self initialize];
         [self setDelegate:delegate];
     }
@@ -182,6 +184,7 @@
 
 - (void)setText:(NSString *)text
 {
+    _tagTextField.text = nil;
     [self.tagTextField setText:text];
     [self resizeTextField];
 }
@@ -295,6 +298,11 @@
 {
     CGContextRef context = UIGraphicsGetCurrentContext();
     
+    CGContextClearRect(context, _tagFrame);
+    
+//    NSString *text = _tagTextField.text;
+//    _tagTextField.text  = nil;
+//    _tagTextField.text = text;
     
     CGContextSetLineWidth(context, 1.0);//线的宽度
     UIColor *aColor = [UIColor whiteColor];//blue蓝色
@@ -489,7 +497,7 @@ replacementString:(NSString *)string {
     CGSize minimumSize = self.tagTextField.isFirstResponder ? self.minimumTextFieldSizeWhileEditing :
     self.minimumTextFieldSize;
     
-    newTextFieldFrame.size.width = MAX(newTagSize.width, minimumSize.width);
+    newTextFieldFrame.size.width = MAX(_tagFrame.size.width, minimumSize.width);
     newTextFieldFrame.size.height = MAX(newTagSize.height, minimumSize.height);
     [self.tagTextField setFrame:newTextFieldFrame];
     

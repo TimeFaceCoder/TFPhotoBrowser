@@ -10,7 +10,7 @@
 #import "TFPhotoProtocol.h"
 #import "TFPhoto.h"
 
-static const NSString      * kNoticeCustomBack    =          @"kNoticeCustomBack";
+#define kNoticeCustomBack           @"kNoticeCustomBack"
 
 // Delgate
 @protocol TFPhotoBrowserDelegate;
