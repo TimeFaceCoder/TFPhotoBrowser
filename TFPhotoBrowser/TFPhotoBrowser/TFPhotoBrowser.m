@@ -1955,7 +1955,7 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
         [array enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
             if ([obj isKindOfClass:[TFPhotoTag class]]) {
                 TFPhotoTag *oldModel = (TFPhotoTag *)obj;
-                if (![oldModel.tagId isEqualToString:model.tagId]) {
+                if (![oldModel.faceId isEqualToString:model.faceId]) {
                     [array addObject:model];
                     *stop = YES;
                 }
