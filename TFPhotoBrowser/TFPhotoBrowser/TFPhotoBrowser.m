@@ -827,26 +827,6 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     _currentPageIndex = indexPriorToLayout;
     _performingLayout = NO;
     
-    NSArray *array = nil;
-    if (self.delegate && [self.delegate respondsToSelector:@selector(photoBrowser:tagInfosAtIndex:)]) {
-        array = [self.delegate photoBrowser:self tagInfosAtIndex:_currentPageIndex];
-    }
-    if (array && [array count] > 0) {
-        //检查是否保存过人脸数据
-//        NSMutableArray
-        NSMutableArray *array_old = [_tagInfos objectAtIndex:_currentPageIndex];
-        if ([array_old isKindOfClass:[NSNull class]] || [array_old count] <=0) {
-            for (TFPhotoTag *tag in array) {
-                if (tag) {
-                    
-                    [self addFaceRectOnView:tag];
-                }
-            }
-            
-        }
-        [self configurePageTag:_currentPageIndex];
-        
-    }
     
 }
 
@@ -1038,6 +1018,28 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
 //        if (_tagOnView) {
 //            [self configurePageTag:_currentPageIndex];
 //        }
+        NSArray *array = nil;
+        if (self.delegate && [self.delegate respondsToSelector:@selector(photoBrowser:tagInfosAtIndex:)]) {
+            array = [self.delegate photoBrowser:self tagInfosAtIndex:_currentPageIndex];
+        }
+        if (array && [array count] > 0) {
+            //检查是否保存过人脸数据
+            //        NSMutableArray
+            NSMutableArray *array_old = [_tagInfos objectAtIndex:_currentPageIndex];
+            if ([array_old isKindOfClass:[NSNull class]] || [array_old count] <=0) {
+                for (TFPhotoTag *tag in array) {
+                    if (tag) {
+                        
+                        [self addFaceRectOnView:tag];
+                    }
+                }
+                
+            }
+            [self configurePageTag:_currentPageIndex];
+            
+        }
+
+        
         NSUInteger pageIndex = page.index;
         if (_currentPageIndex == pageIndex) {
             if (pageIndex > 0) {

@@ -497,7 +497,7 @@ replacementString:(NSString *)string {
     CGSize minimumSize = self.tagTextField.isFirstResponder ? self.minimumTextFieldSizeWhileEditing :
     self.minimumTextFieldSize;
     
-    newTextFieldFrame.size.width = MAX(_tagFrame.size.width, minimumSize.width);
+    newTextFieldFrame.size.width = MAX(newTagSize.width, minimumSize.width);
     newTextFieldFrame.size.height = MAX(newTagSize.height, minimumSize.height);
     [self.tagTextField setFrame:newTextFieldFrame];
     
