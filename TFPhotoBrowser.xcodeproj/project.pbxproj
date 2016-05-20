@@ -77,7 +77,7 @@
 		B0D8F86F1C731645000778EE /* TFImagePickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F86E1C731645000778EE /* TFImagePickerController.m */; };
 		B0D8F8721C73FCA8000778EE /* PHAsset+TFExpand.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F8711C73FCA8000778EE /* PHAsset+TFExpand.m */; };
 		B0F80A271C3B5D05000DD3FE /* TFLibraryCameraCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B0F80A261C3B5D05000DD3FE /* TFLibraryCameraCollectionViewCell.m */; };
-		C47A72241CEB138700D2CDBD /* TFPhotoBrowserLocalString.strings in Resources */ = {isa = PBXBuildFile; fileRef = C47A72261CEB138700D2CDBD /* TFPhotoBrowserLocalString.strings */; };
+		C48EF7AB1CEE999300B29FF2 /* TFPhotoBrowserLocalString.strings in Resources */ = {isa = PBXBuildFile; fileRef = C48EF7A91CEE999300B29FF2 /* TFPhotoBrowserLocalString.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -225,8 +225,8 @@
 		B0F80A251C3B5D05000DD3FE /* TFLibraryCameraCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFLibraryCameraCollectionViewCell.h; sourceTree = "<group>"; };
 		B0F80A261C3B5D05000DD3FE /* TFLibraryCameraCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFLibraryCameraCollectionViewCell.m; sourceTree = "<group>"; };
 		B36250858EA58B0E345BDD17 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		C47A72251CEB138700D2CDBD /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/TFPhotoBrowserLocalString.strings; sourceTree = "<group>"; };
-		C47A72271CEB138900D2CDBD /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/TFPhotoBrowserLocalString.strings"; sourceTree = "<group>"; };
+		C48EF7AA1CEE999300B29FF2 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/TFPhotoBrowserLocalString.strings; sourceTree = "<group>"; };
+		C48EF7AC1CEE999C00B29FF2 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/TFPhotoBrowserLocalString.strings"; sourceTree = "<group>"; };
 		DED5ADB9B81503523C045BA3 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -373,7 +373,7 @@
 		B06A14891B903AEB0022BCE5 /* TFPhotoBrowser */ = {
 			isa = PBXGroup;
 			children = (
-				C47A72261CEB138700D2CDBD /* TFPhotoBrowserLocalString.strings */,
+				C48EF7A91CEE999300B29FF2 /* TFPhotoBrowserLocalString.strings */,
 				6CF2BD521C6193C4009AF2C1 /* TFImageEditor */,
 				B06A14921B904AEE0022BCE5 /* TFPhotoBrowserConstants.h */,
 				B06A14961B904B350022BCE5 /* TFPhotoProtocol.h */,
@@ -604,7 +604,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C47A72241CEB138700D2CDBD /* TFPhotoBrowserLocalString.strings in Resources */,
 				B08EDBF51BFC2ADB00DE1688 /* photo9.jpg in Resources */,
 				B04C0B5D1BF5D3080012B7D8 /* photo1.jpg in Resources */,
 				B04C0B6B1BF5D3080012B7D8 /* photo8.jpg in Resources */,
@@ -624,6 +623,7 @@
 				B04C0B5E1BF5D3080012B7D8 /* photo1t.jpg in Resources */,
 				B04C0B641BF5D3080012B7D8 /* photo4t.jpg in Resources */,
 				B04C0B621BF5D3080012B7D8 /* photo3t.jpg in Resources */,
+				C48EF7AB1CEE999300B29FF2 /* TFPhotoBrowserLocalString.strings in Resources */,
 				B04C0B611BF5D3080012B7D8 /* photo3.jpg in Resources */,
 				B0B30AF71C3A45DA000AA90B /* TFLibraryResource.bundle in Resources */,
 				B04C0B601BF5D3080012B7D8 /* photo2t.jpg in Resources */,
@@ -794,11 +794,11 @@
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
-		C47A72261CEB138700D2CDBD /* TFPhotoBrowserLocalString.strings */ = {
+		C48EF7A91CEE999300B29FF2 /* TFPhotoBrowserLocalString.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				C47A72251CEB138700D2CDBD /* en */,
-				C47A72271CEB138900D2CDBD /* zh-Hans */,
+				C48EF7AA1CEE999300B29FF2 /* en */,
+				C48EF7AC1CEE999C00B29FF2 /* zh-Hans */,
 			);
 			name = TFPhotoBrowserLocalString.strings;
 			sourceTree = "<group>";
