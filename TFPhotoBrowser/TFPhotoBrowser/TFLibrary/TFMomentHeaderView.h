@@ -31,13 +31,13 @@ static NSString *TFMomentHeaderViewDetailIdentifier = @"TFMomentHeaderViewDetail
 
 @interface TFMomentHeaderModel : NSObject
 
-@property (nonatomic, strong) NSString *reuseIdentifier;
+@property (nonatomic, strong) NSString *reuseIdentifier;///<重用标志符
 
-@property (nonatomic, strong) NSString *primary;
+@property (nonatomic, strong) NSString *primary;///<主标题
 
-@property (nonatomic, strong) NSString *secondary;
+@property (nonatomic, strong) NSString *secondary;///<副标题
 
-@property (nonatomic, strong) NSString *detail;
+@property (nonatomic, strong) NSString *detail;///<详情
 
 @end
 

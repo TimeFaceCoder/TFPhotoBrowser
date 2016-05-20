@@ -42,6 +42,8 @@
     UIView *_browserToolBarView;
     NSMutableDictionary  *headerViewDictionary;
     NSArray *_headerModelsArr;
+    UIColor *_headerBackColor;
+    UIColor *_headerTitleColor;
 }
 
 @end
@@ -448,9 +450,9 @@
     UILongPressGestureRecognizer *recognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(showAsset:)];
     recognizer.minimumPressDuration = 0.5;
     [self.collectionView addGestureRecognizer:recognizer];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionForReloadNotification:) name:@"NOTICE_RELOAD_COLLECTION_INDEXPATH" object:nil];
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionForReloadNotification:) name:@"NOTICE_RELOAD_COLLECTION_INDEXPATH" object:nil];    
 }
+
 
 
 
@@ -458,7 +460,22 @@
 - (void)viewDidLayoutSubviews {
     if (self.view.window && !_windowLoaded) {
         _windowLoaded = YES;
-        
+        //获取头部颜色信息
+        if (self.delegate) {
+            if ([self.delegate respondsToSelector:@selector(sectionHeaderTitleColorForImagePickerController:)]) {
+                _headerTitleColor = [self.delegate sectionHeaderTitleColorForImagePickerController:self];
+            }
+            if ([self.delegate respondsToSelector:@selector(sectionHeaderBackColorForImagePickerController:)]) {
+                _headerBackColor = [self.delegate sectionHeaderBackColorForImagePickerController:self];
+            }
+        }
+        if (!_headerTitleColor) {
+            _headerTitleColor = [UIColor blackColor];
+        }
+        if (!_headerBackColor) {
+            _headerBackColor = [UIColor clearColor];
+        }
+
         [self.collectionView reloadData];
         
         if (_moments != nil) {
@@ -862,11 +879,15 @@
     headerView.indexPath = indexPath;
     
     PHAssetCollection *collection = _moments[indexPath.section];
+    headerView.backView.backgroundColor = _headerBackColor;
     headerView.primaryLabel.text = model.primary;
+    headerView.primaryLabel.textColor = _headerTitleColor;
         if (collection.localizedTitle != nil) {
             headerView.primaryLabel.text = model.primary;
             headerView.secondaryLabel.text = model.secondary;
+            headerView.secondaryLabel.textColor = _headerTitleColor;
             headerView.detailLabel.text = model.detail;
+            headerView.detailLabel.textColor = _headerTitleColor;
         }
         headerView.selectedButton.hidden = !_showAllSelectButton;
         if (!_showAllSelectButton) {

@@ -150,6 +150,14 @@
     
 }
 
+//- (UIColor *)sectionHeaderBackColorForImagePickerController:(TFImagePickerController *)picker {
+//    return [UIColor cyanColor];
+//}
+//
+//- (UIColor *)sectionHeaderTitleColorForImagePickerController:(TFImagePickerController *)picker {
+//    return [UIColor greenColor];
+//}
+
 - (void)didSelectImage:(UIImage *)image {
     
 }

@@ -238,7 +238,7 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
         current = [[dic objectForKey:@"current"] integerValue];
     }
     
-    _doneButton = [[UIBarButtonItem alloc]initWithTitle:[NSString stringWithFormat:@"%@%@/%@",TFPhotoBrowserLocalizedStrings(@"Done"),@(current),@(total)] style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonPressed:)];
+    _doneButton = [[UIBarButtonItem alloc]initWithTitle:[NSString stringWithFormat:@"%@(%@/%@)",TFPhotoBrowserLocalizedStrings(@"Done"),@(current),@(total)] style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonPressed:)];
     
     _backButton = [[UIBarButtonItem alloc]initWithTitle:TFPhotoBrowserLocalizedStrings(@"Back") style:UIBarButtonItemStyleDone target:self action:@selector(backButtonPressed:)];
     
@@ -1543,7 +1543,7 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
         NSInteger total = [[dic objectForKey:@"total"] integerValue];
         NSInteger current = [[dic objectForKey:@"current"] integerValue];
         if (_doneButton) {
-            [_doneButton setTitle:[NSString stringWithFormat:@"%@%@/%@",TFPhotoBrowserLocalizedStrings(@"Done"),@(current),@(total)]];
+            [_doneButton setTitle:[NSString stringWithFormat:@"%@(%@/%@)",TFPhotoBrowserLocalizedStrings(@"Done"),@(current),@(total)]];
         }
     }
 }
