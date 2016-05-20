@@ -9,9 +9,7 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = "7.1"
   s.source       = { :git => "https://github.com/TimeFaceCoder/TFPhotoBrowser.git"}
   s.source_files  = "TFPhotoBrowser/TFPhotoBrowser/**/*.{h,m,c}"
-  s.resource_bundles = {
-    'TFLibraryResource' => ['TFPhotoBrowser/TFPhotoBrowser/Resources/*.png']
-  }
+  s.resource = ['Resources/TFLibraryResource.bundle','Resources/TFPhotoBrowserLocalizations.bundle']
   s.frameworks = 'ImageIO', 'QuartzCore', 'AssetsLibrary', 'MediaPlayer'
   s.weak_frameworks = 'Photos'
   s.requires_arc = true
