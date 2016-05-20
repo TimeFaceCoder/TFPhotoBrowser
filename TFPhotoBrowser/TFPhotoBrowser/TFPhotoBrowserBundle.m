@@ -21,6 +21,7 @@ UIImage *TFPhotoBrowserImageNamed(NSString *imageName) {
 
 NSString *TFPhotoBrowserLocalizedStrings(NSString *key) {
     NSBundle *localizedStringBundle = [NSBundle bundleWithURL:[[NSBundle bundleForClass:[TFPhotoBrowser class]] URLForResource:@"TFPhotoBrowserLocalizations" withExtension:@"bundle"]];
-    return [localizedStringBundle localizedStringForKey:key value:@"" table:@"TFPhotoBrowserLocalString"];
+    NSString *valueStr = [localizedStringBundle localizedStringForKey:key value:@"" table:@"TFPhotoBrowserLocalString"];
+    return valueStr;
 }
 
