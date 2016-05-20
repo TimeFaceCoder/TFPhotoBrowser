@@ -55,7 +55,6 @@
 		B093BCF71BFC1C2D00754A2D /* TFPhotoCaptionView.m in Sources */ = {isa = PBXBuildFile; fileRef = B093BCF61BFC1C2D00754A2D /* TFPhotoCaptionView.m */; };
 		B09C3C491C2015C9009C6CF0 /* TFLibraryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B09C3C481C2015C9009C6CF0 /* TFLibraryViewController.m */; };
 		B0B30AF51C3A43E8000AA90B /* TFLibraryCollectionOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = B0B30AF41C3A43E8000AA90B /* TFLibraryCollectionOverlayView.m */; };
-		B0B30AF71C3A45DA000AA90B /* TFLibraryResource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B0B30AF61C3A45DA000AA90B /* TFLibraryResource.bundle */; };
 		B0B30AFA1C3A551C000AA90B /* ALAssetRepresentation+TFMD5.m in Sources */ = {isa = PBXBuildFile; fileRef = B0B30AF91C3A551C000AA90B /* ALAssetRepresentation+TFMD5.m */; };
 		B0B30AFD1C3A68E7000AA90B /* TFCollectionOverlayProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = B0B30AFC1C3A68E7000AA90B /* TFCollectionOverlayProgressView.m */; };
 		B0D8F8391C71B94B000778EE /* TFImageCropViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F8361C71B94B000778EE /* TFImageCropViewController.m */; };
@@ -77,7 +76,8 @@
 		B0D8F86F1C731645000778EE /* TFImagePickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F86E1C731645000778EE /* TFImagePickerController.m */; };
 		B0D8F8721C73FCA8000778EE /* PHAsset+TFExpand.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F8711C73FCA8000778EE /* PHAsset+TFExpand.m */; };
 		B0F80A271C3B5D05000DD3FE /* TFLibraryCameraCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B0F80A261C3B5D05000DD3FE /* TFLibraryCameraCollectionViewCell.m */; };
-		C4C5C65F1CEEA36500B94AD9 /* TFPhotoBrowserLocalizations.bundle in Resources */ = {isa = PBXBuildFile; fileRef = C4C5C65E1CEEA36500B94AD9 /* TFPhotoBrowserLocalizations.bundle */; };
+		C4C5C6631CEEBBED00B94AD9 /* TFLibraryResource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = C4C5C6611CEEBBED00B94AD9 /* TFLibraryResource.bundle */; };
+		C4C5C6641CEEBBED00B94AD9 /* TFPhotoBrowserLocalizations.bundle in Resources */ = {isa = PBXBuildFile; fileRef = C4C5C6621CEEBBED00B94AD9 /* TFPhotoBrowserLocalizations.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -179,7 +179,6 @@
 		B09C3C481C2015C9009C6CF0 /* TFLibraryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFLibraryViewController.m; sourceTree = "<group>"; };
 		B0B30AF31C3A43E8000AA90B /* TFLibraryCollectionOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFLibraryCollectionOverlayView.h; sourceTree = "<group>"; };
 		B0B30AF41C3A43E8000AA90B /* TFLibraryCollectionOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFLibraryCollectionOverlayView.m; sourceTree = "<group>"; };
-		B0B30AF61C3A45DA000AA90B /* TFLibraryResource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = TFLibraryResource.bundle; sourceTree = "<group>"; };
 		B0B30AF81C3A551C000AA90B /* ALAssetRepresentation+TFMD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALAssetRepresentation+TFMD5.h"; sourceTree = "<group>"; };
 		B0B30AF91C3A551C000AA90B /* ALAssetRepresentation+TFMD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALAssetRepresentation+TFMD5.m"; sourceTree = "<group>"; };
 		B0B30AFB1C3A68E7000AA90B /* TFCollectionOverlayProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFCollectionOverlayProgressView.h; sourceTree = "<group>"; };
@@ -225,7 +224,8 @@
 		B0F80A251C3B5D05000DD3FE /* TFLibraryCameraCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFLibraryCameraCollectionViewCell.h; sourceTree = "<group>"; };
 		B0F80A261C3B5D05000DD3FE /* TFLibraryCameraCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFLibraryCameraCollectionViewCell.m; sourceTree = "<group>"; };
 		B36250858EA58B0E345BDD17 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		C4C5C65E1CEEA36500B94AD9 /* TFPhotoBrowserLocalizations.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = TFPhotoBrowserLocalizations.bundle; sourceTree = "<group>"; };
+		C4C5C6611CEEBBED00B94AD9 /* TFLibraryResource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = TFLibraryResource.bundle; sourceTree = "<group>"; };
+		C4C5C6621CEEBBED00B94AD9 /* TFPhotoBrowserLocalizations.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = TFPhotoBrowserLocalizations.bundle; sourceTree = "<group>"; };
 		DED5ADB9B81503523C045BA3 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -372,6 +372,7 @@
 		B06A14891B903AEB0022BCE5 /* TFPhotoBrowser */ = {
 			isa = PBXGroup;
 			children = (
+				C4C5C6601CEEBBED00B94AD9 /* Resources */,
 				6CF2BD521C6193C4009AF2C1 /* TFImageEditor */,
 				B06A14921B904AEE0022BCE5 /* TFPhotoBrowserConstants.h */,
 				B06A14961B904B350022BCE5 /* TFPhotoProtocol.h */,
@@ -403,8 +404,6 @@
 				B0689C271BF7081A00C46CCA /* UIScrollView+ScrollIndicator.m */,
 				B093BCF51BFC1C2D00754A2D /* TFPhotoCaptionView.h */,
 				B093BCF61BFC1C2D00754A2D /* TFPhotoCaptionView.m */,
-				B0B30AF61C3A45DA000AA90B /* TFLibraryResource.bundle */,
-				C4C5C65E1CEEA36500B94AD9 /* TFPhotoBrowserLocalizations.bundle */,
 			);
 			path = TFPhotoBrowser;
 			sourceTree = "<group>";
@@ -482,6 +481,15 @@
 				B0D8F8651C7313F4000778EE /* TFCollectionViewFloatingHeaderFlowLayout.m */,
 			);
 			name = Views;
+			sourceTree = "<group>";
+		};
+		C4C5C6601CEEBBED00B94AD9 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C4C5C6611CEEBBED00B94AD9 /* TFLibraryResource.bundle */,
+				C4C5C6621CEEBBED00B94AD9 /* TFPhotoBrowserLocalizations.bundle */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		CED89CBE8042308A1B7DF0F6 /* Frameworks */ = {
@@ -606,25 +614,25 @@
 				B08EDBF51BFC2ADB00DE1688 /* photo9.jpg in Resources */,
 				B04C0B5D1BF5D3080012B7D8 /* photo1.jpg in Resources */,
 				B04C0B6B1BF5D3080012B7D8 /* photo8.jpg in Resources */,
+				C4C5C6641CEEBBED00B94AD9 /* TFPhotoBrowserLocalizations.bundle in Resources */,
 				B04C0B5F1BF5D3080012B7D8 /* photo2.jpg in Resources */,
 				B06A14661B9039810022BCE5 /* LaunchScreen.storyboard in Resources */,
 				B06A14631B9039810022BCE5 /* Assets.xcassets in Resources */,
 				B08EDBF61BFC2ADB00DE1688 /* photo9t.jpg in Resources */,
 				B04C0B651BF5D3080012B7D8 /* photo5.jpg in Resources */,
 				B04C0B671BF5D3080012B7D8 /* photo6.jpg in Resources */,
+				C4C5C6631CEEBBED00B94AD9 /* TFLibraryResource.bundle in Resources */,
 				B04C0B661BF5D3080012B7D8 /* photo5t.jpg in Resources */,
 				B06A14611B9039810022BCE5 /* Main.storyboard in Resources */,
 				B04C0B631BF5D3080012B7D8 /* photo4.jpg in Resources */,
 				B04C0B6C1BF5D3080012B7D8 /* photo8t.jpg in Resources */,
 				B04C0B6A1BF5D3080012B7D8 /* photo7t.jpg in Resources */,
-				C4C5C65F1CEEA36500B94AD9 /* TFPhotoBrowserLocalizations.bundle in Resources */,
 				B04C0B681BF5D3080012B7D8 /* photo6t.jpg in Resources */,
 				B04C0B691BF5D3080012B7D8 /* photo7.jpg in Resources */,
 				B04C0B5E1BF5D3080012B7D8 /* photo1t.jpg in Resources */,
 				B04C0B641BF5D3080012B7D8 /* photo4t.jpg in Resources */,
 				B04C0B621BF5D3080012B7D8 /* photo3t.jpg in Resources */,
 				B04C0B611BF5D3080012B7D8 /* photo3.jpg in Resources */,
-				B0B30AF71C3A45DA000AA90B /* TFLibraryResource.bundle in Resources */,
 				B04C0B601BF5D3080012B7D8 /* photo2t.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
