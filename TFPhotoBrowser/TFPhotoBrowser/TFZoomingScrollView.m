@@ -617,7 +617,7 @@ static const CGFloat TFMotionViewRotationFactor = 4.0f;
     [popover setSizeOnImage:sizeOnImage];
     if (!popover.text.length) {
 //        [popover becomeFirstResponder];
-        popover.text = NSLocalizedString(@"这是谁?", nil);
+        popover.text = NSLocalizedString(@"This is?", nil);
     }
 }
 

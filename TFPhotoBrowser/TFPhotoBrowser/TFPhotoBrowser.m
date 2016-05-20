@@ -238,9 +238,9 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
         current = [[dic objectForKey:@"current"] integerValue];
     }
     
-    _doneButton = [[UIBarButtonItem alloc]initWithTitle:[NSString stringWithFormat:@"完成%@/%@",@(current),@(total)] style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonPressed:)];
+    _doneButton = [[UIBarButtonItem alloc]initWithTitle:[NSString stringWithFormat:@"%@%@/%@",TFPhotoBrowserLocalizedStrings(@"Done"),@(current),@(total)] style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonPressed:)];
     
-    _backButton = [[UIBarButtonItem alloc]initWithTitle:NSLocalizedString(@"返回", nil) style:UIBarButtonItemStyleDone target:self action:@selector(backButtonPressed:)];
+    _backButton = [[UIBarButtonItem alloc]initWithTitle:TFPhotoBrowserLocalizedStrings(@"Back") style:UIBarButtonItemStyleDone target:self action:@selector(backButtonPressed:)];
     
     // Toolbar Items
     if (self.displayActionButton) {
@@ -826,8 +826,7 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     // Reset
     _currentPageIndex = indexPriorToLayout;
     _performingLayout = NO;
-    
-    
+
 }
 
 #pragma mark - Rotation
@@ -1015,9 +1014,7 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     if (page) {
         // If page is current page then initiate loading of previous and next pages
         [page displayImage];
-//        if (_tagOnView) {
-//            [self configurePageTag:_currentPageIndex];
-//        }
+        
         NSArray *array = nil;
         if (self.delegate && [self.delegate respondsToSelector:@selector(photoBrowser:tagInfosAtIndex:)]) {
             array = [self.delegate photoBrowser:self tagInfosAtIndex:_currentPageIndex];
@@ -1036,10 +1033,10 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
                 
             }
             [self configurePageTag:_currentPageIndex];
-            
         }
-
         
+//        if (_tagOnView) {
+//        }
         NSUInteger pageIndex = page.index;
         if (_currentPageIndex == pageIndex) {
             if (pageIndex > 0) {
@@ -1077,8 +1074,11 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
             [page displayImage];
             
 //            if (_tagOnView) {
+//            NSMutableArray *array_old = [_tagInfos objectAtIndex:_currentPageIndex];
+//            if (!([array_old isKindOfClass:[NSNull class]] || [array_old count] <=0)) {
 //                [self configurePageTag:_currentPageIndex];
 //            }
+            //            }
             
             [self loadAdjacentPhotosIfNecessary:photo];
         } else {
@@ -1543,7 +1543,7 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
         NSInteger total = [[dic objectForKey:@"total"] integerValue];
         NSInteger current = [[dic objectForKey:@"current"] integerValue];
         if (_doneButton) {
-            [_doneButton setTitle:[NSString stringWithFormat:@"完成%@/%@",@(current),@(total)]];
+            [_doneButton setTitle:[NSString stringWithFormat:@"%@%@/%@",TFPhotoBrowserLocalizedStrings(@"Done"),@(current),@(total)]];
         }
     }
 }
@@ -1855,22 +1855,27 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
                         CGFloat height = offsetY + model.tagRect.origin.y;
                         
                         
-                        CGPoint faceCenter = CGPointMake(model.tagRect.origin.x + model.tagRect.size.width / 2, model.tagRect.origin.y);
+                        CGPoint faceCenter = CGPointMake(model.tagRect.origin.x, model.tagRect.origin.y);
                         
                         
                         CGPoint pointOnView = [self.view convertPoint:faceCenter fromView:imageView];
+                        
+                        CGFloat scaleNum = imageView.frame .size.width/imageView.image.size.width;
+                        CGRect tagViewFrame = CGRectMake(model.tagRect.origin.x*scaleNum, model.tagRect.origin.y*scaleNum, model.tagRect.size.width*scaleNum, model.tagRect.size.height*scaleNum);
+                        
                         CGPoint normalizedPoint = [[self pageDisplayedAtIndex:_currentPageIndex] normalizedPositionForPoint:pointOnView];
                         dispatch_main_sync_safe(^{
                             CGFloat scaleW = imageView.image.size.width  / self.view.frame.size.width;
                             NSLog(@"image.size.width = %@, image.size.height = %@",@(imageView.image.size.width),@(imageView.image.size.height));
-                            TFPhotoTagView *tagView = [[TFPhotoTagView alloc] initWithDelegate:self frame:CGRectMake(0, 0, model.tagRect.size.width / 2/scaleW,  model.tagRect.size.height  / 2/scaleW + 40)];
+//                            TFPhotoTagView *tagView = [[TFPhotoTagView alloc] initWithDelegate:self frame:CGRectMake(0, 0, model.tagRect.size.width / 2/scaleW,  model.tagRect.size.height  / 2/scaleW + 40)];
+                            TFPhotoTagView *tagView = [[TFPhotoTagView alloc] initWithDelegate:self frame:tagViewFrame];
                             tagView.faceId = model.faceId;
                             NSLog(@"pointOnView = %@, normalizedPoint = %@",NSStringFromCGPoint(pointOnView),NSStringFromCGPoint(normalizedPoint) );
 
-                            if (normalizedPoint.x <0 ||normalizedPoint.y < 0 || normalizedPoint.x > 1 || normalizedPoint.y > 1) {
-                                NSLog(@"Point is outside of photo.");
-                                return ;
-                            }
+//                            if (normalizedPoint.x <0 ||normalizedPoint.y < 0 || normalizedPoint.x > 1 || normalizedPoint.y > 1) {
+//                                NSLog(@"Point is outside of photo.");
+//                                return ;
+//                            }
                             if (model.tagName.length) {
                                 [tagView setText:model.tagName];
                             }

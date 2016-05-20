@@ -19,3 +19,8 @@ UIImage *TFPhotoBrowserImageNamed(NSString *imageName) {
 //    return [UIImage imageNamed:imageName inBundle:TFPhotoBrowserBundle() compatibleWithTraitCollection:nil];
 }
 
+NSString *TFPhotoBrowserLocalizedStrings(NSString *key) {
+    
+    return NSLocalizedStringFromTable((key), @"TFPhotoBrowserLocalString", [NSBundle bundleForClass: self.class]);
+}
+

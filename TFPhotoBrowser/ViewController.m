@@ -22,6 +22,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
     // Do any additional setup after loading the view, typically from a nib.
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     [button setTitle:@"测试相册" forState:UIControlStateNormal];
@@ -51,7 +52,7 @@
     [button setTitle:@"测试相册2" forState:UIControlStateNormal];
     [button setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
     [button addTarget:self action:@selector(onViewClick2:) forControlEvents:UIControlEventTouchUpInside];
-    [button setFrame:CGRectMake(100, 200, 60, 40)];
+    [button setFrame:CGRectMake(100, 200, 120, 40)];
     button.layer.borderWidth = 1;
     [self.view addSubview:button];
     

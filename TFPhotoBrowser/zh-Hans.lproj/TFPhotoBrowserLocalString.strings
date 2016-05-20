@@ -1,0 +1,9 @@
+/* 
+  TFPhotoBrowserLocalString.strings
+  TFPhotoBrowser
+
+  Created by Summer on 16/5/17.
+  Copyright © 2016年 TimeFace. All rights reserved.
+*/
+"Select" = "选择";
+"Select All" = "全选";
