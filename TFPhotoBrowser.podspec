@@ -10,8 +10,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/TimeFaceCoder/TFPhotoBrowser.git"}
   s.source_files  = "TFPhotoBrowser/TFPhotoBrowser/**/*.{h,m,c}"
   s.resource_bundles = {
-    'TFLibraryResource' => ['Pod/Assets/*.png'],
-    'TFPhotoBrowserLocalizations' => ['Pod/TFPhotoBrowserLocalizations.bundle']
+    'TFLibraryResource' => ['Pod/Assets/*.png']
   }
   s.frameworks = 'ImageIO', 'QuartzCore', 'AssetsLibrary', 'MediaPlayer'
   s.weak_frameworks = 'Photos'
