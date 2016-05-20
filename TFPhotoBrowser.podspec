@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
   s.resource_bundles = {
     'TFLibraryResource' => ['Pod/Assets/*.png']
   }
-  s.resource = 'TFPhotoBrowserLocalizations.bundle's
+  s.resource = 'TFPhotoBrowserLocalizations.bundle'
   s.frameworks = 'ImageIO', 'QuartzCore', 'AssetsLibrary', 'MediaPlayer'
   s.weak_frameworks = 'Photos'
   s.requires_arc = true
