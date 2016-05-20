@@ -151,7 +151,7 @@
         [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         button.titleLabel.font = [UIFont systemFontOfSize:18];
         [button setTitle:TFPhotoBrowserLocalizedStrings(@"Open settings") forState:UIControlStateNormal];
-        CGFloat buttonWidth = 100;
+        CGFloat buttonWidth = 120;
         CGFloat buttonHeight = 30;
         CGFloat buttonLeft = (self.view.frame.size.width - buttonWidth) / 2;
         CGFloat buttonTop = label.frame.origin.y + label.frame.size.height + 10;

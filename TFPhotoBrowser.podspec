@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.social_media_url   = "http://www.timeface.cn"
   s.ios.deployment_target = "7.1"
   s.source       = { :git => "https://github.com/TimeFaceCoder/TFPhotoBrowser.git"}
-  s.source_files  = "TFPhotoBrowser/TFPhotoBrowser/**/*.{h,m,c}”
+  s.source_files  = "TFPhotoBrowser/TFPhotoBrowser/**/*.{h,m,c}"
   s.resource_bundles = {
     'TFLibraryResource' => ['Pod/Assets/*.png']
   }
