@@ -749,28 +749,31 @@
     NSIndexPath *path = (NSIndexPath*)[userInfo objectForKey:@"indexPath"];
     UIButton *selectedAllBtn = (UIButton *)[userInfo objectForKey:@"button"];
     BOOL state = selectedAllBtn.selected;
+    selectedAllBtn.selected = !selectedAllBtn.selected;
     PHAssetCollection *collection = _moments[path.section];
     PHFetchResult *fetchResult = [self _assetsForMoment:collection];
     NSMutableArray *array = [NSMutableArray array];
+    NSInteger addAssetCount = 0;
+    NSInteger orginalCount = _selectedAssets.count;
     for (PHAsset *asset in fetchResult) {
         if (state) {
-            selectedAllBtn.selected = !selectedAllBtn.selected;
             if ([_selectedAssets containsObject:asset]) {
                 [self deselectAsset:asset];
             }
         }else {
             [array addObject:asset];
             if (![_selectedAssets containsObject:asset]) {
-                if ([_selectedAssets count] < _maxSelectedCount) {
-                    selectedAllBtn.selected = !selectedAllBtn.selected;
-                }
                 [self selectAsset:asset];
-
+                addAssetCount ++;
             }
            
         }
         
     }
+    if (addAssetCount + orginalCount > _maxSelectedCount && state==NO) {
+        selectedAllBtn.selected = NO;
+    }
+   
     if (self.delegate && [self.delegate respondsToSelector:@selector(imagePickerController:didSelectedPickingAssets:)]) {
         [self.delegate imagePickerController:self didSelectedPickingAssets:array];
     }
