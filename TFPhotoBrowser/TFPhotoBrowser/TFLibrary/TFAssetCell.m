@@ -9,7 +9,7 @@
 #import "TFAssetCell.h"
 #import "TFAssetImageView.h"
 
-NS_ASSUME_NONNULL_BEGIN
+//NS_ASSUME_NONNULL_BEGIN
 
 @interface TFAssetCell ()
 
@@ -65,12 +65,12 @@ const static CGFloat kPadding = 8.0f;
 - (void)setAssetSelected:(BOOL)assetSelected {
     _assetSelected = assetSelected;
     _selectedBadgeButton.selected = _assetSelected;
-        if (assetSelected) {
-            self.imageView.alpha = 0.8;
-        }
-        else {
-            self.imageView.alpha = 1.0;
-        }
+    if (assetSelected) {
+        self.imageView.alpha = 0.8;
+    }
+    else {
+        self.imageView.alpha = 1.0;
+    }
     [self _updateAccessibility];
 }
 
@@ -81,7 +81,7 @@ const static CGFloat kPadding = 8.0f;
 }
 
 - (void)_init {
-   
+    
     //添加subview
     [self.contentView addSubview:self.imageView];
     [self.contentView addSubview:self.selectedBadgeButton];
@@ -94,7 +94,7 @@ const static CGFloat kPadding = 8.0f;
     
     [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[selectedBadgeButton]-5-|" options:0 metrics:nil views:viewsDic]];
     [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[selectedBadgeButton]-5-|" options:0 metrics:nil views:viewsDic]];
-
+    
 }
 
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
@@ -145,6 +145,13 @@ const static CGFloat kPadding = 8.0f;
     });
 }
 
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+    if (CGRectContainsPoint(UIEdgeInsetsInsetRect(_selectedBadgeButton.frame,UIEdgeInsetsMake(-20, -20, 0, 0)), point)) {
+        return _selectedBadgeButton;
+    }
+    return [super hitTest:point withEvent:event];
+}
+
 @end
 
-NS_ASSUME_NONNULL_END
+//NS_ASSUME_NONNULL_END
