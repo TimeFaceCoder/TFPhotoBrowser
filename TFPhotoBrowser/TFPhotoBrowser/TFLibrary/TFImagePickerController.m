@@ -562,7 +562,7 @@
         // create an asset and add it to the library
         NSArray *images = [[UIPasteboard generalPasteboard] images];
         
-        [self _addImages:images];
+        [self addImages:images];
     }
     
     [self _updateToolbarItems:YES];
@@ -654,7 +654,7 @@
     [self presentViewController:navigationController animated:YES completion:nil];
 }
 
-- (void)_addImages:(NSArray<UIImage *> *)images {
+- (void)addImages:(NSArray<UIImage *> *)images {
     NSMutableArray *localIdentifiers = [NSMutableArray new];
     
     [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
@@ -684,7 +684,7 @@
     }];
 }
 
-- (void)_addVideos:(NSArray<NSURL *> *)videos {
+- (void)addVideos:(NSArray<NSURL *> *)videos {
     NSMutableArray *localIdentifiers = [NSMutableArray new];
     
     [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
@@ -1166,9 +1166,9 @@
     NSURL *videoURL = info[UIImagePickerControllerMediaURL];
     
     if (image != nil) {
-        [self _addImages:@[image]];
+        [self addImages:@[image]];
     } else if (videoURL != nil) {
-        [self _addVideos:@[videoURL]];
+        [self addVideos:@[videoURL]];
     }
     
     

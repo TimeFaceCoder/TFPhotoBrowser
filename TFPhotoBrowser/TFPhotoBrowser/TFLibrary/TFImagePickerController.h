@@ -103,6 +103,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSArray<PHAsset *> *selectedAssets;
 - (void)selectAsset:(PHAsset *)asset;
 - (void)deselectAsset:(PHAsset *)asset;
+- (void)addImages:(NSArray<UIImage *> *)images;
+- (void)addVideos:(NSArray<NSURL *> *)videos;
 @end
 
 NS_ASSUME_NONNULL_END
