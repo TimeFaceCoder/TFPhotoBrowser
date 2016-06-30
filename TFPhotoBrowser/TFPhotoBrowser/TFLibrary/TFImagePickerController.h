@@ -90,6 +90,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign, readonly) BOOL      showScanButton;
 
+@property (nonatomic, assign) NSTimeInterval videoMaximumDuration; // default value is 10 minutes.
+
 /** The asset collection the picker will display to the user.
  
  The user can change this, but you can set this as a default. nil (the default) will cause the picker to display the user's moments.

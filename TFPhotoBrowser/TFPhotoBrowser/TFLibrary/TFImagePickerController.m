@@ -520,6 +520,7 @@
     imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
     imagePicker.delegate = self;
     imagePicker.mediaTypes = self.mediaTypes;
+    imagePicker.videoMaximumDuration = self.videoMaximumDuration ? : 60 * 10.f;
     
     UIViewController *viewController = imagePicker;
     if ([self.delegate respondsToSelector:@selector(imagePickerController:willDisplayCameraViewController:)]) {
