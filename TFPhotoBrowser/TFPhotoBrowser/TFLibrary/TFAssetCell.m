@@ -8,7 +8,8 @@
 
 #import "TFAssetCell.h"
 #import "TFAssetImageView.h"
-
+#import "TFiCloudDownloadHelper.h"
+#import "SVProgressHUD.h"
 //NS_ASSUME_NONNULL_BEGIN
 
 @interface TFAssetCell ()
@@ -17,6 +18,9 @@
 
 @property (nonatomic, strong) UIButton *selectedBadgeButton;
 
+@property (assign, nonatomic) BOOL assetIsInLocalAblum;
+
+@property (strong, nonatomic) UIButton *progressView;
 @end
 
 const static CGFloat kPadding = 8.0f;
@@ -52,11 +56,44 @@ const static CGFloat kPadding = 8.0f;
     return _selectedBadgeButton;
 }
 
+- (UIButton *)progressView {
+    if (!_progressView) {
+        _progressView = [UIButton buttonWithType:UIButtonTypeCustom];
+        _progressView.backgroundColor = [UIColor redColor];
+        [_progressView setTitle:@"0" forState:UIControlStateNormal];
+        _progressView.titleLabel.font = [UIFont systemFontOfSize:10];
+        [_progressView addTarget:self
+                                 action:@selector(actionForProgressView:)
+                       forControlEvents:UIControlEventTouchUpInside];
+        _progressView.translatesAutoresizingMaskIntoConstraints = NO;
+    }
+    return _progressView;
+}
+
 - (void)setAsset:(nullable PHAsset *)asset {
     self.imageView.asset = asset;
     
+    self.assetIsInLocalAblum = [self _qualityImageInLocalWithPHAsset:asset];
+    
+    if (self.assetIsInLocalAblum) {
+        self.progressView.hidden = YES;
+        self.selectedBadgeButton.hidden = NO;
+    }
+    else {
+        [self.progressView setTitle:@"0" forState:UIControlStateNormal];
+        self.progressView.hidden= NO;
+        self.selectedBadgeButton.hidden = YES;
+    }
+    
     [self _updateAccessibility];
 }
+
+//- (void)trackProgress:(CGFloat)progress {
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//       [self.progressView setTitle:[NSString stringWithFormat:@"%.2f", progress]
+//                          forState:UIControlStateNormal];
+//    });
+//}
 
 - (nullable PHAsset *)asset {
     return self.imageView.asset;
@@ -85,16 +122,42 @@ const static CGFloat kPadding = 8.0f;
     //添加subview
     [self.contentView addSubview:self.imageView];
     [self.contentView addSubview:self.selectedBadgeButton];
+    [self.contentView addSubview:self.progressView];
     self.isAccessibilityElement = YES;
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didDownloadQualityImage) name:@"TFdownloadCompletion" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadingQualityImage:) name:@"TFiCloudDownloading" object:nil];
+    
     //添加约束
-    NSDictionary *viewsDic = @{@"imageView":self.imageView,@"selectedBadgeButton":self.selectedBadgeButton};
+    NSDictionary *viewsDic = @{@"imageView":self.imageView,@"selectedBadgeButton":self.selectedBadgeButton,@"progressView" : self.progressView};
     [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[imageView]-0-|" options:0 metrics:nil views:viewsDic]];
     [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[imageView]-0-|" options:0 metrics:nil views:viewsDic]];
     
     [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[selectedBadgeButton]-5-|" options:0 metrics:nil views:viewsDic]];
     [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[selectedBadgeButton]-5-|" options:0 metrics:nil views:viewsDic]];
     
+    [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[progressView]-5-|" options:0 metrics:nil views:viewsDic]];
+    [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[progressView]-5-|" options:0 metrics:nil views:viewsDic]];
+    
+}
+
+- (void)downloadingQualityImage:(NSNotification *)notification {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([[TFiCloudDownloadHelper sharedHelper].asset isEqual:self.asset]) {
+            [self.progressView setTitle:[NSString stringWithFormat:@"%.02f", [notification.object floatValue]]
+                                                        forState:UIControlStateNormal];
+        }
+    });
+}
+
+- (void)didDownloadQualityImage {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([[TFiCloudDownloadHelper sharedHelper].asset isEqual:self.asset]) {
+            self.progressView.hidden = YES;
+            self.selectedBadgeButton.hidden = NO;
+//            [self actionForSelecteButton:nil];
+        }
+    });
 }
 
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
@@ -111,6 +174,13 @@ const static CGFloat kPadding = 8.0f;
         [self _init];
     }
     return self;
+}
+
+- (void)actionForProgressView:(id)sender {
+    if (self.tfAssetCellDelegate && [self.tfAssetCellDelegate respondsToSelector:@selector(assetCellView:didDownloadAtIndexPath:)]) {
+        [self.tfAssetCellDelegate assetCellView:self didDownloadAtIndexPath:self.indexPath];
+    }
+ 
 }
 
 - (void)actionForSelecteButton:(id)sender {
@@ -145,12 +215,27 @@ const static CGFloat kPadding = 8.0f;
     });
 }
 
-- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
-    if (CGRectContainsPoint(UIEdgeInsetsInsetRect(_selectedBadgeButton.frame,UIEdgeInsetsMake(-20, -20, 0, 0)), point)) {
-        return _selectedBadgeButton;
-    }
-    return [super hitTest:point withEvent:event];
+#pragma mark - Tool
+- (BOOL)_qualityImageInLocalWithPHAsset:(PHAsset *)phAsset {
+    PHImageRequestOptions *option = [[PHImageRequestOptions alloc] init];
+    option.networkAccessAllowed = NO;
+    option.synchronous = YES;
+    
+    __block BOOL isInLocalAblum = YES;
+    
+    [[PHCachingImageManager defaultManager] requestImageDataForAsset:phAsset options:option resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
+        isInLocalAblum = imageData ? YES : NO;
+    }];
+    return isInLocalAblum;
 }
+
+
+//- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+//    if (CGRectContainsPoint(UIEdgeInsetsInsetRect(_selectedBadgeButton.frame,UIEdgeInsetsMake(-20, -20, 0, 0)), point)) {
+//        return _selectedBadgeButton;
+//    }
+//    return [super hitTest:point withEvent:event];
+//}
 
 @end
 

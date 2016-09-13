@@ -23,10 +23,12 @@ typedef NS_ENUM(NSInteger, TFAssetCellClickType){
     TFAssetCellClickTypeSelect         =    1,
 };
 
-
+@class TFAssetCell;
 @protocol TFAssetCellDelegate <NSObject>
 
 - (void)assetCellViewClick:(TFAssetCellClickType)type indexPath:(NSIndexPath*)indexPath;
+
+- (void)assetCellView:(TFAssetCell *)cell didDownloadAtIndexPath:(NSIndexPath *)indexPath;
 
 @end
 
@@ -38,6 +40,10 @@ typedef NS_ENUM(NSInteger, TFAssetCellClickType){
 @property (nonatomic) BOOL assetSelected;
 @property (nonatomic, strong, readonly) UIButton *selectedBadgeButton;
 @property (nonatomic, strong) NSIndexPath  *indexPath;
+@property (assign, nonatomic, readonly) BOOL assetIsInLocalAblum;
+
+
+
 
 @end
 

@@ -22,6 +22,7 @@
 #import "NSDate+TFFormattedDay.h"
 #import <SVProgressHUD/SVProgressHUD.h>
 #import "TFPhotoBrowser.h"
+#import "TFiCloudDownloadHelper.h"
 
 #define TFObjectSpacing 2.0
 
@@ -44,6 +45,8 @@
     NSArray *_headerModelsArr;
     UIColor *_headerBackColor;
     UIColor *_headerTitleColor;
+    
+    __block BOOL _loadingQualityImage;
 }
 
 @end
@@ -957,6 +960,10 @@
 //    if (_showAllSelectButton) {
 //        [self updateHeaderView:indexPath];
 //    }
+    TFAssetCell *cell = (TFAssetCell *)[collectionView cellForItemAtIndexPath:indexPath];
+    if (!cell.assetIsInLocalAblum) {
+        return;
+    }
     
     if (indexPath != nil) {
         TFPhotoBrowser *photoBrowser = [[TFPhotoBrowser alloc] initWithDelegate:self];
@@ -986,11 +993,75 @@
     [self.collectionView setContentOffset:contentOffset animated:animated];
 }
 
+- (BOOL)_qualityImageInLocalWithPHAsset:(PHAsset *)phAsset {
+    PHImageRequestOptions *option = [[PHImageRequestOptions alloc] init];
+    option.networkAccessAllowed = NO;
+    option.synchronous = YES;
+    
+    __block BOOL isInLocalAblum = YES;
+    
+    [[PHCachingImageManager defaultManager] requestImageDataForAsset:phAsset options:option resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
+        isInLocalAblum = imageData ? YES : NO;
+    }];
+    return isInLocalAblum;
+}
+
+- (void)_downloadQualityImageWithPHAsset:(PHAsset *)phAsset cell:(TFAssetCell *)cell {
+//    _loadingQualityImage = YES;
+//    
+//    PHImageManager *imageManager = [PHImageManager defaultManager];
+//    
+//    PHImageRequestOptions *options = [PHImageRequestOptions new];
+//    options.networkAccessAllowed = YES;
+//    options.resizeMode = PHImageRequestOptionsResizeModeFast;
+//    options.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat;
+//    options.synchronous = false;
+//    options.progressHandler = ^(double progress, NSError *error, BOOL *stop, NSDictionary *info) {
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//             [cell trackProgress:progress];
+//        });
+//    };
+//    
+//    __weak typeof(self) weakself = self;
+//    [imageManager requestImageForAsset:phAsset
+//                            targetSize:CGSizeMake(phAsset.pixelWidth, phAsset.pixelHeight)
+//                           contentMode:PHImageContentModeAspectFit
+//                               options:options
+//                         resultHandler:^(UIImage *result, NSDictionary *info) {
+//                             __strong typeof(weakself) self = weakself;
+//                               dispatch_async(dispatch_get_main_queue(), ^{
+////                                   [[NSNotificationCenter defaultCenter] postNotificationName:@"TFdownloadCompletion" object:nil];
+//                                   [cell didDownloadQualityImage];
+//                                    self->_loadingQualityImage = NO;
+//                               });
+//                           }];
+}
+
 #pragma mark - TFAssetCellDelegate
+
+- (void)assetCellView:(TFAssetCell *)cell didDownloadAtIndexPath:(NSIndexPath *)indexPath {
+    TFiCloudDownloadHelper *helper = [TFiCloudDownloadHelper sharedHelper];
+    
+    if (helper.loading) {
+        [SVProgressHUD showInfoWithStatus:@"下载任务进行中，请稍候!"];
+        return;
+    }
+    
+    [helper startDownLoadWithAsset:cell.asset
+                   progressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
+                       dispatch_async(dispatch_get_main_queue(), ^{
+                           NSNumber *progressNumber = @(progress);
+                           [[NSNotificationCenter defaultCenter] postNotificationName:@"TFiCloudDownloading" object:progressNumber];
+                       });
+                   } finined:^{
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            [[NSNotificationCenter defaultCenter] postNotificationName:@"TFdownloadCompletion" object:nil];
+                        });
+                   }];
+}
 
 - (void)assetCellViewClick:(TFAssetCellClickType)type indexPath:(NSIndexPath *)indexPath {
     PHAsset *asset = [self _assetAtIndexPath:indexPath];
-    
     if ([_selectedAssets containsObject:asset]) {
         [self deselectAsset:asset];
     } else {
