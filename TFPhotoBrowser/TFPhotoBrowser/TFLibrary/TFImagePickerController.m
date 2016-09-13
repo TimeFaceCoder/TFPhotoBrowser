@@ -962,6 +962,8 @@
 //    }
     TFAssetCell *cell = (TFAssetCell *)[collectionView cellForItemAtIndexPath:indexPath];
     if (!cell.assetIsInLocalAblum) {
+        // 进行下载
+        [self assetCellView:cell didDownloadAtIndexPath:indexPath];
         return;
     }
     
@@ -993,50 +995,6 @@
     [self.collectionView setContentOffset:contentOffset animated:animated];
 }
 
-- (BOOL)_qualityImageInLocalWithPHAsset:(PHAsset *)phAsset {
-    PHImageRequestOptions *option = [[PHImageRequestOptions alloc] init];
-    option.networkAccessAllowed = NO;
-    option.synchronous = YES;
-    
-    __block BOOL isInLocalAblum = YES;
-    
-    [[PHCachingImageManager defaultManager] requestImageDataForAsset:phAsset options:option resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
-        isInLocalAblum = imageData ? YES : NO;
-    }];
-    return isInLocalAblum;
-}
-
-- (void)_downloadQualityImageWithPHAsset:(PHAsset *)phAsset cell:(TFAssetCell *)cell {
-//    _loadingQualityImage = YES;
-//    
-//    PHImageManager *imageManager = [PHImageManager defaultManager];
-//    
-//    PHImageRequestOptions *options = [PHImageRequestOptions new];
-//    options.networkAccessAllowed = YES;
-//    options.resizeMode = PHImageRequestOptionsResizeModeFast;
-//    options.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat;
-//    options.synchronous = false;
-//    options.progressHandler = ^(double progress, NSError *error, BOOL *stop, NSDictionary *info) {
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//             [cell trackProgress:progress];
-//        });
-//    };
-//    
-//    __weak typeof(self) weakself = self;
-//    [imageManager requestImageForAsset:phAsset
-//                            targetSize:CGSizeMake(phAsset.pixelWidth, phAsset.pixelHeight)
-//                           contentMode:PHImageContentModeAspectFit
-//                               options:options
-//                         resultHandler:^(UIImage *result, NSDictionary *info) {
-//                             __strong typeof(weakself) self = weakself;
-//                               dispatch_async(dispatch_get_main_queue(), ^{
-////                                   [[NSNotificationCenter defaultCenter] postNotificationName:@"TFdownloadCompletion" object:nil];
-//                                   [cell didDownloadQualityImage];
-//                                    self->_loadingQualityImage = NO;
-//                               });
-//                           }];
-}
-
 #pragma mark - TFAssetCellDelegate
 
 - (void)assetCellView:(TFAssetCell *)cell didDownloadAtIndexPath:(NSIndexPath *)indexPath {
@@ -1050,6 +1008,7 @@
     [helper startDownLoadWithAsset:cell.asset
                    progressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
                        dispatch_async(dispatch_get_main_queue(), ^{
+                           NSLog(@"%lf", progress);
                            NSNumber *progressNumber = @(progress);
                            [[NSNotificationCenter defaultCenter] postNotificationName:@"TFiCloudDownloading" object:progressNumber];
                        });

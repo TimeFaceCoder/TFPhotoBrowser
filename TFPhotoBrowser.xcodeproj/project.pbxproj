@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		3AAB0EAD616F3302486DDD59 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B36250858EA58B0E345BDD17 /* libPods.a */; };
+		6502B2B51D8846C3000EC298 /* RMDisplayLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 6502B2B21D8846C3000EC298 /* RMDisplayLabel.m */; };
+		6502B2B61D8846C3000EC298 /* RMDownloadIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 6502B2B41D8846C3000EC298 /* RMDownloadIndicator.m */; };
 		6CFD503A1CA52453003586D5 /* TFPhotoTagView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CFD50391CA52453003586D5 /* TFPhotoTagView.m */; };
 		B0207ACA1C3BABEC0055D0F3 /* TFiCloudDownloadHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = B0207AC91C3BABEC0055D0F3 /* TFiCloudDownloadHelper.m */; };
 		B02CE3161C22D2C7005D6E62 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B02CE3151C22D2C7005D6E62 /* Photos.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -98,6 +100,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6502B2B11D8846C3000EC298 /* RMDisplayLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMDisplayLabel.h; sourceTree = "<group>"; };
+		6502B2B21D8846C3000EC298 /* RMDisplayLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMDisplayLabel.m; sourceTree = "<group>"; };
+		6502B2B31D8846C3000EC298 /* RMDownloadIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMDownloadIndicator.h; sourceTree = "<group>"; };
+		6502B2B41D8846C3000EC298 /* RMDownloadIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMDownloadIndicator.m; sourceTree = "<group>"; };
 		6CF2BD531C6193C4009AF2C1 /* TFImageCropViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFImageCropViewController.h; sourceTree = "<group>"; };
 		6CF2BD541C6193C4009AF2C1 /* TFImageCropViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFImageCropViewController.m; sourceTree = "<group>"; };
 		6CF2BD551C6193C4009AF2C1 /* TFImageEditorFrameView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFImageEditorFrameView.h; sourceTree = "<group>"; };
@@ -465,6 +471,10 @@
 		B0D8F84E1C730C41000778EE /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				6502B2B11D8846C3000EC298 /* RMDisplayLabel.h */,
+				6502B2B21D8846C3000EC298 /* RMDisplayLabel.m */,
+				6502B2B31D8846C3000EC298 /* RMDownloadIndicator.h */,
+				6502B2B41D8846C3000EC298 /* RMDownloadIndicator.m */,
 				B0D8F84F1C730C54000778EE /* TFAssetImageView.h */,
 				B0D8F8501C730C54000778EE /* TFAssetImageView.m */,
 				B0D8F8551C730E36000778EE /* TFAssetCell.h */,
@@ -710,6 +720,7 @@
 				B0D8F8541C730CD5000778EE /* TFPhotoBrowserBundle.m in Sources */,
 				B0D8F8661C7313F4000778EE /* TFCollectionViewFloatingHeaderFlowLayout.m in Sources */,
 				B0D8F8471C730809000778EE /* UIImage+TFAspectDraw.m in Sources */,
+				6502B2B61D8846C3000EC298 /* RMDownloadIndicator.m in Sources */,
 				B0207ACA1C3BABEC0055D0F3 /* TFiCloudDownloadHelper.m in Sources */,
 				B0D8F86F1C731645000778EE /* TFImagePickerController.m in Sources */,
 				B0D8F83D1C730267000778EE /* TFCollectionsTitleButton.m in Sources */,
@@ -722,6 +733,7 @@
 				B0420DB71B953FE2002CAF13 /* TFZoomingScrollView.m in Sources */,
 				B0D8F8391C71B94B000778EE /* TFImageCropViewController.m in Sources */,
 				B0B30AF51C3A43E8000AA90B /* TFLibraryCollectionOverlayView.m in Sources */,
+				6502B2B51D8846C3000EC298 /* RMDisplayLabel.m in Sources */,
 				B06A145E1B9039810022BCE5 /* ViewController.m in Sources */,
 				B06A14531B9039810022BCE5 /* AppDelegate.m in Sources */,
 				B02CE3241C22D5B0005D6E62 /* UICollectionView+TFLibrary.m in Sources */,
