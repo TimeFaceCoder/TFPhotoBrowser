@@ -21,6 +21,8 @@
 #import "TFiCloudDownloadHelper.h"
 #import "TFPhotoBrowserBundle.h"
 
+NSString * const FLibraryViewControllerImageTypeJPEG = @"JPEG";
+NSString * const FLibraryViewControllerImageTypePNG = @"PNG";
 
 static NSString * const kTFLCollectionIdentifier        = @"kTFLCollectionIdentifier";
 static NSString * const kTFLCollectionCameraIdentifier  = @"kTFLCollectionCameraIdentifier";
@@ -144,7 +146,9 @@ static CGSize AssetGridThumbnailSize;
         for (PHAsset *asset in weakSelf.assetsFetchResults) {
             if (asset.mediaType == PHAssetMediaTypeImage) {
                 TFAsset *tfAsset = [TFAsset assetFromPH:asset];
-                [_items addObject:tfAsset];
+                if ([self fliterWithAsset:tfAsset]) {
+                    [_items addObject:tfAsset];
+                }
             }
         }
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -156,6 +160,18 @@ static CGSize AssetGridThumbnailSize;
     
     
 }
+
+- (BOOL)fliterWithAsset:(TFAsset *)asset {
+    for (NSString *imageType in self.filterImageTypes) {
+        NSString *propertyName = [@"is" stringByAppendingString:imageType];
+        if ([asset valueForKey:propertyName]) {
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];

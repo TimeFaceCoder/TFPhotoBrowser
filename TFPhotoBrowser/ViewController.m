@@ -79,6 +79,7 @@
     viewController.allowsMultipleSelection = YES;
     viewController.maxSelectedCount = 9;
     viewController.showAllSelectButton = YES;
+    
 //    viewController.showScanButton = YES;
     UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:viewController];
     nc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;

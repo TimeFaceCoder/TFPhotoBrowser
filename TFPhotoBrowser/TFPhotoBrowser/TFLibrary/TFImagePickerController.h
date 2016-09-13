@@ -103,6 +103,12 @@ NS_ASSUME_NONNULL_BEGIN
  Instances are `PHAsset` objects. You can set this to provide default assets to be selected, or read them to see what the user has selected. The order will be roughly the same as the order that the user selected them in.
  */
 @property (nonatomic, copy) NSArray<PHAsset *> *selectedAssets;
+
+/**
+ *  存放不需要被筛掉的图片类型. 默认为nil时，不对图片进行筛选
+ */
+@property (strong, nonatomic) NSArray *filterImageTypes;
+
 - (void)selectAsset:(PHAsset *)asset;
 - (void)deselectAsset:(PHAsset *)asset;
 - (void)addImages:(NSArray<UIImage *> *)images;
