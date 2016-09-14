@@ -1001,7 +1001,7 @@
     TFiCloudDownloadHelper *helper = [TFiCloudDownloadHelper sharedHelper];
     
     if (helper.loading) {
-        [SVProgressHUD showInfoWithStatus:@"下载任务进行中，请稍候!"];
+        [SVProgressHUD showInfoWithStatus:@"图片正在从iCloud下载，请稍候!"];
         return;
     }
     
@@ -1010,11 +1010,11 @@
                        dispatch_async(dispatch_get_main_queue(), ^{
                            NSLog(@"%lf", progress);
                            NSNumber *progressNumber = @(progress);
-                           [[NSNotificationCenter defaultCenter] postNotificationName:@"TFiCloudDownloading" object:progressNumber];
+                           [[NSNotificationCenter defaultCenter] postNotificationName:TFImagePickeriCloudDownLoading object:progressNumber];
                        });
                    } finined:^{
                         dispatch_async(dispatch_get_main_queue(), ^{
-                            [[NSNotificationCenter defaultCenter] postNotificationName:@"TFdownloadCompletion" object:nil];
+                            [[NSNotificationCenter defaultCenter] postNotificationName:TFImagePickeriCloudDownLoadFinish object:nil];
                         });
                    }];
 }

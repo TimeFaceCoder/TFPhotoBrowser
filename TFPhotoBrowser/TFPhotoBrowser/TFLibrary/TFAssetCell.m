@@ -22,8 +22,6 @@
 
 @property (assign, nonatomic) BOOL assetIsInLocalAblum;
 
-//@property (strong, nonatomic) UIButton *loadImageCoverButton;
-
 @property (strong, nonatomic) RMDownloadIndicator *downloadIndicator;
 @end
 
@@ -60,18 +58,6 @@ const static CGFloat kPadding = 8.0f;
     return _selectedBadgeButton;
 }
 
-//- (UIButton *)loadImageCoverButton {
-//    if (!_loadImageCoverButton) {
-//        _loadImageCoverButton = [UIButton buttonWithType:UIButtonTypeCustom];
-//        _loadImageCoverButton.backgroundColor = [UIColor colorWithWhite:0.7 alpha:0.7];
-//        _loadImageCoverButton.titleLabel.font = [UIFont systemFontOfSize:10];
-//        [_loadImageCoverButton addTarget:self
-//                                 action:@selector(actionForProgressView:)
-//                       forControlEvents:UIControlEventTouchUpInside];
-//        _loadImageCoverButton.translatesAutoresizingMaskIntoConstraints = NO;
-//    }
-//    return _loadImageCoverButton;
-//}
 
 - (RMDownloadIndicator *)downloadIndicator {
     
@@ -137,8 +123,8 @@ const static CGFloat kPadding = 8.0f;
     [self.contentView addSubview:self.downloadIndicator];
     self.isAccessibilityElement = YES;
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didDownloadQualityImage) name:@"TFdownloadCompletion" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadingQualityImage:) name:@"TFiCloudDownloading" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didDownloadQualityImage) name:TFImagePickeriCloudDownLoadFinish object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadingQualityImage:) name:TFImagePickeriCloudDownLoading object:nil];
     
     //添加约束
     NSDictionary *viewsDic = @{@"imageView":self.imageView,@"selectedBadgeButton":self.selectedBadgeButton,@"downloadIndicator" : self.downloadIndicator};
@@ -152,17 +138,12 @@ const static CGFloat kPadding = 8.0f;
     [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[downloadIndicator(24)]-5-|" options:0 metrics:nil views:viewsDic]];
     
     [self.contentView layoutIfNeeded];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//         [self.downloadIndicator loadIndicator];
-    });
     
 }
 
 - (void)downloadingQualityImage:(NSNotification *)notification {
     dispatch_async(dispatch_get_main_queue(), ^{
         if ([[TFiCloudDownloadHelper sharedHelper].asset isEqual:self.asset]) {
-//            [self.progressView setTitle:[NSString stringWithFormat:@"%.02f", [notification.object floatValue]]
-//                                                        forState:UIControlStateNormal];
             [self.downloadIndicator updateWithTotalBytes:100
                                          downloadedBytes:[notification.object floatValue] * 100];
         }
@@ -193,13 +174,6 @@ const static CGFloat kPadding = 8.0f;
         [self _init];
     }
     return self;
-}
-
-- (void)actionForProgressView:(id)sender {
-    if (self.tfAssetCellDelegate && [self.tfAssetCellDelegate respondsToSelector:@selector(assetCellView:didDownloadAtIndexPath:)]) {
-        [self.tfAssetCellDelegate assetCellView:self didDownloadAtIndexPath:self.indexPath];
-    }
- 
 }
 
 - (void)actionForSelecteButton:(id)sender {

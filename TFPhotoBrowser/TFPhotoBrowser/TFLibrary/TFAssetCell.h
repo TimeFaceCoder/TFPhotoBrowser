@@ -12,6 +12,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define TFImagePickeriCloudDownLoading      @"TFImagePickeriCloudDownLoading"
+#define TFImagePickeriCloudDownLoadFinish   @"TFImagePickeriCloudDownLoadFinish"
+
 typedef NS_ENUM(NSInteger, TFAssetCellClickType){
     /**
      *  无操作
@@ -27,8 +30,6 @@ typedef NS_ENUM(NSInteger, TFAssetCellClickType){
 @protocol TFAssetCellDelegate <NSObject>
 
 - (void)assetCellViewClick:(TFAssetCellClickType)type indexPath:(NSIndexPath*)indexPath;
-
-- (void)assetCellView:(TFAssetCell *)cell didDownloadAtIndexPath:(NSIndexPath *)indexPath;
 
 @end
 
