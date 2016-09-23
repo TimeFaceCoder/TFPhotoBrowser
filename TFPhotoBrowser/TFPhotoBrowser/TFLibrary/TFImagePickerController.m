@@ -121,7 +121,7 @@
     options.predicate = [NSPredicate predicateWithFormat:@"mediaType IN %@", assetMediaTypes];
     options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:NO]];
     options.includeAllBurstAssets = NO;
-    
+    options.includeAssetSourceTypes = PHAssetSourceTypeUserLibrary;
     return options;
 }
 
@@ -167,7 +167,7 @@
         
         self.navigationItem.title = TFPhotoBrowserLocalizedStrings(@"Request album permissions");
         return;
-
+        
     }
     if (_assetCollection == nil) {
         self.title = TFPhotoBrowserLocalizedStrings(@"Moments");
@@ -363,7 +363,7 @@
     _doneButton = [[UIBarButtonItem alloc] initWithTitle:nil style:UIBarButtonItemStyleDone target:self action:@selector(done:)];
     //    self.navigationItem.rightBarButtonItem = _doneButton;
     
-//    _cameraButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCamera target:self action:@selector(takePicture:)];
+    //    _cameraButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCamera target:self action:@selector(takePicture:)];
     _cameraButton = [[UIBarButtonItem alloc]initWithImage:TFPhotoBrowserImageNamed(@"TFImagePickCameraIcon") style:UIBarButtonItemStylePlain target:self action:@selector(takePicture:)];
     
     _scanButton = [[UIBarButtonItem alloc]initWithImage:TFPhotoBrowserImageNamed(@"TFImagePickScanIcon") style:UIBarButtonItemStylePlain target:self action:@selector(takeScan:)];
@@ -447,13 +447,13 @@
     self.collectionView.allowsMultipleSelection = self.allowsMultipleSelection;
     [self.collectionView registerClass:[TFMomentHeaderNomalView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:TFMomentHeaderViewNomalIdentifier];
     [self.collectionView registerClass:[TFMomentHeaderDetailView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:TFMomentHeaderViewDetailIdentifier];
-
+    
     [[PHPhotoLibrary sharedPhotoLibrary] registerChangeObserver:self];
     
     UILongPressGestureRecognizer *recognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(showAsset:)];
     recognizer.minimumPressDuration = 0.5;
     [self.collectionView addGestureRecognizer:recognizer];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionForReloadNotification:) name:@"NOTICE_RELOAD_COLLECTION_INDEXPATH" object:nil];    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionForReloadNotification:) name:@"NOTICE_RELOAD_COLLECTION_INDEXPATH" object:nil];
 }
 
 
@@ -478,7 +478,7 @@
         if (!_headerBackColor) {
             _headerBackColor = [UIColor clearColor];
         }
-
+        
         [self.collectionView reloadData];
         
         if (_moments != nil) {
@@ -721,22 +721,28 @@
 - (void)updateHeaderView:(NSIndexPath*)indexPath {
     //    UICollectionReusableView
     NSLog(@"index.section = %@, item = %@",@(indexPath.section),@(indexPath.row));
-
-    TFMomentHeaderNomalView *headerView = [headerViewDictionary objectForKey:[NSString stringWithFormat:@"%@",@(indexPath.section)]];
-
-    __block BOOL allSelected = _moments[indexPath.section] != nil;
     
+    TFMomentHeaderNomalView *headerView = [headerViewDictionary objectForKey:[NSString stringWithFormat:@"%@",@(indexPath.section)]];
+    
+    __block BOOL allSelected = _moments[indexPath.section] != nil;
+    __block BOOL allInLocal  = YES;
     PHAssetCollection *collection = _moments[indexPath.section];
     PHFetchResult *fetchResult = [self _assetsForMoment:collection];
     NSSet *selectedAssets = [_selectedAssets copy];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        __weak typeof(self) weakself = self;
         [fetchResult enumerateObjectsUsingBlock:^(PHAsset *asset, NSUInteger idx, BOOL *stop) {
             allSelected &= [selectedAssets containsObject:asset];
             *stop = !allSelected;
         }];
+        [fetchResult enumerateObjectsUsingBlock:^(PHAsset *asset, NSUInteger idx, BOOL *stop) {
+            allInLocal &= [weakself _qualityImageInLocalWithPHAsset:asset];
+            *stop = !allInLocal;
+        }];
         dispatch_async(dispatch_get_main_queue(), ^{
             headerView.selectedButton.selected = allSelected;
+            headerView.selectedButton.enabled  = allInLocal;
         });
         
     });
@@ -770,14 +776,14 @@
                 [self selectAsset:asset];
                 addAssetCount ++;
             }
-           
+            
         }
         
     }
     if (addAssetCount + orginalCount > _maxSelectedCount && state==NO) {
         selectedAllBtn.selected = NO;
     }
-   
+    
     if (self.delegate && [self.delegate respondsToSelector:@selector(imagePickerController:didSelectedPickingAssets:)]) {
         [self.delegate imagePickerController:self didSelectedPickingAssets:array];
     }
@@ -867,7 +873,7 @@
     cell.assetSelected = [_selectedAssets containsObject:asset];
     cell.indexPath = indexPath;
     cell.tfAssetCellDelegate = self;
-//    cell.selectedBadgeImageView.image = _selectedAssetBadgeImage;
+    //    cell.selectedBadgeImageView.image = _selectedAssetBadgeImage;
     
     return cell;
 }
@@ -889,33 +895,42 @@
     headerView.backView.backgroundColor = _headerBackColor;
     headerView.primaryLabel.text = model.primary;
     headerView.primaryLabel.textColor = _headerTitleColor;
-        if (collection.localizedTitle != nil) {
-            headerView.primaryLabel.text = model.primary;
-            headerView.secondaryLabel.text = model.secondary;
-            headerView.secondaryLabel.textColor = _headerTitleColor;
-            headerView.detailLabel.text = model.detail;
-            headerView.detailLabel.textColor = _headerTitleColor;
-        }
-        headerView.selectedButton.hidden = !_showAllSelectButton;
-        if (!_showAllSelectButton) {
-            return headerView;
-        }
-        __block BOOL allSelected = _moments[indexPath.section] != nil;
-        PHFetchResult *fetchResult = [self _assetsForMoment:collection];
-        NSSet *selectedAssets = [_selectedAssets copy];
+    if (collection.localizedTitle != nil) {
+        headerView.primaryLabel.text = model.primary;
+        headerView.secondaryLabel.text = model.secondary;
+        headerView.secondaryLabel.textColor = _headerTitleColor;
+        headerView.detailLabel.text = model.detail;
+        headerView.detailLabel.textColor = _headerTitleColor;
+    }
+    headerView.selectedButton.hidden = !_showAllSelectButton;
+    if (!_showAllSelectButton) {
+        return headerView;
+    }
+    __block BOOL allSelected = _moments[indexPath.section] != nil;
+    __block BOOL allInLocal  = YES;
+    PHFetchResult *fetchResult = [self _assetsForMoment:collection];
+    NSSet *selectedAssets = [_selectedAssets copy];
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        __weak typeof(self) weakself = self;
+        [fetchResult enumerateObjectsUsingBlock:^(PHAsset *asset, NSUInteger idx, BOOL *stop) {
+            allSelected &= [selectedAssets containsObject:asset];
+            *stop = !allSelected;
+        }];
         
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [fetchResult enumerateObjectsUsingBlock:^(PHAsset *asset, NSUInteger idx, BOOL *stop) {
-                allSelected &= [selectedAssets containsObject:asset];
-                *stop = !allSelected;
-            }];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                headerView.selectedButton.selected = allSelected;
-            });
-            
+        [fetchResult enumerateObjectsUsingBlock:^(PHAsset * _Nonnull asset, NSUInteger idx, BOOL * _Nonnull stop) {
+            allInLocal &= [weakself _qualityImageInLocalWithPHAsset:asset];
+            *stop = !allInLocal;
+        }];
+        
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            headerView.selectedButton.selected = allSelected;
+            headerView.selectedButton.enabled = allInLocal;
         });
         
-        
+    });
+    
+    
     
     return headerView;
 }
@@ -951,15 +966,15 @@
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-//    PHAsset *asset = [self _assetAtIndexPath:indexPath];
-//    if ([_selectedAssets containsObject:asset]) {
-//        [self deselectAsset:asset];
-//    } else {
-//        [self selectAsset:asset];
-//    }
-//    if (_showAllSelectButton) {
-//        [self updateHeaderView:indexPath];
-//    }
+    //    PHAsset *asset = [self _assetAtIndexPath:indexPath];
+    //    if ([_selectedAssets containsObject:asset]) {
+    //        [self deselectAsset:asset];
+    //    } else {
+    //        [self selectAsset:asset];
+    //    }
+    //    if (_showAllSelectButton) {
+    //        [self updateHeaderView:indexPath];
+    //    }
     TFAssetCell *cell = (TFAssetCell *)[collectionView cellForItemAtIndexPath:indexPath];
     if (!cell.assetIsInLocalAblum) {
         // 进行下载
@@ -994,7 +1009,23 @@
     contentOffset.y = MAX(self.collectionView.contentSize.height - self.collectionView.bounds.size.height + self.collectionView.contentInset.bottom, -self.collectionView.contentInset.top);
     [self.collectionView setContentOffset:contentOffset animated:animated];
 }
-
+#pragma mark - Tool
+- (BOOL)_qualityImageInLocalWithPHAsset:(PHAsset *)phAsset {
+    __block BOOL isInLocalAblum = YES;
+    
+    if (phAsset.mediaType == PHAssetMediaTypeVideo) {
+        return YES;
+    }
+    
+    PHImageRequestOptions *option = [[PHImageRequestOptions alloc] init];
+    option.networkAccessAllowed = NO;
+    option.synchronous = YES;
+    
+    [[PHCachingImageManager defaultManager] requestImageDataForAsset:phAsset options:option resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
+        isInLocalAblum = imageData ? YES : NO;
+    }];
+    return isInLocalAblum;
+}
 #pragma mark - TFAssetCellDelegate
 
 - (void)assetCellView:(TFAssetCell *)cell didDownloadAtIndexPath:(NSIndexPath *)indexPath {
@@ -1005,6 +1036,7 @@
         return;
     }
     
+    __weak typeof(self) weakself = self;
     [helper startDownLoadWithAsset:cell.asset
                    progressHandler:^(double progress, NSError * _Nullable error, BOOL * _Nonnull stop, NSDictionary * _Nullable info) {
                        dispatch_async(dispatch_get_main_queue(), ^{
@@ -1013,9 +1045,11 @@
                            [[NSNotificationCenter defaultCenter] postNotificationName:TFImagePickeriCloudDownLoading object:progressNumber];
                        });
                    } finined:^{
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            [[NSNotificationCenter defaultCenter] postNotificationName:TFImagePickeriCloudDownLoadFinish object:nil];
-                        });
+                       __strong typeof(weakself) strongself = weakself;
+                       dispatch_async(dispatch_get_main_queue(), ^{
+                           [[NSNotificationCenter defaultCenter] postNotificationName:TFImagePickeriCloudDownLoadFinish object:nil];
+                           [strongself updateHeaderView:indexPath];
+                       });
                    }];
 }
 
@@ -1059,7 +1093,7 @@
         return photo;
     }
     
-
+    
 }
 
 - (void)photoBrowser:(TFPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index section:(NSInteger)section selectedChanged:(BOOL)selected {

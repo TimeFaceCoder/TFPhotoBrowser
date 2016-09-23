@@ -52,6 +52,7 @@ const static CGFloat kPadding = 8.0f;
                        forControlEvents:UIControlEventTouchUpInside];
         [_selectedBadgeButton setImage:[UIImage imageNamed:@"TFLibraryResource.bundle/images/TFLibraryCollectionUnSelected.png"] forState:UIControlStateNormal];
         [_selectedBadgeButton setImage:[UIImage imageNamed:@"TFLibraryResource.bundle/images/TFLibraryCollectionSelected.png"] forState:UIControlStateSelected];
+        [_selectedBadgeButton setImage:[UIImage imageNamed:@"TFLibraryResource.bundle/images/TFLibraryCollectioniCloud.png"] forState:UIControlStateDisabled];
         _selectedBadgeButton.contentMode = UIViewContentModeCenter;
         _selectedBadgeButton.translatesAutoresizingMaskIntoConstraints = NO;
     }
@@ -80,14 +81,16 @@ const static CGFloat kPadding = 8.0f;
     
     if (self.assetIsInLocalAblum) {
         self.downloadIndicator.hidden = YES;
-        self.selectedBadgeButton.hidden = NO;
+        //        self.selectedBadgeButton.hidden = NO;
+        self.selectedBadgeButton.enabled = YES;
     }
     else {
-//        [self.progressView setTitle:@"0" forState:UIControlStateNormal];
+        //        [self.progressView setTitle:@"0" forState:UIControlStateNormal];
         [self.downloadIndicator loadIndicator];
         [self.downloadIndicator updateWithTotalBytes:100 downloadedBytes:0];
         self.downloadIndicator.hidden= NO;
-        self.selectedBadgeButton.hidden = YES;
+        //        self.selectedBadgeButton.hidden = YES;
+        self.selectedBadgeButton.enabled = NO;
     }
     
     [self _updateAccessibility];
@@ -144,6 +147,8 @@ const static CGFloat kPadding = 8.0f;
 - (void)downloadingQualityImage:(NSNotification *)notification {
     dispatch_async(dispatch_get_main_queue(), ^{
         if ([[TFiCloudDownloadHelper sharedHelper].asset isEqual:self.asset]) {
+            self.selectedBadgeButton.hidden = YES;
+            self.downloadIndicator.hidden = NO;
             [self.downloadIndicator updateWithTotalBytes:100
                                          downloadedBytes:[notification.object floatValue] * 100];
         }
@@ -155,7 +160,8 @@ const static CGFloat kPadding = 8.0f;
         if ([[TFiCloudDownloadHelper sharedHelper].asset isEqual:self.asset]) {
             self.downloadIndicator.hidden = YES;
             self.selectedBadgeButton.hidden = NO;
-//            [self actionForSelecteButton:nil];
+            self.selectedBadgeButton.enabled = YES;
+            //            [self actionForSelecteButton:nil];
         }
     });
 }
@@ -210,11 +216,14 @@ const static CGFloat kPadding = 8.0f;
 
 #pragma mark - Tool
 - (BOOL)_qualityImageInLocalWithPHAsset:(PHAsset *)phAsset {
+    __block BOOL isInLocalAblum = YES;
+    if (phAsset.mediaType == PHAssetMediaTypeVideo) {
+        return YES;
+    }
+    
     PHImageRequestOptions *option = [[PHImageRequestOptions alloc] init];
     option.networkAccessAllowed = NO;
     option.synchronous = YES;
-    
-    __block BOOL isInLocalAblum = YES;
     
     [[PHCachingImageManager defaultManager] requestImageDataForAsset:phAsset options:option resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
         isInLocalAblum = imageData ? YES : NO;

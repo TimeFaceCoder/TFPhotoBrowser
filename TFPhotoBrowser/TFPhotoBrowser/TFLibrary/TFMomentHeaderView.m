@@ -43,7 +43,7 @@
         _selectedButton = [[UIButton alloc]init];
         _selectedButton.translatesAutoresizingMaskIntoConstraints = NO;
         [_selectedButton setTitleColor:[UIColor colorWithRed:6/255.0f green:155/255.0f blue:242/255.0f alpha:1] forState:UIControlStateNormal];
-        
+        [_selectedButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
         [_selectedButton setTitle:TFPhotoBrowserLocalizedStrings(@"Select all") forState:UIControlStateNormal];
         [_selectedButton setTitle:TFPhotoBrowserLocalizedStrings(@"Deselect all") forState:UIControlStateSelected];
         [_selectedButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentRight];
