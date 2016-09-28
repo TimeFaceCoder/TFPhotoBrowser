@@ -121,7 +121,6 @@
     options.predicate = [NSPredicate predicateWithFormat:@"mediaType IN %@", assetMediaTypes];
     options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:NO]];
     options.includeAllBurstAssets = NO;
-    options.includeAssetSourceTypes = PHAssetSourceTypeUserLibrary;
     return options;
 }
 
