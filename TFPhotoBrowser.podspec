@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
   s.requires_arc = true
   s.dependency 'pop'
   s.dependency 'SDWebImage'
-  s.dependency 'PINRemoteImage', '3.0.0-beta.3'
+  s.dependency 'PINRemoteImage', '3.0.0-beta.6'
   s.dependency 'AFNetworking'
   s.dependency 'DACircularProgress'
   s.dependency 'SVProgressHUD'
