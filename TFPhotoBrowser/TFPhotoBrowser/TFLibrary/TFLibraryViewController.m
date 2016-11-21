@@ -59,7 +59,7 @@ static CGSize AssetGridThumbnailSize;
         self.imageOptions.deliveryMode = PHImageRequestOptionsDeliveryModeOpportunistic;
         self.imageOptions.networkAccessAllowed = NO;
         [self resetCachedAssets];
-        //        [[PHPhotoLibrary sharedPhotoLibrary] registerChangeObserver:self];
+        [[PHPhotoLibrary sharedPhotoLibrary] registerChangeObserver:self];
         _items = [NSMutableArray array];
         _selectedAssets = [NSMutableArray array];
         _allowsMultipleSelection = YES;
@@ -374,17 +374,62 @@ static CGSize AssetGridThumbnailSize;
             [collectionView performBatchUpdates:^{
                 NSIndexSet *removedIndexes = [collectionChanges removedIndexes];
                 if ([removedIndexes count] > 0) {
-                    [collectionView deleteItemsAtIndexPaths:[removedIndexes tfl_indexPathsFromIndexesWithSection:0]];
+                    
+                    NSMutableArray* indexPaths = [NSMutableArray arrayWithCapacity:removedIndexes.count];
+                    
+                    for(NSInteger i = 1; i < _items.count; ++i)
+                    {
+                        TFAsset* asset = _items[i];
+                        for(PHAsset* phAsset in collectionChanges.removedObjects)
+                        {
+                            if([phAsset.localIdentifier isEqualToString:asset.localIdentifier])
+                            {
+                                [indexPaths addObject:[NSIndexPath indexPathForItem:i inSection:0]];
+                            }
+                        }
+                    }
+                    
+                    [collectionView deleteItemsAtIndexPaths:indexPaths];
                 }
                 
                 NSIndexSet *insertedIndexes = [collectionChanges insertedIndexes];
                 if ([insertedIndexes count] > 0) {
-                    [collectionView insertItemsAtIndexPaths:[insertedIndexes tfl_indexPathsFromIndexesWithSection:0]];
+                    
+                    NSMutableArray* indexPaths = [NSMutableArray arrayWithCapacity:insertedIndexes.count];
+                    
+                    for(NSInteger i = 0; i < insertedIndexes.count; ++i)
+                    {
+                        [indexPaths addObject:[NSIndexPath indexPathForItem:i + 1 inSection:0]];
+                    }
+                    
+                    [collectionView insertItemsAtIndexPaths:indexPaths];
                 }
                 
                 NSIndexSet *changedIndexes = [collectionChanges changedIndexes];
                 if ([changedIndexes count] > 0) {
-                    [collectionView reloadItemsAtIndexPaths:[changedIndexes tfl_indexPathsFromIndexesWithSection:0]];
+                    //[collectionView reloadItemsAtIndexPaths:[changedIndexes tfl_indexPathsFromIndexesWithSection:0]];
+                    
+                    NSMutableArray* indexPaths = [NSMutableArray arrayWithCapacity:changedIndexes.count];
+                    
+                    for(NSInteger i = 0; i < insertedIndexes.count; ++i)
+                    {
+                        [indexPaths addObject:[NSIndexPath indexPathForItem:i + 1 inSection:0]];
+                    }
+                    
+                    [collectionView reloadItemsAtIndexPaths:indexPaths];
+                }
+                
+                //更新数据源
+                [self.assetsFetchResults indexOfObject:[NSNull null] inRange:NSMakeRange(0, 1)];
+                [_items removeAllObjects];
+                [_items addObject:[NSNull null]];
+                for(PHAsset* asset in self.assetsFetchResults)
+                {
+                    if(asset.mediaType == PHAssetMediaTypeImage)
+                    {
+                        TFAsset* tfAsset = [TFAsset assetFromPH:asset];
+                        [_items addObject:tfAsset];
+                    }
                 }
             } completion:NULL];
         }
