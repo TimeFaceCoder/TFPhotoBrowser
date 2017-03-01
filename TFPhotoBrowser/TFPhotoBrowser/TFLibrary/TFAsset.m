@@ -245,13 +245,39 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
 - (NSString *)md5 {
     if (_md5 == nil) {
         if (self.isPHAsset) {
-            _md5 = [self getMD5StringFromNSString:self.localIdentifier];
+            NSString* dataMd5 = [self phAssetMD5FromNSData];
+            NSString* combineId  = [NSString stringWithFormat:@"%@%@", dataMd5, self.localIdentifier];
+            _md5 = [self getMD5StringFromNSString:combineId];
         }
         else {
             _md5 = [self getMD5StringFromNSString:[self.url absoluteString]];
         }
     }
+    
     return _md5;
+}
+
+- (NSString *)phAssetMD5FromNSData
+{
+    __block NSString *md5 = nil;
+    
+    [_cachingImageManager requestImageDataForAsset:self.phAsset
+                                           options:_imageRequestOptions
+                                     resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
+                                         md5 = [self getMD5StringFromNSData:imageData];
+                                     }];
+    
+    return md5;
+}
+
+- (NSString *)getMD5StringFromNSData:(NSData *)data {
+    unsigned char digest[CC_MD5_DIGEST_LENGTH], i;
+    CC_MD5([data bytes], (CC_LONG)[data length], digest);
+    NSMutableString *result = [NSMutableString string];
+    for (i = 0; i < CC_MD5_DIGEST_LENGTH; i++) {
+        [result appendFormat: @"%02x", (int)(digest[i])];
+    }
+    return [result copy];
 }
 
 - (CLLocation*)location {

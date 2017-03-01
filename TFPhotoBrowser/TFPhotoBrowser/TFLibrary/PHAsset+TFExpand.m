@@ -7,7 +7,7 @@
 //
 
 #import "PHAsset+TFExpand.h"
-
+#import <CommonCrypto/CommonDigest.h>
 
 @implementation PHAsset (TFExpand)
 
@@ -213,9 +213,39 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
 }
 
 - (NSString *)md5 {
-    NSString *md5 = nil;
+    __block NSString *md5 = nil;
+    
+    [_cachingImageManager requestImageDataForAsset:self
+                                           options:_imageRequestOptions
+                                     resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
+                                         md5 = [self getMD5StringFromNSData:imageData];
+                                     }];
+    
+    NSString* combineId  = [NSString stringWithFormat:@"%@%@", md5, self.localIdentifier];
+    md5 = [self getMD5StringFromNSString:combineId];
     
     return md5;
+}
+
+- (NSString *)getMD5StringFromNSData:(NSData *)data {
+    unsigned char digest[CC_MD5_DIGEST_LENGTH], i;
+    CC_MD5([data bytes], (CC_LONG)[data length], digest);
+    NSMutableString *result = [NSMutableString string];
+    for (i = 0; i < CC_MD5_DIGEST_LENGTH; i++) {
+        [result appendFormat: @"%02x", (int)(digest[i])];
+    }
+    return [result copy];
+}
+
+- (NSString *)getMD5StringFromNSString:(NSString *)string {
+    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
+    unsigned char digest[CC_MD5_DIGEST_LENGTH], i;
+    CC_MD5([data bytes], (CC_LONG)[data length], digest);
+    NSMutableString *result = [NSMutableString string];
+    for (i = 0; i < CC_MD5_DIGEST_LENGTH; i++) {
+        [result appendFormat: @"%02x", (int)(digest[i])];
+    }
+    return [result copy];
 }
 
 @end
