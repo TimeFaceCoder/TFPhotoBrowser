@@ -3,7 +3,10 @@
   "version": "0.0.4",
   "summary": "时光流影iOS相机框架",
   "homepage": "https://github.com/TimeFaceCoder/TFCamera",
-  "license": "Copyright (C) 2015 TimeFace, Inc.  All rights reserved.",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
   "authors": {
     "Melvin": "yangmin@timeface.cn"
   },
@@ -12,7 +15,8 @@
     "ios": "7.0"
   },
   "source": {
-    "git": "https://github.com/TimeFaceCoder/TFCamera.git"
+    "git": "https://github.com/TimeFaceCoder/TFCamera.git",
+    "tag": "0.0.4"
   },
   "source_files": "TFCamera/TFCamera/**/*.{h,m,c}",
   "requires_arc": true,

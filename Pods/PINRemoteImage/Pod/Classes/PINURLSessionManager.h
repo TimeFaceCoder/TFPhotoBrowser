@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+extern NSString * __nonnull const PINURLErrorDomain;
+
 @protocol PINURLSessionManagerDelegate <NSObject>
 
 @required
@@ -28,6 +30,6 @@
 
 - (void)invalidateSessionAndCancelTasks;
 
-@property (atomic, weak) id <PINURLSessionManagerDelegate> delegate;
+@property (atomic, weak, nullable) id <PINURLSessionManagerDelegate> delegate;
 
 @end

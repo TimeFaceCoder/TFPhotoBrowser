@@ -1,10 +1,12 @@
-/* Copyright (c) 2014-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
+//
+//  _ASDisplayLayer.mm
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #import "_ASDisplayLayer.h"
 
@@ -31,7 +33,7 @@
 #pragma mark -
 #pragma mark Lifecycle
 
-- (id)init
+- (instancetype)init
 {
   if ((self = [super init])) {
     _displaySentinel = [[ASSentinel alloc] init];
@@ -76,6 +78,12 @@
       [self cancelAsyncDisplay];
     }
   }
+}
+
+- (void)setBounds:(CGRect)bounds
+{
+  [super setBounds:bounds];
+  self.asyncdisplaykit_node.threadSafeBounds = bounds;
 }
 
 #if DEBUG // These override is strictly to help detect application-level threading errors.  Avoid method overhead in release.

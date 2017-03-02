@@ -1,10 +1,12 @@
-/* Copyright (c) 2014-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
+//
+//  ASDisplayNode+Subclasses.h
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #import <pthread.h>
 
@@ -89,7 +91,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @discussion Gives a chance for subclasses to perform actions after the subclass and superclass have finished laying
  * out.
  */
-- (void)layoutDidFinish;
+- (void)layoutDidFinish ASDISPLAYNODE_REQUIRES_SUPER;
 
 /**
  * @abstract Called on a background thread if !isNodeLoaded - called on the main thread if isNodeLoaded.
@@ -97,7 +99,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @discussion When the .calculatedLayout property is set to a new ASLayout (directly from -calculateLayoutThatFits: or
  * calculated via use of -layoutSpecThatFits:), subclasses may inspect it here.
  */
-- (void)calculatedLayoutDidChange;
+- (void)calculatedLayoutDidChange ASDISPLAYNODE_REQUIRES_SUPER;
 
 /** @name Layout calculation */
 
@@ -143,6 +145,10 @@ NS_ASSUME_NONNULL_BEGIN
  * encouraged.
  *
  * @note This method should not be called directly outside of ASDisplayNode; use -measure: or -calculatedLayout instead.
+ *
+ * @warning Subclasses that implement -layoutSpecThatFits: must not also use .layoutSpecBlock. Doing so will trigger
+ * an exception. A future version of the framework may support using both, calling them serially, with the
+ * .layoutSpecBlock superseding any values set by the method override.
  */
 - (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize;
 
@@ -206,6 +212,8 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @discussion Subclasses may override this method to be notified when display (asynchronous or synchronous) is
  * about to begin.
+ *
+ * @note Called on the main thread only
  */
 - (void)displayWillStart ASDISPLAYNODE_REQUIRES_SUPER;
 
@@ -214,6 +222,8 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @discussion Subclasses may override this method to be notified when display (asynchronous or synchronous) has
  * completed.
+ *
+ * @note Called on the main thread only
  */
 - (void)displayDidFinish ASDISPLAYNODE_REQUIRES_SUPER;
 
@@ -225,9 +235,39 @@ NS_ASSUME_NONNULL_BEGIN
  * @discussion Subclasses may use this to monitor when they become visible, should free cached data, and much more.
  * @see ASInterfaceState
  */
-- (void)interfaceStateDidChange:(ASInterfaceState)newState fromState:(ASInterfaceState)oldState;
+- (void)interfaceStateDidChange:(ASInterfaceState)newState fromState:(ASInterfaceState)oldState ASDISPLAYNODE_REQUIRES_SUPER;
 
-- (void)visibilityDidChange:(BOOL)isVisible;
+/**
+ * @abstract Called whenever the visiblity of the node changed.
+ *
+ * @discussion Subclasses may use this to monitor when they become visible.
+ */
+- (void)visibilityDidChange:(BOOL)isVisible ASDISPLAYNODE_REQUIRES_SUPER;
+
+/**
+ * @abstract Called whenever the visiblity of the node changed.
+ *
+ * @discussion Subclasses may use this to monitor when they become visible.
+ */
+- (void)visibleStateDidChange:(BOOL)isVisible ASDISPLAYNODE_REQUIRES_SUPER;
+
+/**
+ * @abstract Called whenever the the node has entered or exited the display state.
+ *
+ * @discussion Subclasses may use this to monitor when a node should be rendering its content.
+ *
+ * @note This method can be called from any thread and should therefore be thread safe.
+ */
+- (void)displayStateDidChange:(BOOL)inDisplayState ASDISPLAYNODE_REQUIRES_SUPER;
+
+/**
+ * @abstract Called whenever the the node has entered or left the load state.
+ *
+ * @discussion Subclasses may use this to monitor data for a node should be loaded, either from a local or remote source.  
+ *
+ * @note This method can be called from any thread and should therefore be thread safe.
+ */
+- (void)loadStateDidChange:(BOOL)inLoadState ASDISPLAYNODE_REQUIRES_SUPER;
 
 /**
  * Called just before the view is added to a window.
@@ -340,7 +380,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param touches A set of UITouch instances.
  * @param event A UIEvent associated with the touch.
  */
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event;
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event ASDISPLAYNODE_REQUIRES_SUPER;
 
 /**
  * @abstract Tells the node when touches moved in its view.
@@ -348,7 +388,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param touches A set of UITouch instances.
  * @param event A UIEvent associated with the touch.
  */
-- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event;
+- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event ASDISPLAYNODE_REQUIRES_SUPER;
 
 /**
  * @abstract Tells the node when touches ended in its view.
@@ -356,7 +396,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param touches A set of UITouch instances.
  * @param event A UIEvent associated with the touch.
  */
-- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event;
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event ASDISPLAYNODE_REQUIRES_SUPER;
 
 /**
  * @abstract Tells the node when touches was cancelled in its view.
@@ -364,7 +404,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param touches A set of UITouch instances.
  * @param event A UIEvent associated with the touch.
  */
-- (void)touchesCancelled:(nullable NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event;
+- (void)touchesCancelled:(nullable NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event ASDISPLAYNODE_REQUIRES_SUPER;
 
 
 /** @name Managing Gesture Recognizers */
@@ -424,6 +464,13 @@ NS_ASSUME_NONNULL_BEGIN
  * @discussion The function that gets called for each display node in -recursiveDescription
  */
 - (NSString *)descriptionForRecursiveDescription;
+
+/**
+ * @abstract Called when the node's ASTraitCollection changes
+ *
+ * @discussion Subclasses can override this method to react to a trait collection change.
+ */
+- (void)asyncTraitCollectionDidChange;
 
 @end
 

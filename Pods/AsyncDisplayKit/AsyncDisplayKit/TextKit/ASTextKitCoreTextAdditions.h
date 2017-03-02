@@ -1,10 +1,12 @@
-/* Copyright (c) 2014-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
+//
+//  ASTextKitCoreTextAdditions.h
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
@@ -76,7 +78,7 @@ ASDISPLAYNODE_EXTERN_C_END
         - kCTParagraphStyleSpecifierMinimumLineSpacing
         - kCTParagraphStyleSpecifierLineSpacingAdjustment
         - kCTParagraphStyleSpecifierLineBoundsOptions
-  @result An NSParagraphStyle initializd with as many of the paragraph specifiers from `coreTextParagraphStyle` as possible.
+  @result An NSParagraphStyle initialized with as many of the paragraph specifiers from `coreTextParagraphStyle` as possible.
 
  */
 + (instancetype)paragraphStyleWithCTParagraphStyle:(CTParagraphStyleRef)coreTextParagraphStyle;

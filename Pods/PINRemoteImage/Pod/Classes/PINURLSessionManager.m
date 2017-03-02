@@ -8,6 +8,8 @@
 
 #import "PINURLSessionManager.h"
 
+NSString * const PINURLErrorDomain = @"PINURLErrorDomain";
+
 @interface PINURLSessionManager () <NSURLSessionDelegate, NSURLSessionDataDelegate>
 
 @property (nonatomic, strong) NSLock *sessionManagerLock;
@@ -81,19 +83,19 @@
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler 
 {
-	[self lock];
+    [self lock];
         dispatch_queue_t delegateQueue = self.delegateQueues[@(task.taskIdentifier)];
-	[self unlock];
-	
-	__weak typeof(self) weakSelf = self;
-	dispatch_async(delegateQueue, ^{
+    [self unlock];
+
+    __weak typeof(self) weakSelf = self;
+    dispatch_async(delegateQueue, ^{
         typeof(self) strongSelf = weakSelf;
-		if ([strongSelf.delegate respondsToSelector:@selector(didReceiveAuthenticationChallenge:forTask:completionHandler:)]) {
-			[strongSelf.delegate didReceiveAuthenticationChallenge:challenge forTask:task completionHandler:completionHandler];
+        if ([strongSelf.delegate respondsToSelector:@selector(didReceiveAuthenticationChallenge:forTask:completionHandler:)]) {
+            [strongSelf.delegate didReceiveAuthenticationChallenge:challenge forTask:task completionHandler:completionHandler];
         } else {
             completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
         }
-	});
+    });
 }
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data
@@ -114,10 +116,13 @@
     [self lock];
         dispatch_queue_t delegateQueue = self.delegateQueues[@(task.taskIdentifier)];
     [self unlock];
-    if (!error && [task.response isKindOfClass:[NSHTTPURLResponse class]] && [(NSHTTPURLResponse *)task.response statusCode] == 404) {
-        error = [NSError errorWithDomain:NSURLErrorDomain
-                                    code:NSURLErrorRedirectToNonExistentLocation
-                                userInfo:@{NSLocalizedDescriptionKey : @"The requested URL was not found on this server."}];
+    if (!error && [task.response isKindOfClass:[NSHTTPURLResponse class]]) {
+        NSInteger statusCode = [(NSHTTPURLResponse *)task.response statusCode];
+        if (statusCode >= 400) {
+            error = [NSError errorWithDomain:PINURLErrorDomain
+                                        code:statusCode
+                                    userInfo:@{NSLocalizedDescriptionKey : @"HTTP Error Response."}];
+        }
     }
     __weak typeof(self) weakSelf = self;
     dispatch_async(delegateQueue, ^{

@@ -1,10 +1,12 @@
-/* Copyright (c) 2014-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
+//
+//  ASTableView.h
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #import <UIKit/UIKit.h>
 #import <AsyncDisplayKit/ASRangeController.h>
@@ -42,18 +44,8 @@ NS_ASSUME_NONNULL_BEGIN
  * The frame of the table view changes as table cells are added and deleted.
  *
  * @param style A constant that specifies the style of the table view. See UITableViewStyle for descriptions of valid constants.
- *
- * @param asyncDataFetchingEnabled This option is reserved for future use, and currently a no-op.
- *
- * @discussion If asyncDataFetching is enabled, the `ASTableView` will fetch data through `tableView:numberOfRowsInSection:` and
- * `tableView:nodeForRowAtIndexPath:` in async mode from background thread. Otherwise, the methods will be invoked synchronically
- * from calling thread.
- * Enabling asyncDataFetching could avoid blocking main thread for `ASCellNode` allocation, which is frequently reported issue for
- * large scale data. On another hand, the application code need take the responsibility to avoid data inconsistence. Specifically,
- * we will lock the data source through `tableViewLockDataSource`, and unlock it by `tableViewUnlockDataSource` after the data fetching.
- * The application should not update the data source while the data source is locked, to keep data consistence.
  */
-- (instancetype)initWithFrame:(CGRect)frame style:(UITableViewStyle)style asyncDataFetching:(BOOL)asyncDataFetchingEnabled;
+- (instancetype)initWithFrame:(CGRect)frame style:(UITableViewStyle)style;
 
 /**
  * Tuning parameters for a range type in full mode.
@@ -81,7 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Tuning parameters for a range type in the specified mode.
  *
- * @param rangeMode The range mode to get the runing parameters for.
+ * @param rangeMode The range mode to get the running parameters for.
  * @param rangeType The range type to get the tuning parameters for.
  *
  * @returns A tuning parameter value for the given range type in the given mode.
@@ -92,10 +84,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (ASRangeTuningParameters)tuningParametersForRangeMode:(ASLayoutRangeMode)rangeMode rangeType:(ASLayoutRangeType)rangeType;
 
 /**
- * Set the tuning parameters for a range type in the specigied mode.
+ * Set the tuning parameters for a range type in the specified mode.
  *
  * @param tuningParameters The tuning parameters to store for a range type.
- * @param rangeMode The range mode to set the runing parameters for.
+ * @param rangeMode The range mode to set the running parameters for.
  * @param rangeType The range type to set the tuning parameters for.
  *
  * @see ASLayoutRangeMode
@@ -135,6 +127,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)reloadDataImmediately;
 
 /**
+ * Triggers a relayout of all nodes.
+ *
+ */
+- (void)relayoutItems;
+
+/**
  *  begins a batch of insert, delete reload and move operations. This method must be called from the main thread.
  */
 - (void)beginUpdates;
@@ -143,7 +141,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  Concludes a series of method calls that insert, delete, select, or reload rows and sections of the table view, with animation enabled and no completion block.
  *  You call this method to bracket a series of method calls that begins with beginUpdates and that consists of operations
  *  to insert, delete, select, and reload rows and sections of the table view. When you call endUpdates, ASTableView begins animating
- *  the operations simultaneously. This method is must be called from the main thread. It's important to remeber that the ASTableView will
+ *  the operations simultaneously. This method is must be called from the main thread. It's important to remember that the ASTableView will
  *  be processing the updates asynchronously after this call is completed.
  */
 - (void)endUpdates;
@@ -152,7 +150,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  Concludes a series of method calls that insert, delete, select, or reload rows and sections of the table view.
  *  You call this method to bracket a series of method calls that begins with beginUpdates and that consists of operations 
  *  to insert, delete, select, and reload rows and sections of the table view. When you call endUpdates, ASTableView begins animating
- *  the operations simultaneously. This method is must be called from the main thread. It's important to remeber that the ASTableView will
+ *  the operations simultaneously. This method is must be called from the main thread. It's important to remember that the ASTableView will
  *  be processing the updates asynchronously after this call and are not guaranteed to be reflected in the ASTableView until
  *  the completion block is executed.
  *
@@ -162,6 +160,11 @@ NS_ASSUME_NONNULL_BEGIN
  *                    NO if they were interrupted. This parameter may be nil. If supplied, the block is run on the main thread.
  */
 - (void)endUpdatesAnimated:(BOOL)animated completion:(void (^ _Nullable)(BOOL completed))completion;
+
+/**
+ *  Blocks execution of the main thread until all section and row updates are committed. This method must be called from the main thread.
+ */
+- (void)waitUntilAllUpdatesAreCommitted;
 
 /**
  * Inserts one or more sections, with an option to animate the insertion.
@@ -280,9 +283,9 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Similar to -visibleCells.
  *
- * @returns an array containing the nodes being displayed on screen.
+ * @returns an array containing the cell nodes being displayed on screen.
  */
-- (NSArray<ASDisplayNode *> *)visibleNodes;
+- (NSArray<ASCellNode *> *)visibleNodes;
 
 /**
  * YES to automatically adjust the contentOffset when cells are inserted or deleted "before"
@@ -346,21 +349,23 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Indicator to lock the data source for data fetching in async mode.
- * We should not update the data source until the data source has been unlocked. Otherwise, it will incur data inconsistence or exception
+ * We should not update the data source until the data source has been unlocked. Otherwise, it will incur data inconsistency or exception
  * due to the data access in async mode.
  *
  * @param tableView The sender.
+ * @deprecated The data source is always accessed on the main thread, and this method will not be called.
  */
-- (void)tableViewLockDataSource:(ASTableView *)tableView;
+- (void)tableViewLockDataSource:(ASTableView *)tableView ASDISPLAYNODE_DEPRECATED;
 
 /**
  * Indicator to unlock the data source for data fetching in asyn mode.
- * We should not update the data source until the data source has been unlocked. Otherwise, it will incur data inconsistence or exception
+ * We should not update the data source until the data source has been unlocked. Otherwise, it will incur data inconsistency or exception
  * due to the data access in async mode.
  *
  * @param tableView The sender.
+ * @deprecated The data source is always accessed on the main thread, and this method will not be called.
  */
-- (void)tableViewUnlockDataSource:(ASTableView *)tableView;
+- (void)tableViewUnlockDataSource:(ASTableView *)tableView ASDISPLAYNODE_DEPRECATED;
 
 @end
 
@@ -377,6 +382,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 @optional
 
+/**
+ * Informs the delegate that the table view will add the node
+ * at the given index path to the view hierarchy.
+ *
+ * @param tableView The sender.
+ * @param indexPath The index path of the row that will be displayed.
+ *
+ * @warning AsyncDisplayKit processes table view edits asynchronously. The index path
+ *   passed into this method may not correspond to the same item in your data source
+ *   if your data source has been updated since the last edit was processed.
+ */
 - (void)tableView:(ASTableView *)tableView willDisplayNodeForRowAtIndexPath:(NSIndexPath *)indexPath;
 
 /**
@@ -418,8 +434,24 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)shouldBatchFetchForTableView:(ASTableView *)tableView;
 
 /**
+ * Provides the constrained size range for measuring the row at the index path.
+ * Note: the widths in the returned size range are ignored!
+ * 
+ * @param tableView The sender.
+ *
+ * @param indexPath The index path of the node.
+ *
+ * @returns A constrained size range for layout the node at this index path.
+ */
+- (ASSizeRange)tableView:(ASTableView *)tableView constrainedSizeForRowAtIndexPath:(NSIndexPath *)indexPath;
+
+/**
  * Informs the delegate that the table view did remove the node which was previously
  * at the given index path from the view hierarchy.
+ *
+ * @warning AsyncDisplayKit processes table view edits asynchronously. The index path
+ *   passed into this method may not correspond to the same item in your data source
+ *   if your data source has been updated since the last edit was processed.
  *
  * This method is deprecated. Use @c tableView:didEndDisplayingNode:forRowAtIndexPath: instead.
  */
@@ -428,6 +460,12 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @protocol ASTableViewDelegate <ASTableDelegate>
+@end
+
+@interface ASTableView (Deprecated)
+
+- (instancetype)initWithFrame:(CGRect)frame style:(UITableViewStyle)style asyncDataFetching:(BOOL)asyncDataFetchingEnabled ASDISPLAYNODE_DEPRECATED;
+
 @end
 
 NS_ASSUME_NONNULL_END

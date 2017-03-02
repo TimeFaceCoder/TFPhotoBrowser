@@ -1,34 +1,37 @@
 PODS:
-  - AsyncDisplayKit (1.9.7):
-    - AsyncDisplayKit/PINRemoteImage (= 1.9.7)
-  - AsyncDisplayKit/ASDealloc2MainObject (1.9.7)
-  - AsyncDisplayKit/PINRemoteImage (1.9.7):
+  - AsyncDisplayKit (1.9.92):
+    - AsyncDisplayKit/PINRemoteImage (= 1.9.92)
+  - AsyncDisplayKit/ASDealloc2MainObject (1.9.92)
+  - AsyncDisplayKit/Core (1.9.92):
     - AsyncDisplayKit/ASDealloc2MainObject
-    - PINRemoteImage/iOS (>= 2)
+  - AsyncDisplayKit/PINRemoteImage (1.9.92):
+    - AsyncDisplayKit/Core
+    - PINCache (= 3.0.1-beta)
+    - PINRemoteImage/iOS (= 3.0.0-beta.3)
   - DACircularProgress (2.3.1)
   - FLAnimatedImage (1.0.12)
-  - Masonry (0.6.4)
-  - PINCache (2.2.2)
-  - PINRemoteImage (2.1.1):
-    - PINRemoteImage/FLAnimatedImage (= 2.1.1)
-  - PINRemoteImage/Core (2.1.1):
-    - PINCache (>= 2.1)
-  - PINRemoteImage/FLAnimatedImage (2.1.1):
+  - Masonry (1.0.2)
+  - PINCache (3.0.1-beta)
+  - PINRemoteImage (3.0.0-beta.3):
+    - PINRemoteImage/FLAnimatedImage (= 3.0.0-beta.3)
+  - PINRemoteImage/Core (3.0.0-beta.3):
+    - PINCache (>= 3.0.0-beta)
+  - PINRemoteImage/FLAnimatedImage (3.0.0-beta.3):
     - FLAnimatedImage (>= 1.0)
     - PINRemoteImage/Core
-  - PINRemoteImage/iOS (2.1.1):
+  - PINRemoteImage/iOS (3.0.0-beta.3):
     - PINRemoteImage/Core
   - pop (1.0.9)
-  - SDWebImage (3.7.5):
-    - SDWebImage/Core (= 3.7.5)
-  - SDWebImage/Core (3.7.5)
-  - SVProgressHUD (1.1.3)
+  - SDWebImage (3.8.2):
+    - SDWebImage/Core (= 3.8.2)
+  - SDWebImage/Core (3.8.2)
+  - SVProgressHUD (2.0.3)
   - TFCamera (0.0.4):
     - Masonry
     - pop
 
 DEPENDENCIES:
-  - AsyncDisplayKit
+  - AsyncDisplayKit (from `https://git.coding.net/Timeface_xzx/AsyncDisplayKit.git`)
   - DACircularProgress
   - PINRemoteImage
   - pop
@@ -37,24 +40,31 @@ DEPENDENCIES:
   - TFCamera (from `https://github.com/TimeFaceCoder/TFCamera.git`)
 
 EXTERNAL SOURCES:
+  AsyncDisplayKit:
+    :git: https://git.coding.net/Timeface_xzx/AsyncDisplayKit.git
   TFCamera:
     :git: https://github.com/TimeFaceCoder/TFCamera.git
 
 CHECKOUT OPTIONS:
+  AsyncDisplayKit:
+    :commit: 071f070713aa2b9377c5d61a7b20c1caaf6c80c2
+    :git: https://git.coding.net/Timeface_xzx/AsyncDisplayKit.git
   TFCamera:
-    :commit: a34e3482546d10baba8a2f08cbcd66070e1a79fe
+    :commit: a11f04d1543365ea29cd3218fbc2e060a5ad587e
     :git: https://github.com/TimeFaceCoder/TFCamera.git
 
 SPEC CHECKSUMS:
-  AsyncDisplayKit: eb762d3bfd3896b2901909ebc24b54c97f32d43c
+  AsyncDisplayKit: 70f2350c075cd29225aaf077e4c960b119cc40e4
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
-  Masonry: 281802d04d787ea2973179ee8bcb50500579ede2
-  PINCache: 078426d356ab95ef875e9e62e5c35a2ea3333c28
-  PINRemoteImage: 0c620b392a2a41a0a14f143107bbb0596f73dd23
+  Masonry: 7c429b56da9d4ee0bbb3ed77a5ea710d6a5df39e
+  PINCache: 6911fe422a633e18b3d3ddf2bd4f0e55e36e2892
+  PINRemoteImage: 308731aa6534500e58fc211b9cc2bb7252df25ba
   pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
-  SDWebImage: 69c6303e3348fba97e03f65d65d4fbc26740f461
-  SVProgressHUD: 748080e4f36e603f6c02aec292664239df5279c1
-  TFCamera: e2db7e6d153a05f4afc43434336952a2d0f0fbb1
+  SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
+  SVProgressHUD: b0830714205bea1317ea1a2ebc71e5633af334d4
+  TFCamera: 2148748ebd0be73b820ef06c627d0250e3af9f0d
 
-COCOAPODS: 0.39.0
+PODFILE CHECKSUM: 7f698a942799fd2a4f3053fc6f3f02a5765abf6f
+
+COCOAPODS: 1.2.0.beta.1

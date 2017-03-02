@@ -1,10 +1,12 @@
-/* Copyright (c) 2014-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
+//
+//  ASButtonNode.h
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #import <AsyncDisplayKit/ASTextNode.h>
 #import <AsyncDisplayKit/ASImageNode.h>
@@ -28,19 +30,17 @@
 @property (nonatomic, assign) BOOL laysOutHorizontally;
 
 /** Horizontally align content (text or image).
- Defaults to ASAlignmentMiddle.
+ Defaults to ASHorizontalAlignmentMiddle.
  */
 @property (nonatomic, assign) ASHorizontalAlignment contentHorizontalAlignment;
 
 /** Vertically align content (text or image).
- Defaults to ASAlignmentCenter.
+ Defaults to ASVerticalAlignmentCenter.
  */
 @property (nonatomic, assign) ASVerticalAlignment contentVerticalAlignment;
 
 /**
- * @discussion insets the title and the image node
- * 
- * @param contentEdgeInsets The insets used around the title and image node
+ * @discussion The insets used around the title and image node
  */
 @property (nonatomic, assign) UIEdgeInsets contentEdgeInsets;
 
@@ -61,6 +61,7 @@
  */
 - (void)setAttributedTitle:(nullable NSAttributedString *)title forState:(ASControlState)state;
 
+#if TARGET_OS_IOS
 /**
  *  Sets the title to use for the specified state. This will reset styled title previously set with -setAttributedTitle:forState.
  *
@@ -70,7 +71,7 @@
  *  @param state The state that uses the specified title. The possible values are described in ASControlState.
  */
 - (void)setTitle:(nonnull NSString *)title withFont:(nullable UIFont *)font withColor:(nullable UIColor *)color forState:(ASControlState)state;
-
+#endif
 /**
  *  Returns the image used for a button state.
  *

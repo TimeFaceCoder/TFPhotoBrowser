@@ -1,14 +1,19 @@
 //
-//  ASMainSerialQueue.m
+//  ASMainSerialQueue.mm
 //  AsyncDisplayKit
 //
 //  Created by Garrett Moon on 12/11/15.
-//  Copyright © 2015 Facebook. All rights reserved.
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 //
 
 #import "ASMainSerialQueue.h"
 
 #import "ASThread.h"
+#import "ASInternalHelpers.h"
 
 @interface ASMainSerialQueue ()
 {
@@ -45,7 +50,7 @@
       ASDN::MutexLocker l(_serialQueueLock);
       dispatch_block_t block;
       if (_blocks.count > 0) {
-        block = [_blocks objectAtIndex:0];
+        block = _blocks[0];
         [_blocks removeObjectAtIndex:0];
       } else {
         break;
@@ -55,13 +60,12 @@
     } while (true);
   };
   
-  if ([NSThread isMainThread]) {
-    mainThread();
-  } else {
-    dispatch_async(dispatch_get_main_queue(), ^{
-      mainThread();
-    });
-  }
+  ASPerformBlockOnMainThread(mainThread);
+}
+
+- (NSString *)description
+{
+  return [[super description] stringByAppendingFormat:@" Blocks: %@", _blocks];
 }
 
 @end

@@ -21,7 +21,6 @@
 @property (nonatomic, assign) CGImageSourceRef imageSource;
 @property (nonatomic, assign) CGSize size;
 @property (nonatomic, assign) BOOL isProgressiveJPEG;
-@property (nonatomic, strong) PINImage *cachedImage;
 @property (nonatomic, assign) NSUInteger currentThreshold;
 @property (nonatomic, assign) float bytesPerSecond;
 @property (nonatomic, assign) NSUInteger scannedByte;
@@ -153,7 +152,7 @@
     [self.lock unlock];
 }
 
-- (PINImage *)currentImageBlurred:(BOOL)blurred maxProgressiveRenderSize:(CGSize)maxProgressiveRenderSize
+- (PINImage *)currentImageBlurred:(BOOL)blurred maxProgressiveRenderSize:(CGSize)maxProgressiveRenderSize renderedImageQuality:(out CGFloat *)renderedImageQuality
 {
     [self.lock lock];
         if (self.imageSource == nil) {
@@ -166,7 +165,7 @@
             return nil;
         }
         
-        if (_estimatedRemainingTimeThreshold < 0 || self.estimatedRemainingTime < _estimatedRemainingTimeThreshold) {
+        if (_estimatedRemainingTimeThreshold > 0 && self.estimatedRemainingTime < _estimatedRemainingTimeThreshold) {
             [self.lock unlock];
             return nil;
         }
@@ -234,6 +233,9 @@
                     currentImage = [PINImage imageWithCGImage:image];
                 }
                 CGImageRelease(image);
+                if (renderedImageQuality) {
+                    *renderedImageQuality = progress;
+                }
             }
         }
     

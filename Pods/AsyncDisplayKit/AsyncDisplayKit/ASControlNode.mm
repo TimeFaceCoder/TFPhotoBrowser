@@ -1,14 +1,18 @@
-/* Copyright (c) 2014-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
+//
+//  ASControlNode.mm
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #import "ASControlNode.h"
 #import "ASControlNode+Subclasses.h"
-#import "ASThread.h"
+#import "ASImageNode.h"
+#import "AsyncDisplayKit+Debug.h"
+#import "ASInternalHelpers.h"
 
 // UIControl allows dragging some distance outside of the control itself during
 // tracking. This value depends on the device idiom (25 or 70 points), so
@@ -69,11 +73,14 @@ void _ASEnumerateControlEventsIncludedInMaskWithBlock(ASControlNodeEvent mask, v
 
 @end
 
-#pragma mark -
 @implementation ASControlNode
+{
+  ASImageNode *_debugHighlightOverlay;
+}
 
 #pragma mark - Lifecycle
-- (id)init
+
+- (instancetype)init
 {
   if (!(self = [super init]))
     return nil;
@@ -82,8 +89,31 @@ void _ASEnumerateControlEventsIncludedInMaskWithBlock(ASControlNodeEvent mask, v
 
   // As we have no targets yet, we start off with user interaction off. When a target is added, it'll get turned back on.
   self.userInteractionEnabled = NO;
+  
   return self;
 }
+
+#if TARGET_OS_TV
+- (void)didLoad
+{
+  // On tvOS all controls, such as buttons, interact with the focus system even if they don't have a target set on them.
+  // Here we add our own internal tap gesture to handle this behaviour.
+  self.userInteractionEnabled = YES;
+  UITapGestureRecognizer *tapGestureRec = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(pressDown)];
+  tapGestureRec.allowedPressTypes = @[@(UIPressTypeSelect)];
+  [self.view addGestureRecognizer:tapGestureRec];
+}
+#endif
+
+- (void)setUserInteractionEnabled:(BOOL)userInteractionEnabled
+{
+  [super setUserInteractionEnabled:userInteractionEnabled];
+  self.isAccessibilityElement = userInteractionEnabled;
+}
+
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wobjc-missing-super-calls"
 
 #pragma mark - ASDisplayNode Overrides
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
@@ -201,6 +231,8 @@ void _ASEnumerateControlEventsIncludedInMaskWithBlock(ASControlNodeEvent mask, v
                           withEvent:event];
 }
 
+#pragma clang diagnostic pop
+
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
   // If we're interested in touches, this is a tap (the only gesture we care about) and passed -hitTest for us, then no, you may not begin. Sir.
@@ -228,6 +260,18 @@ void _ASEnumerateControlEventsIncludedInMaskWithBlock(ASControlNodeEvent mask, v
 
   if (!_controlEventDispatchTable) {
     _controlEventDispatchTable = [[NSMutableDictionary alloc] initWithCapacity:kASControlNodeEventDispatchTableInitialCapacity]; // enough to handle common types without re-hashing the dictionary when adding entries.
+    
+    // only show tap-able areas for views with 1 or more addTarget:action: pairs
+    if ([ASControlNode enableHitTestDebug] && _debugHighlightOverlay == nil) {
+      ASPerformBlockOnMainThread(^{
+        // add a highlight overlay node with area of ASControlNode + UIEdgeInsets
+        self.clipsToBounds = NO;
+        _debugHighlightOverlay = [[ASImageNode alloc] init];
+        _debugHighlightOverlay.zPosition = 1000;  // ensure we're over the top of any siblings
+        _debugHighlightOverlay.layerBacked = YES;
+        [self addSubnode:_debugHighlightOverlay];
+      });
+    }
   }
 
   // Enumerate the events in the mask, adding the target-action pair for each control event included in controlEventMask
@@ -236,26 +280,29 @@ void _ASEnumerateControlEventsIncludedInMaskWithBlock(ASControlNodeEvent mask, v
     {
       // Do we already have an event table for this control event?
       id<NSCopying> eventKey = _ASControlNodeEventKeyForControlEvent(controlEvent);
-      NSMapTable *eventDispatchTable = [_controlEventDispatchTable objectForKey:eventKey];
+      NSMapTable *eventDispatchTable = _controlEventDispatchTable[eventKey];
       // Create it if necessary.
       if (!eventDispatchTable)
       {
         // Create the dispatch table for this event.
         eventDispatchTable = [NSMapTable weakToStrongObjectsMapTable];
-        [_controlEventDispatchTable setObject:eventDispatchTable forKey:eventKey];
+        if (eventKey) {
+          [_controlEventDispatchTable setObject:eventDispatchTable forKey:eventKey];
+        }
       }
 
       // Have we seen this target before for this event?
-      NSMutableArray *targetActions = [eventDispatchTable objectForKey:target];
+      NSMutableSet *targetActions = [eventDispatchTable objectForKey:target];
       if (!targetActions)
       {
-        // Nope. Create an actions array for it.
-        targetActions = [[NSMutableArray alloc] initWithCapacity:kASControlNodeActionDispatchTableInitialCapacity]; // enough to handle common types without re-hashing the dictionary when adding entries.
+        // Nope. Create an action set for it.
+        targetActions = [[NSMutableSet alloc] initWithCapacity:kASControlNodeActionDispatchTableInitialCapacity]; // enough to handle common types without re-hashing the dictionary when adding entries.
         [eventDispatchTable setObject:targetActions forKey:target];
       }
 
       // Add the action message.
-      // Note that bizarrely enough UIControl (at least according to the docs) supports duplicate target-action pairs for a particular control event, so we replicate that behavior.
+      // UIControl does not support duplicate target-action-events entries, so we replicate that behavior.
+      // See: https://github.com/facebook/AsyncDisplayKit/files/205466/DuplicateActionsTest.playground.zip
       [targetActions addObject:NSStringFromSelector(action)];
     });
 
@@ -270,7 +317,7 @@ void _ASEnumerateControlEventsIncludedInMaskWithBlock(ASControlNodeEvent mask, v
   ASDN::MutexLocker l(_controlLock);
   
   // Grab the event dispatch table for this event.
-  NSMapTable *eventDispatchTable = [_controlEventDispatchTable objectForKey:_ASControlNodeEventKeyForControlEvent(controlEvent)];
+  NSMapTable *eventDispatchTable = _controlEventDispatchTable[_ASControlNodeEventKeyForControlEvent(controlEvent)];
   if (!eventDispatchTable)
     return nil;
 
@@ -285,7 +332,7 @@ void _ASEnumerateControlEventsIncludedInMaskWithBlock(ASControlNodeEvent mask, v
   NSMutableSet *targets = [[NSMutableSet alloc] init];
 
   // Look at each event...
-  for (NSMapTable *eventDispatchTable in [_controlEventDispatchTable allValues])
+  for (NSMapTable *eventDispatchTable in [_controlEventDispatchTable objectEnumerator])
   {
     // and each event's targets...
     for (id target in eventDispatchTable)
@@ -307,7 +354,7 @@ void _ASEnumerateControlEventsIncludedInMaskWithBlock(ASControlNodeEvent mask, v
     {
       // Grab the dispatch table for this event (if we have it).
       id<NSCopying> eventKey = _ASControlNodeEventKeyForControlEvent(controlEvent);
-      NSMapTable *eventDispatchTable = [_controlEventDispatchTable objectForKey:eventKey];
+      NSMapTable *eventDispatchTable = _controlEventDispatchTable[eventKey];
       if (!eventDispatchTable)
         return;
 
@@ -340,7 +387,7 @@ void _ASEnumerateControlEventsIncludedInMaskWithBlock(ASControlNodeEvent mask, v
       if (!target)
       {
         // Look at every target, removing target-pairs that have action (or all of its actions).
-        for (id aTarget in eventDispatchTable)
+        for (id aTarget in [eventDispatchTable copy])
           removeActionFromTarget(aTarget, action);
       }
       else
@@ -360,7 +407,7 @@ void _ASEnumerateControlEventsIncludedInMaskWithBlock(ASControlNodeEvent mask, v
     (ASControlNodeEvent controlEvent)
     {
       // Use a copy to itereate, the action perform could call remove causing a mutation crash.
-      NSMapTable *eventDispatchTable = [[_controlEventDispatchTable objectForKey:_ASControlNodeEventKeyForControlEvent(controlEvent)] copy];
+      NSMapTable *eventDispatchTable = [_controlEventDispatchTable[_ASControlNodeEventKeyForControlEvent(controlEvent)] copy];
 
       // For each target interested in this event...
       for (id target in eventDispatchTable)
@@ -392,14 +439,16 @@ void _ASEnumerateControlEventsIncludedInMaskWithBlock(ASControlNodeEvent mask, v
 
 id<NSCopying> _ASControlNodeEventKeyForControlEvent(ASControlNodeEvent controlEvent)
 {
-  return [NSNumber numberWithInteger:controlEvent];
+  return @(controlEvent);
 }
 
 void _ASEnumerateControlEventsIncludedInMaskWithBlock(ASControlNodeEvent mask, void (^block)(ASControlNodeEvent anEvent))
 {
+  if (block == nil) {
+    return;
+  }
   // Start with our first event (touch down) and work our way up to the last event (touch cancel)
-  for (ASControlNodeEvent thisEvent = ASControlNodeEventTouchDown; thisEvent <= ASControlNodeEventTouchCancel; thisEvent <<= 1)
-  {
+  for (ASControlNodeEvent thisEvent = ASControlNodeEventTouchDown; thisEvent <= ASControlNodeEventTouchCancel; thisEvent <<= 1){
     // If it's included in the mask, invoke the block.
     if ((mask & thisEvent) == thisEvent)
       block(thisEvent);
@@ -423,6 +472,12 @@ void _ASEnumerateControlEventsIncludedInMaskWithBlock(ASControlNodeEvent mask, v
 
 - (void)endTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)touchEvent
 {
+}
+
+#pragma mark - Debug
+- (ASImageNode *)debugHighlightOverlay
+{
+  return _debugHighlightOverlay;
 }
 
 @end

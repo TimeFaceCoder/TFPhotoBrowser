@@ -1,10 +1,12 @@
-/* Copyright (c) 2014-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
+//
+//  ASCollectionView.h
+//  AsyncDisplayKit
+//
+//  Copyright (c) 2014-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
+//
 
 #import <UIKit/UIKit.h>
 
@@ -12,14 +14,12 @@
 #import <AsyncDisplayKit/ASCollectionViewProtocols.h>
 #import <AsyncDisplayKit/ASBaseDefines.h>
 #import <AsyncDisplayKit/ASBatchContext.h>
-#import <AsyncDisplayKit/ASCollectionViewFlowLayoutInspector.h>
 
 @class ASCellNode;
 @class ASCollectionNode;
 @protocol ASCollectionDataSource;
 @protocol ASCollectionDelegate;
 @protocol ASCollectionViewLayoutInspecting;
-@protocol ASCollectionViewLayoutFacilitatorProtocol;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -77,7 +77,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Tuning parameters for a range type in the specified mode.
  *
- * @param rangeMode The range mode to get the runing parameters for.
+ * @param rangeMode The range mode to get the running parameters for.
  * @param rangeType The range type to get the tuning parameters for.
  *
  * @returns A tuning parameter value for the given range type in the given mode.
@@ -88,10 +88,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (ASRangeTuningParameters)tuningParametersForRangeMode:(ASLayoutRangeMode)rangeMode rangeType:(ASLayoutRangeType)rangeType;
 
 /**
- * Set the tuning parameters for a range type in the specigied mode.
+ * Set the tuning parameters for a range type in the specified mode.
  *
  * @param tuningParameters The tuning parameters to store for a range type.
- * @param rangeMode The range mode to set the runing parameters for.
+ * @param rangeMode The range mode to set the running parameters for.
  * @param rangeType The range type to set the tuning parameters for.
  *
  * @see ASLayoutRangeMode
@@ -166,9 +166,20 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)reloadDataImmediately;
 
 /**
+ * Triggers a relayout of all nodes.
+ *
+ */
+- (void)relayoutItems;
+
+/**
+ *  Blocks execution of the main thread until all section and row updates are committed. This method must be called from the main thread.
+ */
+- (void)waitUntilAllUpdatesAreCommitted;
+
+/**
  * Registers the given kind of supplementary node for use in creating node-backed supplementary views.
  *
- * @param kind The kind of supplementary node that will be requested through the data source.
+ * @param elementKind The kind of supplementary node that will be requested through the data source.
  *
  * @discussion Use this method to register support for the use of supplementary nodes in place of the default
  * `registerClass:forSupplementaryViewOfKind:withReuseIdentifier:` and `registerNib:forSupplementaryViewOfKind:withReuseIdentifier:`
@@ -266,9 +277,20 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param indexPath The index path of the requested node.
  *
- * @returns a node for display at this indexpath.
+ * @returns a node for display at this indexpath or nil
  */
-- (ASCellNode *)nodeForItemAtIndexPath:(NSIndexPath *)indexPath;
+- (nullable ASCellNode *)nodeForItemAtIndexPath:(NSIndexPath *)indexPath;
+
+
+/**
+ * Similar to -supplementaryViewForElementKind:atIndexPath:
+ *
+ * @param elementKind The kind of supplementary node to locate.
+ * @param indexPath The index path of the requested supplementary node.
+ *
+ * @returns The specified supplementary node or nil
+ */
+- (nullable ASCellNode *)supplementaryNodeForElementKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath;
 
 /**
  * Similar to -indexPathForCell:.
@@ -338,7 +360,7 @@ NS_ASSUME_NONNULL_BEGIN
  * This is a node-based UICollectionViewDataSource.
  */
 #define ASCollectionViewDataSource ASCollectionDataSource
-@protocol ASCollectionDataSource <ASCommonCollectionViewDataSource, NSObject>
+@protocol ASCollectionDataSource <ASCommonCollectionViewDataSource>
 
 @optional
 
@@ -391,21 +413,23 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Indicator to lock the data source for data fetching in async mode.
- * We should not update the data source until the data source has been unlocked. Otherwise, it will incur data inconsistence or exception
+ * We should not update the data source until the data source has been unlocked. Otherwise, it will incur data inconsistency or exception
  * due to the data access in async mode.
  *
  * @param collectionView The sender.
+ * @deprecated The data source is always accessed on the main thread, and this method will not be called.
  */
-- (void)collectionViewLockDataSource:(ASCollectionView *)collectionView;
+- (void)collectionViewLockDataSource:(ASCollectionView *)collectionView ASDISPLAYNODE_DEPRECATED;
 
 /**
  * Indicator to unlock the data source for data fetching in async mode.
- * We should not update the data source until the data source has been unlocked. Otherwise, it will incur data inconsistence or exception
+ * We should not update the data source until the data source has been unlocked. Otherwise, it will incur data inconsistency or exception
  * due to the data access in async mode.
  *
  * @param collectionView The sender.
+ * @deprecated The data source is always accessed on the main thread, and this method will not be called.
  */
-- (void)collectionViewUnlockDataSource:(ASCollectionView *)collectionView;
+- (void)collectionViewUnlockDataSource:(ASCollectionView *)collectionView ASDISPLAYNODE_DEPRECATED;
 
 @end
 
@@ -418,6 +442,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 @optional
 
+/**
+ * Informs the delegate that the collection view will add the node
+ * at the given index path to the view hierarchy.
+ *
+ * @param collectionView The sender.
+ * @param indexPath The index path of the item that will be displayed.
+ *
+ * @warning AsyncDisplayKit processes collection view edits asynchronously. The index path
+ *   passed into this method may not correspond to the same item in your data source
+ *   if your data source has been updated since the last edit was processed.
+ */
 - (void)collectionView:(ASCollectionView *)collectionView willDisplayNodeForItemAtIndexPath:(NSIndexPath *)indexPath;
 
 /**
@@ -428,6 +463,10 @@ NS_ASSUME_NONNULL_BEGIN
  * @param collectionView The sender.
  * @param node The node which was removed from the view hierarchy.
  * @param indexPath The index path at which the node was located before it was removed.
+ *
+ * @warning AsyncDisplayKit processes collection view edits asynchronously. The index path
+ *   passed into this method may not correspond to the same item in your data source
+ *   if your data source has been updated since the last edit was processed.
  */
 - (void)collectionView:(ASCollectionView *)collectionView didEndDisplayingNode:(ASCellNode *)node forItemAtIndexPath:(NSIndexPath *)indexPath;
 
@@ -463,6 +502,10 @@ NS_ASSUME_NONNULL_BEGIN
  * Informs the delegate that the collection view did remove the node which was previously
  * at the given index path from the view hierarchy.
  *
+ * @warning AsyncDisplayKit processes collection view edits asynchronously. The index path
+ *   passed into this method may not correspond to the same item in your data source
+ *   if your data source has been updated since the last edit was processed.
+ *
  * This method is deprecated. Use @c collectionView:didEndDisplayingNode:forItemAtIndexPath: instead.
  */
 - (void)collectionView:(ASCollectionView *)collectionView didEndDisplayingNodeForItemAtIndexPath:(NSIndexPath *)indexPath ASDISPLAYNODE_DEPRECATED;
@@ -477,17 +520,15 @@ NS_ASSUME_NONNULL_BEGIN
 @optional
 
 /**
- * Passthrough support to UICollectionViewDelegateFlowLayout sectionInset behavior.
- *
- * @param collectionView The sender.
- * @param collectionViewLayout The layout object requesting the information.
- * @param section The index number of the section whose insets are needed.
- *
- * @discussion The same rules apply as the UICollectionView implementation, but this can also be used without a UICollectionViewFlowLayout.
- * https://developer.apple.com/library/ios/documentation/UIKit/Reference/UICollectionViewDelegateFlowLayout_protocol/index.html#//apple_ref/occ/intfm/UICollectionViewDelegateFlowLayout/collectionView:layout:insetForSectionAtIndex:
- *
+ * @discussion This method is deprecated and does nothing from 1.9.7 and up
+ * Previously it applies the section inset to every cells within the corresponding section.
+ * The expected behavior is to apply the section inset to the whole section rather than
+ * shrinking each cell individually.
+ * If you want this behavior, you can integrate your insets calculation into
+ * `constrainedSizeForNodeAtIndexPath`
+ * please file a github issue if you would like this to be restored.
  */
-- (UIEdgeInsets)collectionView:(ASCollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section;
+- (UIEdgeInsets)collectionView:(ASCollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section __deprecated_msg("This method does nothing for 1.9.7+ due to incorrect implementation previously, see the header file for more information.");
 
 /**
  * Asks the delegate for the size of the header in the specified section.

@@ -21,8 +21,6 @@
 #import "TFiCloudDownloadHelper.h"
 #import "TFPhotoBrowserBundle.h"
 
-NSString * const FLibraryViewControllerImageTypeJPEG = @"JPEG";
-NSString * const FLibraryViewControllerImageTypePNG = @"PNG";
 
 static NSString * const kTFLCollectionIdentifier        = @"kTFLCollectionIdentifier";
 static NSString * const kTFLCollectionCameraIdentifier  = @"kTFLCollectionCameraIdentifier";
@@ -139,16 +137,14 @@ static CGSize AssetGridThumbnailSize;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         // Photos library iOS >= 8
         PHFetchOptions *allPhotosOptions = [[PHFetchOptions alloc] init];
-        allPhotosOptions.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:NO]];
+        allPhotosOptions.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"modificationDate" ascending:NO]];
         weakSelf.assetsFetchResults = [PHAsset fetchAssetsWithOptions:allPhotosOptions];
         [weakSelf.assetsFetchResults indexOfObject:[NSNull null] inRange:NSMakeRange(0, 1)];
         [_items addObject:[NSNull null]];
         for (PHAsset *asset in weakSelf.assetsFetchResults) {
             if (asset.mediaType == PHAssetMediaTypeImage) {
                 TFAsset *tfAsset = [TFAsset assetFromPH:asset];
-                if ([self fliterWithAsset:tfAsset]) {
-                    [_items addObject:tfAsset];
-                }
+                [_items addObject:tfAsset];
             }
         }
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -160,18 +156,6 @@ static CGSize AssetGridThumbnailSize;
     
     
 }
-
-- (BOOL)fliterWithAsset:(TFAsset *)asset {
-    for (NSString *imageType in self.filterImageTypes) {
-        NSString *propertyName = [@"is" stringByAppendingString:imageType];
-        if ([asset valueForKey:propertyName]) {
-            return YES;
-        }
-    }
-    
-    return NO;
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
@@ -340,102 +324,6 @@ static CGSize AssetGridThumbnailSize;
 }
 - (void)deleteItem:(NSIndexPath *)indexPath {
     [self updateViewState];
-}
-
-
-#pragma mark - PHPhotoLibraryChangeObserver
-
-- (void)photoLibraryDidChange:(PHChange *)changeInstance {
-    // Check if there are changes to the assets we are showing.
-    PHFetchResultChangeDetails *collectionChanges = [changeInstance changeDetailsForFetchResult:self.assetsFetchResults];
-    if (collectionChanges == nil) {
-        return;
-    }
-    
-    /*
-     Change notifications may be made on a background queue. Re-dispatch to the
-     main queue before acting on the change as we'll be updating the UI.
-     */
-    dispatch_async(dispatch_get_main_queue(), ^{
-        // Get the new fetch result.
-        self.assetsFetchResults = [collectionChanges fetchResultAfterChanges];
-        
-        UICollectionView *collectionView = self.collectionView;
-        
-        if (![collectionChanges hasIncrementalChanges] || [collectionChanges hasMoves]) {
-            // Reload the collection view if the incremental diffs are not available
-            [collectionView reloadData];
-            
-        } else {
-            /*
-             Tell the collection view to animate insertions and deletions if we
-             have incremental diffs.
-             */
-            [collectionView performBatchUpdates:^{
-                NSIndexSet *removedIndexes = [collectionChanges removedIndexes];
-                if ([removedIndexes count] > 0) {
-                    
-                    NSMutableArray* indexPaths = [NSMutableArray arrayWithCapacity:removedIndexes.count];
-                    
-                    for(NSInteger i = 1; i < _items.count; ++i)
-                    {
-                        TFAsset* asset = _items[i];
-                        for(PHAsset* phAsset in collectionChanges.removedObjects)
-                        {
-                            if([phAsset.localIdentifier isEqualToString:asset.localIdentifier])
-                            {
-                                [indexPaths addObject:[NSIndexPath indexPathForItem:i inSection:0]];
-                            }
-                        }
-                    }
-                    
-                    [collectionView deleteItemsAtIndexPaths:indexPaths];
-                }
-                
-                NSIndexSet *insertedIndexes = [collectionChanges insertedIndexes];
-                if ([insertedIndexes count] > 0) {
-                    
-                    NSMutableArray* indexPaths = [NSMutableArray arrayWithCapacity:insertedIndexes.count];
-                    
-                    for(NSInteger i = 0; i < insertedIndexes.count; ++i)
-                    {
-                        [indexPaths addObject:[NSIndexPath indexPathForItem:i + 1 inSection:0]];
-                    }
-                    
-                    [collectionView insertItemsAtIndexPaths:indexPaths];
-                }
-                
-                NSIndexSet *changedIndexes = [collectionChanges changedIndexes];
-                if ([changedIndexes count] > 0) {
-                    //[collectionView reloadItemsAtIndexPaths:[changedIndexes tfl_indexPathsFromIndexesWithSection:0]];
-                    
-                    NSMutableArray* indexPaths = [NSMutableArray arrayWithCapacity:changedIndexes.count];
-                    
-                    for(NSInteger i = 0; i < insertedIndexes.count; ++i)
-                    {
-                        [indexPaths addObject:[NSIndexPath indexPathForItem:i + 1 inSection:0]];
-                    }
-                    
-                    [collectionView reloadItemsAtIndexPaths:indexPaths];
-                }
-                
-                //更新数据源
-                [self.assetsFetchResults indexOfObject:[NSNull null] inRange:NSMakeRange(0, 1)];
-                [_items removeAllObjects];
-                [_items addObject:[NSNull null]];
-                for(PHAsset* asset in self.assetsFetchResults)
-                {
-                    if(asset.mediaType == PHAssetMediaTypeImage)
-                    {
-                        TFAsset* tfAsset = [TFAsset assetFromPH:asset];
-                        [_items addObject:tfAsset];
-                    }
-                }
-            } completion:NULL];
-        }
-        
-        [self resetCachedAssets];
-    });
 }
 
 
@@ -789,9 +677,7 @@ static CGSize AssetGridThumbnailSize;
                 
             }
             
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self updateViewState];
-            });
+            [self updateViewState];
             
             
         } else {
@@ -822,12 +708,18 @@ static CGSize AssetGridThumbnailSize;
     NSUInteger minimumNumberOfSelection = MAX(1, self.minimumNumberOfSelection);
     
     if (minimumNumberOfSelection <= self.maximumNumberOfSelection) {
-        return (numberOfSelections <= self.maximumNumberOfSelection);
+        if ((numberOfSelections <= self.maximumNumberOfSelection)) {
+            return YES;
+        }
+        else {
+            [SVProgressHUD setMinimumDismissTimeInterval:.8f];
+            [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"最多选%zd张照片",self.maximumNumberOfSelection]];
+            return NO;
+        }
     }
     
     return YES;
 }
-
 
 #pragma mark - 图片裁剪
 
@@ -840,5 +732,102 @@ static CGSize AssetGridThumbnailSize;
  // Pass the selected object to the new view controller.
  }
  */
+
+#pragma mark - PHPhotoLibraryChangeObserver
+
+- (void)photoLibraryDidChange:(PHChange *)changeInstance {
+    // Check if there are changes to the assets we are showing.
+    PHFetchResultChangeDetails *collectionChanges = [changeInstance changeDetailsForFetchResult:self.assetsFetchResults];
+    if (collectionChanges == nil) {
+        return;
+    }
+    
+    /*
+     Change notifications may be made on a background queue. Re-dispatch to the
+     main queue before acting on the change as we'll be updating the UI.
+     */
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // Get the new fetch result.
+        self.assetsFetchResults = [collectionChanges fetchResultAfterChanges];
+        
+        UICollectionView *collectionView = self.collectionView;
+        
+        if (![collectionChanges hasIncrementalChanges] || [collectionChanges hasMoves]) {
+            // Reload the collection view if the incremental diffs are not available
+            [collectionView reloadData];
+            
+        } else {
+            /*
+             Tell the collection view to animate insertions and deletions if we
+             have incremental diffs.
+             */
+            [collectionView performBatchUpdates:^{
+                NSIndexSet *removedIndexes = [collectionChanges removedIndexes];
+                if ([removedIndexes count] > 0) {
+                    
+                    NSMutableArray* indexPaths = [NSMutableArray arrayWithCapacity:removedIndexes.count];
+                    
+                    for(NSInteger i = 1; i < _items.count; ++i)
+                    {
+                        TFAsset* asset = _items[i];
+                        for(PHAsset* phAsset in collectionChanges.removedObjects)
+                        {
+                            if([phAsset.localIdentifier isEqualToString:asset.localIdentifier])
+                            {
+                                [indexPaths addObject:[NSIndexPath indexPathForItem:i inSection:0]];
+                            }
+                        }
+                    }
+                    
+                    [collectionView deleteItemsAtIndexPaths:indexPaths];
+                }
+                
+                
+                NSIndexSet *insertedIndexes = [collectionChanges insertedIndexes];
+                if ([insertedIndexes count] > 0) {
+                    
+                    NSMutableArray* indexPaths = [NSMutableArray arrayWithCapacity:insertedIndexes.count];
+                    
+                    for(NSInteger i = 0; i < insertedIndexes.count; ++i)
+                    {
+                        [indexPaths addObject:[NSIndexPath indexPathForItem:i + 1 inSection:0]];
+                    }
+                    
+                    [collectionView insertItemsAtIndexPaths:indexPaths];
+                }
+                
+                NSIndexSet *changedIndexes = [collectionChanges changedIndexes];
+                if ([changedIndexes count] > 0) {
+                    //[collectionView reloadItemsAtIndexPaths:[changedIndexes tfl_indexPathsFromIndexesWithSection:0]];
+                    
+                    NSMutableArray* indexPaths = [NSMutableArray arrayWithCapacity:changedIndexes.count];
+                    
+                    for(NSInteger i = 0; i < insertedIndexes.count; ++i)
+                    {
+                        [indexPaths addObject:[NSIndexPath indexPathForItem:i + 1 inSection:0]];
+                    }
+                    
+                    [collectionView reloadItemsAtIndexPaths:indexPaths];
+                }
+                
+                //更新数据源
+                [self.assetsFetchResults indexOfObject:[NSNull null] inRange:NSMakeRange(0, 1)];
+                [_items removeAllObjects];
+                [_items addObject:[NSNull null]];
+                for(PHAsset* asset in self.assetsFetchResults)
+                {
+                    if(asset.mediaType == PHAssetMediaTypeImage)
+                    {
+                        TFAsset* tfAsset = [TFAsset assetFromPH:asset];
+                        [_items addObject:tfAsset];
+                    }
+                }
+            } completion:NULL];
+        }
+        
+        [self resetCachedAssets];
+    });
+}
+
 
 @end
