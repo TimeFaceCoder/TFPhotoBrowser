@@ -151,13 +151,11 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
     _imageRequestOptions.networkAccessAllowed = YES;
 }
 
-
 + (void)initialize {
     [super initialize];
     [self _setupImageManager];
     [self _setupImageRequestOptions];
 }
-
 
 #pragma mark -
 #pragma mark Properties (Image)
