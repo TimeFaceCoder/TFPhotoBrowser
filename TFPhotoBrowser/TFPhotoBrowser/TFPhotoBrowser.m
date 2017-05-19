@@ -1864,18 +1864,18 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
                         CGRect tagViewFrame = CGRectMake(model.tagRect.origin.x*scaleNum, model.tagRect.origin.y*scaleNum, model.tagRect.size.width*scaleNum, model.tagRect.size.height*scaleNum);
                         
                         CGPoint normalizedPoint = [[self pageDisplayedAtIndex:_currentPageIndex] normalizedPositionForPoint:pointOnView];
-                        dispatch_main_sync_safe(^{
+                        dispatch_sync(dispatch_get_main_queue(), ^{
                             CGFloat scaleW = imageView.image.size.width  / self.view.frame.size.width;
                             NSLog(@"image.size.width = %@, image.size.height = %@",@(imageView.image.size.width),@(imageView.image.size.height));
-//                            TFPhotoTagView *tagView = [[TFPhotoTagView alloc] initWithDelegate:self frame:CGRectMake(0, 0, model.tagRect.size.width / 2/scaleW,  model.tagRect.size.height  / 2/scaleW + 40)];
+                            //                            TFPhotoTagView *tagView = [[TFPhotoTagView alloc] initWithDelegate:self frame:CGRectMake(0, 0, model.tagRect.size.width / 2/scaleW,  model.tagRect.size.height  / 2/scaleW + 40)];
                             TFPhotoTagView *tagView = [[TFPhotoTagView alloc] initWithDelegate:self frame:tagViewFrame];
                             tagView.faceId = model.faceId;
                             NSLog(@"pointOnView = %@, normalizedPoint = %@",NSStringFromCGPoint(pointOnView),NSStringFromCGPoint(normalizedPoint) );
-
-//                            if (normalizedPoint.x <0 ||normalizedPoint.y < 0 || normalizedPoint.x > 1 || normalizedPoint.y > 1) {
-//                                NSLog(@"Point is outside of photo.");
-//                                return ;
-//                            }
+                            
+                            //                            if (normalizedPoint.x <0 ||normalizedPoint.y < 0 || normalizedPoint.x > 1 || normalizedPoint.y > 1) {
+                            //                                NSLog(@"Point is outside of photo.");
+                            //                                return ;
+                            //                            }
                             if (model.tagName.length) {
                                 [tagView setText:model.tagName];
                             }
