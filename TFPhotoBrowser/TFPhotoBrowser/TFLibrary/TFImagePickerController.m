@@ -74,6 +74,15 @@
     return [_selectedAssets.array copy];
 }
 
+- (void)selectAsset:(PHAsset *)asset {
+    if ([_selectedAssets count] >= _maxSelectedCount) {
+        [SVProgressHUD setMinimumDismissTimeInterval:.8];
+        [SVProgressHUD showInfoWithStatus:[NSString localizedStringWithFormat:TFPhotoBrowserLocalizedStrings(@"Choose %d photos at most"), _selectedAssets.count]];
+        return;
+    }
+    [self addSelectedAssets:[NSOrderedSet orderedSetWithObject:asset]];
+}
+
 - (void)addSelectedAssets:(NSOrderedSet *)objects {
     [_selectedAssets unionOrderedSet:objects];
     
@@ -86,12 +95,19 @@
     }
 }
 
-- (void)selectAsset:(PHAsset *)asset {
-    if ([_selectedAssets count] >= _maxSelectedCount) {
-        [SVProgressHUD showInfoWithStatus:[NSString localizedStringWithFormat:TFPhotoBrowserLocalizedStrings(@"Choose %d photos at most"), _selectedAssets.count]];
+- (void)_updateSelection {
+    if (!self.isViewLoaded) {
         return;
     }
-    [self addSelectedAssets:[NSOrderedSet orderedSetWithObject:asset]];
+    
+    //NSLog(@"%@", @(self.collectionView.visibleCells.count));
+    
+    for (TFAssetCell *cell in self.collectionView.visibleCells) {
+        
+        BOOL isSelect = [_selectedAssets containsObject:cell.asset];
+        
+        cell.assetSelected = isSelect;
+    }
 }
 
 - (void)removeSelectedAssets:(NSOrderedSet *)objects {
@@ -327,16 +343,6 @@
     [items addObject:_doneButton];
     
     [self setToolbarItems:items animated:animated];
-}
-
-- (void)_updateSelection {
-    if (!self.isViewLoaded) {
-        return;
-    }
-    
-    for (TFAssetCell *cell in self.collectionView.visibleCells) {
-        cell.assetSelected = [_selectedAssets containsObject:cell.asset];
-    }
 }
 
 - (void)setSelectedAssetBadgeImage:(UIImage *)selectedAssetBadgeImage
@@ -718,8 +724,8 @@
 }
 
 - (void)updateHeaderView:(NSIndexPath*)indexPath {
-    //    UICollectionReusableView
-    NSLog(@"index.section = %@, item = %@",@(indexPath.section),@(indexPath.row));
+    //UICollectionReusableView
+    //NSLog(@"index.section = %@, item = %@",@(indexPath.section),@(indexPath.row));
     
     TFMomentHeaderNomalView *headerView = [headerViewDictionary objectForKey:[NSString stringWithFormat:@"%@",@(indexPath.section)]];
     
@@ -775,17 +781,18 @@
                 [self selectAsset:asset];
                 addAssetCount ++;
             }
-            
         }
-        
     }
+    
     if (addAssetCount + orginalCount > _maxSelectedCount && state==NO) {
         selectedAllBtn.selected = NO;
     }
-    
     if (self.delegate && [self.delegate respondsToSelector:@selector(imagePickerController:didSelectedPickingAssets:)]) {
         [self.delegate imagePickerController:self didSelectedPickingAssets:array];
     }
+    
+    [self.collectionView reloadData];
+    //[self.collectionView reloadSections:[NSIndexSet indexSetWithIndex:path.section]];
 }
 
 
@@ -868,6 +875,8 @@
     TFAssetCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"Cell" forIndexPath:indexPath];
     PHAsset *asset = [self _assetAtIndexPath:indexPath];
     
+    //NSLog(@"reuse date: %@", [self stringFromDate:asset.creationDate dateFormat:@"yyyy-MM-dd"]);
+    
     cell.asset = asset;
     cell.assetSelected = [_selectedAssets containsObject:asset];
     cell.indexPath = indexPath;
@@ -875,6 +884,15 @@
     //    cell.selectedBadgeImageView.image = _selectedAssetBadgeImage;
     
     return cell;
+}
+
+- (NSString *)stringFromDate:(NSDate *)date dateFormat:(NSString*)dateFormat{
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    
+    [dateFormatter setDateFormat:dateFormat];
+    
+    return [dateFormatter stringFromDate:date];
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -1002,11 +1020,11 @@
 }
 
 - (void)_scrollToBottomAnimated:(BOOL)animated {
-    CGPoint contentOffset = self.collectionView.contentOffset;
-    contentOffset.y = self.collectionView.contentSize.height - self.collectionView.bounds.size.height + self.collectionView.contentInset.bottom;
-    contentOffset.y = MAX(contentOffset.y, -self.collectionView.contentInset.top);
-    contentOffset.y = MAX(self.collectionView.contentSize.height - self.collectionView.bounds.size.height + self.collectionView.contentInset.bottom, -self.collectionView.contentInset.top);
-    [self.collectionView setContentOffset:contentOffset animated:animated];
+    //    CGPoint contentOffset = self.collectionView.contentOffset;
+    //    contentOffset.y = self.collectionView.contentSize.height - self.collectionView.bounds.size.height + self.collectionView.contentInset.bottom;
+    //    contentOffset.y = MAX(contentOffset.y, -self.collectionView.contentInset.top);
+    //    contentOffset.y = MAX(self.collectionView.contentSize.height - self.collectionView.bounds.size.height + self.collectionView.contentInset.bottom, -self.collectionView.contentInset.top);
+    //    [self.collectionView setContentOffset:contentOffset animated:animated];
 }
 #pragma mark - Tool
 - (BOOL)_qualityImageInLocalWithPHAsset:(PHAsset *)phAsset {

@@ -8,7 +8,7 @@ target 'TFPhotoBrowser' do
     pod 'PINRemoteImage'
     pod 'DACircularProgress'
     pod 'SVProgressHUD'
-    pod 'AsyncDisplayKit', :git => 'https://git.coding.net/Timeface_xzx/AsyncDisplayKit.git'
+    pod 'AsyncDisplayKit', :git => 'https://git.coding.net/TimeFace/AsyncDisplayKit.git'
     pod 'TFCamera', :git => 'https://github.com/TimeFaceCoder/TFCamera.git'
     xcodeproj 'TFPhotoBrowser.xcodeproj'
 end

@@ -22,16 +22,16 @@ PODS:
   - PINRemoteImage/iOS (3.0.0-beta.3):
     - PINRemoteImage/Core
   - pop (1.0.9)
-  - SDWebImage (3.8.2):
-    - SDWebImage/Core (= 3.8.2)
-  - SDWebImage/Core (3.8.2)
-  - SVProgressHUD (2.0.3)
+  - SDWebImage (4.0.0):
+    - SDWebImage/Core (= 4.0.0)
+  - SDWebImage/Core (4.0.0)
+  - SVProgressHUD (2.1.2)
   - TFCamera (0.0.4):
     - Masonry
     - pop
 
 DEPENDENCIES:
-  - AsyncDisplayKit (from `https://git.coding.net/Timeface_xzx/AsyncDisplayKit.git`)
+  - AsyncDisplayKit (from `https://git.coding.net/TimeFace/AsyncDisplayKit.git`)
   - DACircularProgress
   - PINRemoteImage
   - pop
@@ -41,30 +41,30 @@ DEPENDENCIES:
 
 EXTERNAL SOURCES:
   AsyncDisplayKit:
-    :git: https://git.coding.net/Timeface_xzx/AsyncDisplayKit.git
+    :git: https://git.coding.net/TimeFace/AsyncDisplayKit.git
   TFCamera:
     :git: https://github.com/TimeFaceCoder/TFCamera.git
 
 CHECKOUT OPTIONS:
   AsyncDisplayKit:
-    :commit: 071f070713aa2b9377c5d61a7b20c1caaf6c80c2
-    :git: https://git.coding.net/Timeface_xzx/AsyncDisplayKit.git
+    :commit: 77c88c47b2fa39182a4a20addae0378590f17999
+    :git: https://git.coding.net/TimeFace/AsyncDisplayKit.git
   TFCamera:
     :commit: a11f04d1543365ea29cd3218fbc2e060a5ad587e
     :git: https://github.com/TimeFaceCoder/TFCamera.git
 
 SPEC CHECKSUMS:
-  AsyncDisplayKit: 70f2350c075cd29225aaf077e4c960b119cc40e4
+  AsyncDisplayKit: 94d2b0648c4a4ec5145dca23624e4ce856716c94
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
   Masonry: 7c429b56da9d4ee0bbb3ed77a5ea710d6a5df39e
   PINCache: 6911fe422a633e18b3d3ddf2bd4f0e55e36e2892
   PINRemoteImage: 308731aa6534500e58fc211b9cc2bb7252df25ba
   pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
-  SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
-  SVProgressHUD: b0830714205bea1317ea1a2ebc71e5633af334d4
+  SDWebImage: 76a6348bdc74eb5a55dd08a091ef298e56b55e41
+  SVProgressHUD: c404a55d78acbeb7ebb78b76d3faf986475a6994
   TFCamera: 2148748ebd0be73b820ef06c627d0250e3af9f0d
 
-PODFILE CHECKSUM: 7f698a942799fd2a4f3053fc6f3f02a5765abf6f
+PODFILE CHECKSUM: a1c6ad08d3ecc3479ffb7587d28eeca81c589330
 
-COCOAPODS: 1.2.0.beta.1
+COCOAPODS: 1.3.0.beta.1

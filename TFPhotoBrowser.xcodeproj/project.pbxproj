@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3AAB0EAD616F3302486DDD59 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B36250858EA58B0E345BDD17 /* libPods.a */; };
+		3E878B731EF0CF8300C9C57C /* TFImageCropViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E878B701EF0CF8300C9C57C /* TFImageCropViewController.m */; };
+		3E878B741EF0CF8300C9C57C /* TFImageEditorFrameView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E878B721EF0CF8300C9C57C /* TFImageEditorFrameView.m */; };
 		6502B2B51D8846C3000EC298 /* RMDisplayLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 6502B2B21D8846C3000EC298 /* RMDisplayLabel.m */; };
 		6502B2B61D8846C3000EC298 /* RMDownloadIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 6502B2B41D8846C3000EC298 /* RMDownloadIndicator.m */; };
 		6CFD503A1CA52453003586D5 /* TFPhotoTagView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CFD50391CA52453003586D5 /* TFPhotoTagView.m */; };
@@ -60,8 +61,6 @@
 		B0B30AF51C3A43E8000AA90B /* TFLibraryCollectionOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = B0B30AF41C3A43E8000AA90B /* TFLibraryCollectionOverlayView.m */; };
 		B0B30AFA1C3A551C000AA90B /* ALAssetRepresentation+TFMD5.m in Sources */ = {isa = PBXBuildFile; fileRef = B0B30AF91C3A551C000AA90B /* ALAssetRepresentation+TFMD5.m */; };
 		B0B30AFD1C3A68E7000AA90B /* TFCollectionOverlayProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = B0B30AFC1C3A68E7000AA90B /* TFCollectionOverlayProgressView.m */; };
-		B0D8F8391C71B94B000778EE /* TFImageCropViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F8361C71B94B000778EE /* TFImageCropViewController.m */; };
-		B0D8F83A1C71B94B000778EE /* TFImageEditorFrameView.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F8381C71B94B000778EE /* TFImageEditorFrameView.m */; };
 		B0D8F83D1C730267000778EE /* TFCollectionsTitleButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F83C1C730267000778EE /* TFCollectionsTitleButton.m */; };
 		B0D8F8411C7306EC000778EE /* NSDate+TFFormattedDay.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F8401C7306EC000778EE /* NSDate+TFFormattedDay.m */; };
 		B0D8F8441C730733000778EE /* PHCollection+TFThumbnail.m in Sources */ = {isa = PBXBuildFile; fileRef = B0D8F8431C730733000778EE /* PHCollection+TFThumbnail.m */; };
@@ -101,6 +100,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3E878B6F1EF0CF8300C9C57C /* TFImageCropViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFImageCropViewController.h; sourceTree = "<group>"; };
+		3E878B701EF0CF8300C9C57C /* TFImageCropViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFImageCropViewController.m; sourceTree = "<group>"; };
+		3E878B711EF0CF8300C9C57C /* TFImageEditorFrameView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFImageEditorFrameView.h; sourceTree = "<group>"; };
+		3E878B721EF0CF8300C9C57C /* TFImageEditorFrameView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFImageEditorFrameView.m; sourceTree = "<group>"; };
 		6502B2B11D8846C3000EC298 /* RMDisplayLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMDisplayLabel.h; sourceTree = "<group>"; };
 		6502B2B21D8846C3000EC298 /* RMDisplayLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMDisplayLabel.m; sourceTree = "<group>"; };
 		6502B2B31D8846C3000EC298 /* RMDownloadIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMDownloadIndicator.h; sourceTree = "<group>"; };
@@ -195,10 +198,6 @@
 		B0B30AFC1C3A68E7000AA90B /* TFCollectionOverlayProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFCollectionOverlayProgressView.m; sourceTree = "<group>"; };
 		B0C5D6C41C2D418300ADF607 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
 		B0C5D6C51C2D418300ADF607 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
-		B0D8F8351C71B94B000778EE /* TFImageCropViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFImageCropViewController.h; sourceTree = "<group>"; };
-		B0D8F8361C71B94B000778EE /* TFImageCropViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFImageCropViewController.m; sourceTree = "<group>"; };
-		B0D8F8371C71B94B000778EE /* TFImageEditorFrameView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFImageEditorFrameView.h; sourceTree = "<group>"; };
-		B0D8F8381C71B94B000778EE /* TFImageEditorFrameView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFImageEditorFrameView.m; sourceTree = "<group>"; };
 		B0D8F83B1C730267000778EE /* TFCollectionsTitleButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFCollectionsTitleButton.h; sourceTree = "<group>"; };
 		B0D8F83C1C730267000778EE /* TFCollectionsTitleButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFCollectionsTitleButton.m; sourceTree = "<group>"; };
 		B0D8F83F1C7306EC000778EE /* NSDate+TFFormattedDay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+TFFormattedDay.h"; sourceTree = "<group>"; };
@@ -244,7 +243,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3AAB0EAD616F3302486DDD59 /* libPods.a in Frameworks */,
 				8C41AF58734CA1B0158BE728 /* libPods-TFPhotoBrowser.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -385,6 +383,10 @@
 		B06A14891B903AEB0022BCE5 /* TFPhotoBrowser */ = {
 			isa = PBXGroup;
 			children = (
+				3E878B6F1EF0CF8300C9C57C /* TFImageCropViewController.h */,
+				3E878B701EF0CF8300C9C57C /* TFImageCropViewController.m */,
+				3E878B711EF0CF8300C9C57C /* TFImageEditorFrameView.h */,
+				3E878B721EF0CF8300C9C57C /* TFImageEditorFrameView.m */,
 				C4C5C6601CEEBBED00B94AD9 /* Resources */,
 				6CF2BD521C6193C4009AF2C1 /* TFImageEditor */,
 				B06A14921B904AEE0022BCE5 /* TFPhotoBrowserConstants.h */,
@@ -393,10 +395,6 @@
 				B0D8F8531C730CD5000778EE /* TFPhotoBrowserBundle.m */,
 				B09C3C461C2015B3009C6CF0 /* TFLibrary */,
 				B04C0B4B1BF5C05F0012B7D8 /* TFPhotoBrowserPrivate.h */,
-				B0D8F8351C71B94B000778EE /* TFImageCropViewController.h */,
-				B0D8F8361C71B94B000778EE /* TFImageCropViewController.m */,
-				B0D8F8371C71B94B000778EE /* TFImageEditorFrameView.h */,
-				B0D8F8381C71B94B000778EE /* TFImageEditorFrameView.m */,
 				B06A148E1B903BA60022BCE5 /* TFPhotoBrowser.h */,
 				B06A148F1B903BA60022BCE5 /* TFPhotoBrowser.m */,
 				6CFD50381CA52453003586D5 /* TFPhotoTagView.h */,
@@ -591,7 +589,8 @@
 				TargetAttributes = {
 					B06A144A1B9039810022BCE5 = {
 						CreatedOnToolsVersion = 7.0;
-						DevelopmentTeam = N7HPU2D4KX;
+						DevelopmentTeam = AA34382B49;
+						ProvisioningStyle = Manual;
 					};
 					B06A146B1B9039810022BCE5 = {
 						CreatedOnToolsVersion = 7.0;
@@ -714,7 +713,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -739,7 +738,6 @@
 				B0B30AFD1C3A68E7000AA90B /* TFCollectionOverlayProgressView.m in Sources */,
 				B0D8F8411C7306EC000778EE /* NSDate+TFFormattedDay.m in Sources */,
 				B0420DB71B953FE2002CAF13 /* TFZoomingScrollView.m in Sources */,
-				B0D8F8391C71B94B000778EE /* TFImageCropViewController.m in Sources */,
 				B0B30AF51C3A43E8000AA90B /* TFLibraryCollectionOverlayView.m in Sources */,
 				6502B2B51D8846C3000EC298 /* RMDisplayLabel.m in Sources */,
 				B06A145E1B9039810022BCE5 /* ViewController.m in Sources */,
@@ -751,7 +749,6 @@
 				B06A14501B9039810022BCE5 /* main.m in Sources */,
 				B06A14901B903BA60022BCE5 /* TFPhotoBrowser.m in Sources */,
 				B0D8F8571C730E36000778EE /* TFAssetCell.m in Sources */,
-				B0D8F83A1C71B94B000778EE /* TFImageEditorFrameView.m in Sources */,
 				B04C0B4A1BF5B8140012B7D8 /* UIImage+TFPhotoBrowser.m in Sources */,
 				B0D8F8721C73FCA8000778EE /* PHAsset+TFExpand.m in Sources */,
 				B0D8F8441C730733000778EE /* PHCollection+TFThumbnail.m in Sources */,
@@ -759,10 +756,12 @@
 				B02CE31F1C22D51E005D6E62 /* TFLibraryCollectionViewCell.m in Sources */,
 				B06A14951B904B080022BCE5 /* TFPhoto.m in Sources */,
 				B09C3C491C2015C9009C6CF0 /* TFLibraryViewController.m in Sources */,
+				3E878B741EF0CF8300C9C57C /* TFImageEditorFrameView.m in Sources */,
 				B0D8F8631C731390000778EE /* TFImageZoomView.m in Sources */,
 				B08D61BC1C224CBC00335903 /* TFAsset.m in Sources */,
 				B0D8F84D1C7308E5000778EE /* PHImageManager+TFRequestImages.m in Sources */,
 				B02CE3191C22D443005D6E62 /* TFLibraryViewLayout.m in Sources */,
+				3E878B731EF0CF8300C9C57C /* TFImageCropViewController.m in Sources */,
 				B0420DB11B953376002CAF13 /* TFTapDetectingView.m in Sources */,
 				B0B30AFA1C3A551C000AA90B /* ALAssetRepresentation+TFMD5.m in Sources */,
 				B0D8F85A1C7310C2000778EE /* TFCollectionCell.m in Sources */,
@@ -911,10 +910,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = AA34382B49;
 				INFOPLIST_FILE = TFPhotoBrowser/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = cn.timeface.demo.TFPhotoBrowser;
+				PRODUCT_BUNDLE_IDENTIFIER = cn.timeface.app.demo.TFPhotoBrowser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "eae85d71-8342-49db-9389-0d1cdd84f1b0";
+				PROVISIONING_PROFILE_SPECIFIER = DemoAppDevelopmentProfile;
 			};
 			name = Debug;
 		};
@@ -925,10 +927,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = TFPhotoBrowser/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = cn.timeface.demo.TFPhotoBrowser;
+				PRODUCT_BUNDLE_IDENTIFIER = cn.timeface.app.demo.TFPhotoBrowser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Release;
 		};

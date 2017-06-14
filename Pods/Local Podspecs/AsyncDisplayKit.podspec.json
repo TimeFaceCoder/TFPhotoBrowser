@@ -4,13 +4,13 @@
   "license": {
     "type": "MIT"
   },
-  "homepage": "https://git.coding.net/Timeface_xzx/AsyncDisplayKit.git",
+  "homepage": "https://git.coding.net/TimeFace/AsyncDisplayKit.git",
   "authors": {
     "Timeface_xzx": "xiazhixiang@timeface.cn"
   },
   "summary": "Smooth asynchronous user interfaces for iOS apps.",
   "source": {
-    "git": "https://git.coding.net/Timeface_xzx/AsyncDisplayKit.git"
+    "git": "https://git.coding.net/TimeFace/AsyncDisplayKit.git"
   },
   "documentation_url": "http://asyncdisplaykit.org/appledoc/",
   "frameworks": "AssetsLibrary",
@@ -20,7 +20,7 @@
   ],
   "requires_arc": true,
   "platforms": {
-    "ios": "8.0"
+    "ios": "7.0"
   },
   "default_subspecs": "PINRemoteImage",
   "social_media_url": "https://twitter.com/fbOpenSource",
