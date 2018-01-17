@@ -159,6 +159,7 @@ NS_ASSUME_NONNULL_BEGIN
     UIImage *thumbnail = [[PHCollection _tf_thumbnailImageCache] objectForKey:cacheKey];
     if (thumbnail == nil) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            
             [self _tf_requestThumbnailWithAssetsFetchOptions:assetFetchOptions completion:^(UIImage *result) {
                 if (result == nil) {
                     [[PHCollection _tf_thumbnailImageCache] setObject:[NSNull null] forKey:cacheKey];
@@ -182,7 +183,64 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)_tf_requestThumbnailWithAssetsFetchOptions:(nullable PHFetchOptions *)assetFetchOptions completion:(void (^)(UIImage *__nullable result))resultHandler
 {
-    resultHandler(nil);
+    //  在对于 其他的相册，处理为，与第一个相册一致，即取出相册中的前3张照片绘制出一个类似相册的图片，将该图片return
+    if ([self isKindOfClass:[PHAssetCollection class]]) {
+        
+        CGSize assetSize = CGSizeMake(TFPrimaryThumbnailWidth, TFPrimaryThumbnailWidth);
+        assetSize.width *= [UIScreen mainScreen].scale;
+        assetSize.height *= [UIScreen mainScreen].scale;
+        
+        PHImageRequestOptions *options = [[PHImageRequestOptions alloc] init];
+        options.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat;
+        options.resizeMode = PHImageRequestOptionsResizeModeFast;
+        
+        NSMutableArray *assets = [NSMutableArray new];
+        PHFetchResult *result = [PHAsset fetchAssetsInAssetCollection:self options:nil];
+        
+        for (PHAsset *asset in result) {
+            if (assets.count == 3) {
+                break;
+            }
+            [assets addObject:asset];
+        }
+        [[PHImageManager defaultManager] tf_requestImagesForAssets:assets targetSize:assetSize contentMode:PHImageContentModeAspectFill options:options resultHandler:^(NSDictionary *results, NSDictionary *infos) {
+            UIGraphicsBeginImageContextWithOptions(CGSizeMake(TFTotalThumbnailWidth, TFTotalThumbnailWidth), NO, 0.0);
+            
+            for (NSInteger index = 2; index >= 0; index--) {
+                CGRect assetFrame;
+                assetFrame.origin.y = (2 - index) * 2.0;
+                assetFrame.origin.x = index * 2.0 + 4.0;
+                assetFrame.size.width = TFPrimaryThumbnailWidth - index * 4.0;
+                assetFrame.size.height = TFPrimaryThumbnailWidth - index * 4.0;
+                
+                UIImage *image = nil;
+                if (assets.count > index) {
+                    PHAsset *asset = assets[index];
+                    image = results[asset.localIdentifier];
+                }
+                if (image != nil) {
+                    [image tf_drawInRectWithAspectFill:assetFrame];
+                }
+                CGFloat lineWidth = 1.0 / [UIScreen mainScreen].scale;
+                CGRect borderRect = CGRectInset(assetFrame, -lineWidth / 2.0, -lineWidth / 2.0);
+                UIBezierPath *border = [UIBezierPath bezierPathWithRect:borderRect];
+                border.lineWidth = lineWidth;
+                [[UIColor whiteColor] setStroke];
+                [border stroke];
+            }
+            
+            UIImage *retImage = UIGraphicsGetImageFromCurrentImageContext();
+            UIGraphicsEndImageContext();
+            
+            
+            resultHandler(retImage);
+        }];
+        
+    }
+    else
+    {
+        resultHandler(nil);
+    }
 }
 
 + (void)tf_clearThumbnailCache
@@ -343,3 +401,4 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
+

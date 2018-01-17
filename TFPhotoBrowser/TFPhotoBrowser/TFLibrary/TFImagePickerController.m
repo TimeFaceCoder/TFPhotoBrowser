@@ -198,7 +198,18 @@
         _moments = nil;
     } else {
         _fetchResult = nil;
-        _moments = [PHAssetCollection fetchMomentsWithOptions:nil];
+        
+        PHFetchOptions *options = [[PHFetchOptions alloc] init];
+        options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"endDate" ascending:NO]];
+        _moments = [PHAssetCollection fetchMomentsWithOptions:options];
+        
+        //(PHFetchResult<PHAssetCollection *> *)
+        
+        for(PHAssetCollection* collection in _moments)
+        {
+            NSLog(@"%@", collection.localizedTitle);
+        }
+        
         // 存储头部信息
         [self saveHeaderModels];
     }
@@ -354,9 +365,34 @@
 
 - (void)_init {
     
+    PHAuthorizationStatus status = [PHPhotoLibrary authorizationStatus];
+    if (status == PHAuthorizationStatusNotDetermined) {
+        [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (status == PHAuthorizationStatusAuthorized) {
+                    [self _initMethod];
+                }
+                else
+                {
+                    [self showNotAuthView];
+                }
+            });
+        }];
+    } else if (status == PHAuthorizationStatusAuthorized) {
+        [self _initMethod];
+    } else if (status == PHAuthorizationStatusDenied) {
+        
+        [self showNotAuthView];
+    }
+    
+}
+
+- (void)_initMethod
+{
     CGFloat scale = [[UIScreen mainScreen] scale];
     _fullScreenSize = CGSizeMake(CGRectGetWidth([[UIScreen mainScreen] bounds]) *scale, CGRectGetHeight([[UIScreen mainScreen] bounds]) *scale);
-    _maxSelectedCount = NSIntegerMax;
+    _maxSelectedCount = 100;//NSIntegerMax;
     _mediaTypes = @[ (NSString *)kUTTypeImage ];
     _selectedAssets = [NSMutableOrderedSet new];
     _selectedAssetBadgeImage = TFPhotoBrowserImageNamed(@"TFLibraryCollectionSelected");
@@ -402,7 +438,11 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pasteboardChanged:) name:UIPasteboardChangedNotification object:[UIPasteboard generalPasteboard]];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
+    
 }
+
+
+
 
 - (instancetype)init {
     UICollectionViewFlowLayout *layout = [[TFCollectionViewFloatingHeaderFlowLayout alloc] init];
@@ -410,9 +450,46 @@
     layout.minimumInteritemSpacing = TFObjectSpacing;
     self = [super initWithCollectionViewLayout:layout];
     if (self) {
+        
         [self _init];
     }
     return self;
+}
+
+- (void)showNotAuthView
+{
+    UILabel *label = [[UILabel alloc] init];
+    label.backgroundColor = [UIColor clearColor];
+    label.text = NSLocalizedString(@"打开相册隐私设置", nil);
+    label.textColor = [UIColor colorWithRed:81/255.0f green:81/255.0f blue:81/255.0f alpha:1];
+    label.font = [UIFont systemFontOfSize:16];
+    label.numberOfLines = 2;
+    label.textAlignment = NSTextAlignmentCenter;
+    [label sizeToFit];
+    CGFloat left = (self.view.frame.size.width - label.frame.size.width) / 2;
+    CGFloat top = (self.view.frame.size.height - label.frame.size.height)/ 2;
+    label.frame = CGRectMake(left, top, label.frame.size.width,label.frame.size.height);
+    [self.view addSubview:label];
+    
+    UIButton *button = [[UIButton alloc]init];
+    button.backgroundColor = [UIColor colorWithRed:6 / 255.0 green:155 / 255.0 blue:242 / 255.0 alpha:1];
+    [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    button.titleLabel.font = [UIFont systemFontOfSize:16];
+    [button setTitle:NSLocalizedString(@"去设置", nil) forState:UIControlStateNormal];
+    CGFloat buttonWidth = 100;
+    CGFloat buttonHeight = 30;
+    CGFloat buttonLeft = (self.view.frame.size.width - buttonWidth) / 2;
+    CGFloat buttonTop = label.frame.origin.y + label.frame.size.height + 10;
+    button.frame = CGRectMake(buttonLeft, buttonTop, buttonWidth, buttonHeight);
+    button.layer.cornerRadius = 4;
+    [button addTarget:self action:@selector(actionForSettingButton:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:button];
+    
+    self.navigationItem.title = NSLocalizedString(@"请求相册权限", nil);
+    
+    _cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel:)];
+    _cancelButton.tintColor = [UIColor whiteColor];
+    self.navigationItem.rightBarButtonItem = _cancelButton;
 }
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
@@ -430,7 +507,7 @@
     layout.minimumInteritemSpacing = 0.0;
     self = [super initWithCollectionViewLayout:layout];
     if (self) {
-        _showScanButton = YES;
+        _showScanButton = NO;
         [self _init];
     }
     return self;
@@ -442,6 +519,12 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NOTICE_RELOAD_COLLECTION_INDEXPATH" object:nil];
 }
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    [SVProgressHUD dismiss];
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -827,6 +910,10 @@
 }
 
 - (PHFetchResult *)_assetsForMoment:(PHAssetCollection *)collection {
+    
+    //    Printing description of collection:
+    //    <PHMoment: 0x14368fb30> 76D1ACA8-3585-4B07-B907-C8C0948FB97D/L0/060, title:"(null)", subtitle:"(null)" assetCollectionType=3/0 [2018-01-16 06:53:37 +0000 - 2018-01-16 08:45:03 +0000]
+    
     PHFetchResult *result = [_momentCache objectForKey:collection.localIdentifier];
     if (result == nil) {
         result = [PHAsset fetchAssetsInAssetCollection:collection options:[self _assetFetchOptions]];
@@ -1329,3 +1416,4 @@
 
 
 @end
+
