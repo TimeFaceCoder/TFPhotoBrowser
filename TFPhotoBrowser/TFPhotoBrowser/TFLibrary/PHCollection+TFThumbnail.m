@@ -98,7 +98,12 @@ NS_ASSUME_NONNULL_BEGIN
     options.resizeMode = PHImageRequestOptionsResizeModeFast;
     
     NSMutableArray *assets = [NSMutableArray new];
+    
+    
+    
     PHFetchResult *moments = [PHAssetCollection fetchMomentsWithOptions:nil];
+    
+    
     [moments enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(PHAssetCollection *moment, NSUInteger idx, BOOL *stop) {
         PHFetchResult *keyResult = [PHAsset fetchAssetsInAssetCollection:moment options:assetFetchOptions];
         
@@ -195,7 +200,10 @@ NS_ASSUME_NONNULL_BEGIN
         options.resizeMode = PHImageRequestOptionsResizeModeFast;
         
         NSMutableArray *assets = [NSMutableArray new];
-        PHFetchResult *result = [PHAsset fetchAssetsInAssetCollection:self options:nil];
+        
+        PHFetchOptions *_options = [[PHFetchOptions alloc] init];
+        _options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:NO]];
+        PHFetchResult *result = [PHAsset fetchAssetsInAssetCollection:self options:_options];
         
         for (PHAsset *asset in result) {
             if (assets.count == 3) {
@@ -203,6 +211,7 @@ NS_ASSUME_NONNULL_BEGIN
             }
             [assets addObject:asset];
         }
+        
         [[PHImageManager defaultManager] tf_requestImagesForAssets:assets targetSize:assetSize contentMode:PHImageContentModeAspectFill options:options resultHandler:^(NSDictionary *results, NSDictionary *infos) {
             UIGraphicsBeginImageContextWithOptions(CGSizeMake(TFTotalThumbnailWidth, TFTotalThumbnailWidth), NO, 0.0);
             
@@ -231,7 +240,6 @@ NS_ASSUME_NONNULL_BEGIN
             
             UIImage *retImage = UIGraphicsGetImageFromCurrentImageContext();
             UIGraphicsEndImageContext();
-            
             
             resultHandler(retImage);
         }];
@@ -401,4 +409,3 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
-

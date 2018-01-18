@@ -184,12 +184,16 @@
         return;
         
     }
+    
+    NSString* title = @"";
+    
     if (_assetCollection == nil) {
-        self.title = TFPhotoBrowserLocalizedStrings(@"Moments");
+        title = TFPhotoBrowserLocalizedStrings(@"Moments");
     } else {
-        self.title = _assetCollection.localizedTitle;
+        title = _assetCollection.localizedTitle;
     }
-    [_collectionButton setTitle:self.title forState:UIControlStateNormal];
+    
+    [_collectionButton setTitle:title forState:UIControlStateNormal];
     [_collectionButton sizeToFit];
     
     
@@ -202,8 +206,6 @@
         PHFetchOptions *options = [[PHFetchOptions alloc] init];
         options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"endDate" ascending:NO]];
         _moments = [PHAssetCollection fetchMomentsWithOptions:options];
-        
-        //(PHFetchResult<PHAssetCollection *> *)
         
         for(PHAssetCollection* collection in _moments)
         {
@@ -1416,4 +1418,3 @@
 
 
 @end
-
