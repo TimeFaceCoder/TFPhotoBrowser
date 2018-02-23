@@ -47,6 +47,8 @@
     UIColor *_headerTitleColor;
     
     __block BOOL _loadingQualityImage;
+    
+    NSIndexPath *lastAccessed;
 }
 
 @end
@@ -193,9 +195,11 @@
         title = _assetCollection.localizedTitle;
     }
     
-    [_collectionButton setTitle:title forState:UIControlStateNormal];
-    [_collectionButton sizeToFit];
-    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [_collectionButton setTitle:title forState:UIControlStateNormal];
+        [_collectionButton sizeToFit];
+        self.navigationItem.titleView = _collectionButton;
+    });
     
     if (_assetCollection != nil) {
         _fetchResult = [PHAsset fetchAssetsInAssetCollection:_assetCollection options:[self _assetFetchOptions]];
@@ -544,7 +548,57 @@
     recognizer.minimumPressDuration = 0.5;
     [self.collectionView addGestureRecognizer:recognizer];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionForReloadNotification:) name:@"NOTICE_RELOAD_COLLECTION_INDEXPATH" object:nil];
+    
+    
+    UIPanGestureRecognizer *gestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleGesture:)];
+    [self.view addGestureRecognizer:gestureRecognizer];
+    [gestureRecognizer setMinimumNumberOfTouches:1];
+    [gestureRecognizer setMaximumNumberOfTouches:1];
 }
+
+
+- (void) handleGesture:(UIPanGestureRecognizer *)gestureRecognizer
+{
+    float pointerX = [gestureRecognizer locationInView:self.collectionView].x;
+    float pointerY = [gestureRecognizer locationInView:self.collectionView].y;
+    
+    for (TFAssetCell *cell in self.collectionView.visibleCells) {
+        float cellSX = cell.frame.origin.x;
+        float cellEX = cell.frame.origin.x + cell.frame.size.width;
+        float cellSY = cell.frame.origin.y;
+        float cellEY = cell.frame.origin.y + cell.frame.size.height;
+        
+        if (pointerX >= cellSX && pointerX <= cellEX && pointerY >= cellSY && pointerY <= cellEY)
+        {
+            NSIndexPath *touchOver = [self.collectionView indexPathForCell:cell];
+            
+            if (lastAccessed != touchOver)
+            {
+                if (cell.assetSelected)  //取消选中
+                {
+                    [self deselectAsset:cell.asset];
+                }
+                else  //选中
+                {
+                    [self selectAsset:cell.asset];
+                }
+                if (_showAllSelectButton) {
+                    [self updateHeaderView:touchOver];
+                }
+            }
+            
+            lastAccessed = touchOver;
+        }
+    }
+    
+    if (gestureRecognizer.state == UIGestureRecognizerStateEnded)
+    {
+        lastAccessed = nil;
+        self.collectionView.scrollEnabled = YES;
+    }
+}
+
+
 
 
 
@@ -832,11 +886,13 @@
         }];
         dispatch_async(dispatch_get_main_queue(), ^{
             headerView.selectedButton.selected = allSelected;
-            headerView.selectedButton.enabled  = allInLocal;
+            if(!selectedAssets.count)
+            {
+                headerView.selectedButton.selected = NO;
+            }
+            headerView.selectedButton.enabled = allInLocal;
         });
-        
     });
-    
 }
 
 
@@ -856,11 +912,11 @@
     NSInteger addAssetCount = 0;
     NSInteger orginalCount = _selectedAssets.count;
     for (PHAsset *asset in fetchResult) {
-        if (state) {
+        if (state) { //取消全选
             if ([_selectedAssets containsObject:asset]) {
                 [self deselectAsset:asset];
             }
-        }else {
+        }else {  //全选
             [array addObject:asset];
             if (![_selectedAssets containsObject:asset]) {
                 [self selectAsset:asset];
@@ -1418,3 +1474,5 @@
 
 
 @end
+
+
