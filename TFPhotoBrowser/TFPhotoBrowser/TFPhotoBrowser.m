@@ -17,6 +17,8 @@
 #import "TFPhotoBrowserBundle.h"
 #import "TFPhotoTagView.h"
 
+#define iPhoneX_PhotoBrowser (([UIApplication sharedApplication].statusBarFrame.size.height > 20) ? YES: NO)
+
 @interface TFPhotoBrowser() <TFPhotoTagViewDelegate> {
     BOOL            _tagOnView;
     CGPoint         _editPoint;
@@ -187,6 +189,19 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
 
 #pragma mark - View Loading
 
+- (UIImage *)createImageWithColor:(UIColor *)color width:(CGFloat)width height:(CGFloat)height {
+    CGRect rect = CGRectMake(0.0f, 0.0f, width, height);
+    UIGraphicsBeginImageContext(rect.size);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetFillColorWithColor(context, [color CGColor]);
+    CGContextFillRect(context, rect);
+    
+    UIImage *theImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return theImage;
+}
+
+
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
     // View
@@ -211,9 +226,20 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     // Toolbar
     _toolbar = [[UIToolbar alloc] initWithFrame:[self frameForToolbarAtOrientation:[[UIApplication sharedApplication] statusBarOrientation]]];
     _toolbar.tintColor = [UIColor whiteColor];
-    _toolbar.barTintColor = nil;
-    [_toolbar setBackgroundImage:nil forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsDefault];
-    [_toolbar setBackgroundImage:nil forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsCompact];
+    if(iPhoneX_PhotoBrowser)
+    {
+        UIImage* image = [self createImageWithColor:[UIColor clearColor] width:[UIScreen mainScreen].bounds.size.width height:44];
+        _toolbar.barTintColor = [UIColor clearColor];
+        [_toolbar setBackgroundImage:image forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsDefault];
+        [_toolbar setBackgroundImage:image forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsCompact];
+    }
+    else
+    {
+        _toolbar.barTintColor = nil;
+        [_toolbar setBackgroundImage:nil forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsDefault];
+        [_toolbar setBackgroundImage:nil forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsCompact];
+    }
+    
     _toolbar.barStyle = UIBarStyleBlackTranslucent;
     _toolbar.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
     
@@ -221,8 +247,20 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     _navigationBar = [[UINavigationBar alloc] initWithFrame:[self frameForNavbarAtOrientation:[[UIApplication sharedApplication] statusBarOrientation]]];
     _navigationBar.tintColor = [UIColor whiteColor];
     _navigationBar.barTintColor = nil;
-    [_navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
-    [_navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsCompact];
+    if(iPhoneX_PhotoBrowser)
+    {
+        UIImage* image = [self createImageWithColor:[UIColor clearColor] width:[UIScreen mainScreen].bounds.size.width height:44];
+        _navigationBar.barTintColor = [UIColor clearColor];
+        [_navigationBar setBackgroundImage:image forBarMetrics:UIBarMetricsDefault];
+        [_navigationBar setBackgroundImage:image forBarMetrics:UIBarMetricsCompact];
+    }
+    else
+    {
+        _navigationBar.barTintColor = nil;
+        [_navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
+        [_navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsCompact];
+    }
+
     _navigationBar.barStyle = UIBarStyleBlackTranslucent;
     _navigationBar.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
     
@@ -775,6 +813,15 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     
     // Toolbar
     _toolbar.frame = [self frameForToolbarAtOrientation:[[UIApplication sharedApplication] statusBarOrientation]];
+    
+    if(iPhoneX_PhotoBrowser)
+    {
+        CGRect frame = _toolbar.frame;
+        frame.origin.y -= 34;
+        //frame.size.height -= 34;
+        _toolbar.frame = frame;
+        _toolbar.backgroundColor = [UIColor clearColor];
+    }
     
     // Remember index
     NSUInteger indexPriorToLayout = _currentPageIndex;
@@ -1394,9 +1441,10 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
 }
 
 - (CGRect)frameForNavbarAtOrientation:(UIInterfaceOrientation)orientation {
-    CGFloat height = 64;
+    CGFloat height = iPhoneX_PhotoBrowser ? 88 : 64;
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone &&
         UIInterfaceOrientationIsLandscape(orientation)) height = 52;
+    
     return CGRectIntegral(CGRectMake(0, 0, self.view.bounds.size.width, height));
 }
 
@@ -1736,6 +1784,15 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
         // Toolbar
         _toolbar.frame = [self frameForToolbarAtOrientation:[[UIApplication sharedApplication] statusBarOrientation]];
         if (hidden) _toolbar.frame = CGRectOffset(_toolbar.frame, 0, animatonOffset);
+        
+        if(iPhoneX_PhotoBrowser)
+        {
+            CGRect frame = _toolbar.frame;
+            frame.origin.y -= 34;
+            _toolbar.frame = frame;
+            _toolbar.backgroundColor = [UIColor clearColor];
+        }
+
         _toolbar.alpha = alpha;
         
         // Captions
@@ -1757,6 +1814,11 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
                 UIButton *v = page.selectedButton;
                 CGRect newFrame = [self frameForSelectedButton:v atIndex:0];
                 newFrame.origin.x = v.frame.origin.x;
+                if(iPhoneX_PhotoBrowser && hidden)
+                {
+                    newFrame.origin.y += 20;
+                }
+
                 v.frame = newFrame;
             }
         }
