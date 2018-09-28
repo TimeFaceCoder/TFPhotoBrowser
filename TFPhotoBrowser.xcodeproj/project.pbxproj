@@ -913,10 +913,10 @@
 				DEVELOPMENT_TEAM = 9LA25E73B7;
 				INFOPLIST_FILE = TFPhotoBrowser/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = cn.timeface.test.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = cn.timeface.test.demo.photoBrowser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "81251f35-a9d9-4e40-afff-7d0e50f1dad9";
-				PROVISIONING_PROFILE_SPECIFIER = TimeFaceDevelopmentProfile;
+				PROVISIONING_PROFILE = "0d74f27a-4930-4339-a30b-4ba4b21aa44a";
+				PROVISIONING_PROFILE_SPECIFIER = DemoAppDevelopmentProfile;
 			};
 			name = Debug;
 		};
@@ -930,7 +930,7 @@
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = TFPhotoBrowser/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = cn.timeface.test.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = cn.timeface.test.demo.photoBrowser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
