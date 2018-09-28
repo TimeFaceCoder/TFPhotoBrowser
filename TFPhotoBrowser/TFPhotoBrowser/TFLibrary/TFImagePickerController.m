@@ -8,7 +8,6 @@
 
 #import "TFImagePickerController.h"
 
-
 @import Photos;
 
 #import "TFAsset.h"
@@ -25,7 +24,6 @@
 #import "TFiCloudDownloadHelper.h"
 
 #define TFObjectSpacing 2.0
-
 
 @interface TFImagePickerController () <UIPopoverPresentationControllerDelegate, TFCollectionPickerControllerDelegate, PHPhotoLibraryChangeObserver, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIViewControllerRestoration,TFPhotoBrowserDelegate,TFAssetCellDelegate>
 {
@@ -50,6 +48,10 @@
     
     NSIndexPath *lastAccessed;
 }
+
+@property(nonatomic, strong) UIView* titleView;
+@property(nonatomic, strong) UILabel* titleLabel;
+@property(nonatomic, strong) UIImageView* arrowImage;
 
 @end
 
@@ -102,8 +104,6 @@
         return;
     }
     
-    //NSLog(@"%@", @(self.collectionView.visibleCells.count));
-    
     for (TFAssetCell *cell in self.collectionView.visibleCells) {
         
         BOOL isSelect = [_selectedAssets containsObject:cell.asset];
@@ -151,7 +151,6 @@
 
 - (void)_updateForAssetCollection
 {
-    
     PHAuthorizationStatus status = [PHPhotoLibrary authorizationStatus];
     if (status != PHAuthorizationStatusAuthorized) {
         //没有访问权限
@@ -184,7 +183,6 @@
         
         self.navigationItem.title = TFPhotoBrowserLocalizedStrings(@"Request album permissions");
         return;
-        
     }
     
     NSString* title = @"";
@@ -196,9 +194,23 @@
     }
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        [_collectionButton setTitle:title forState:UIControlStateNormal];
-        [_collectionButton sizeToFit];
-        self.navigationItem.titleView = _collectionButton;
+        //        [_collectionButton setTitle:@"" forState:UIControlStateNormal];
+        //        [_collectionButton sizeToFit];
+        //        [NSThread sleepForTimeInterval:0.1];
+        //        [_collectionButton setTitle:title forState:UIControlStateNormal];
+        //        [_collectionButton sizeToFit];
+        //        self.navigationItem.titleView = nil;
+        //        self.navigationItem.titleView = _collectionButton;
+        
+        self.titleLabel.text = title;
+        [self.titleLabel sizeToFit];
+        self.titleLabel.center = _titleView.center;
+        
+        self.arrowImage.center = _titleView.center;
+        
+        CGRect frame = self.arrowImage.frame;
+        frame.origin.x = self.titleLabel.frame.origin.x + self.titleLabel.frame.size.width + 4;
+        self.arrowImage.frame = frame;
     });
     
     if (_assetCollection != nil) {
@@ -328,8 +340,6 @@
     });
 }
 
-
-
 - (void)_updateToolbarItems:(BOOL)animated {
     NSMutableArray *items = [NSMutableArray new];
     
@@ -341,9 +351,7 @@
             [items addObject:fixedSpace];
             [items addObject: _scanButton];
         }
-        
     }
-    
     
     if ([[UIPasteboard generalPasteboard] containsPasteboardTypes:@[(NSString *)kUTTypeImage]] && [UIPasteboard generalPasteboard].changeCount != _pasteChangeCount) {
         if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
@@ -391,7 +399,6 @@
         
         [self showNotAuthView];
     }
-    
 }
 
 - (void)_initMethod
@@ -430,7 +437,10 @@
     _collectionButton.imageEdgeInsets = UIEdgeInsetsMake(0.0, 3.0, 0.0, 0.0);
     [_collectionButton setImage:[TFPhotoBrowserImageNamed(@"TFLibraryCollectionNavDisclosure") imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
     [_collectionButton sizeToFit];
-    self.navigationItem.titleView = _collectionButton;
+    //self.navigationItem.titleView = _collectionButton;
+    _collectionButton.hidden = YES;
+    self.navigationItem.titleView = self.titleView;
+    
     
     _momentCache = [[NSCache alloc] init];
     [self _updateForAssetCollection];
@@ -521,6 +531,7 @@
 
 - (void)dealloc
 {
+    NSLog(@"---------------%@ dealloc------------------", NSStringFromClass([self class]));
     [[PHPhotoLibrary sharedPhotoLibrary] unregisterChangeObserver:self];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NOTICE_RELOAD_COLLECTION_INDEXPATH" object:nil];
 }
@@ -597,12 +608,6 @@
         self.collectionView.scrollEnabled = YES;
     }
 }
-
-
-
-
-
-
 
 - (void)viewDidLayoutSubviews {
     if (self.view.window && !_windowLoaded) {
@@ -784,7 +789,7 @@
     _collectionPicker.assetFetchOptions = [self _assetFetchOptions];
     if (_selectedAssets.count > 0) {
         PHAssetCollection *collection = [PHAssetCollection transientAssetCollectionWithAssets:_selectedAssets.array title:TFPhotoBrowserLocalizedStrings(@"Selected")];
-        _collectionPicker.additionalAssetCollections = @[ collection ];
+        _collectionPicker.additionalAssetCollections = @[collection];
     } else {
         _collectionPicker.additionalAssetCollections = @[];
     }
@@ -795,8 +800,8 @@
     navigationController.navigationBarHidden = YES;
     
     navigationController.modalPresentationStyle = UIModalPresentationPopover;
-    navigationController.popoverPresentationController.sourceView = _collectionButton;
-    navigationController.popoverPresentationController.sourceRect = _collectionButton.bounds;
+    navigationController.popoverPresentationController.sourceView = self.titleView;//_collectionButton;
+    navigationController.popoverPresentationController.sourceRect = self.titleView.bounds;
     navigationController.popoverPresentationController.delegate = self;
     
     [self presentViewController:navigationController animated:YES completion:nil];
@@ -863,9 +868,7 @@
 }
 
 - (void)updateHeaderView:(NSIndexPath*)indexPath {
-    //UICollectionReusableView
-    //NSLog(@"index.section = %@, item = %@",@(indexPath.section),@(indexPath.row));
-    
+
     TFMomentHeaderNomalView *headerView = [headerViewDictionary objectForKey:[NSString stringWithFormat:@"%@",@(indexPath.section)]];
     
     __block BOOL allSelected = _moments[indexPath.section] != nil;
@@ -932,7 +935,7 @@
         [self.delegate imagePickerController:self didSelectedPickingAssets:array];
     }
     
-    [self.collectionView reloadData];
+    //[self.collectionView reloadData];
     //[self.collectionView reloadSections:[NSIndexSet indexSetWithIndex:path.section]];
 }
 
@@ -968,9 +971,6 @@
 }
 
 - (PHFetchResult *)_assetsForMoment:(PHAssetCollection *)collection {
-    
-    //    Printing description of collection:
-    //    <PHMoment: 0x14368fb30> 76D1ACA8-3585-4B07-B907-C8C0948FB97D/L0/060, title:"(null)", subtitle:"(null)" assetCollectionType=3/0 [2018-01-16 06:53:37 +0000 - 2018-01-16 08:45:03 +0000]
     
     PHFetchResult *result = [_momentCache objectForKey:collection.localIdentifier];
     if (result == nil) {
@@ -1089,10 +1089,7 @@
             headerView.selectedButton.selected = allSelected;
             headerView.selectedButton.enabled = allInLocal;
         });
-        
     });
-    
-    
     
     return headerView;
 }
@@ -1254,8 +1251,6 @@
                                       targetSize:_fullScreenSize];
         return photo;
     }
-    
-    
 }
 
 - (void)photoBrowser:(TFPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index section:(NSInteger)section selectedChanged:(BOOL)selected {
@@ -1398,7 +1393,6 @@
         [self addVideos:@[videoURL]];
     }
     
-    
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -1472,7 +1466,54 @@
     return nil;
 }
 
+#pragma mark - TitleView
+
+- (UIImageView *)arrowImage
+{
+    if(!_arrowImage)
+    {
+        _arrowImage = [[UIImageView alloc] initWithImage:TFPhotoBrowserImageNamed(@"TFLibraryCollectionNavDisclosure")];
+        
+    }
+    return _arrowImage;
+}
+
+- (UILabel *)titleLabel
+{
+    if(!_titleLabel)
+    {
+        _titleLabel = [[UILabel alloc] init];
+        _titleLabel.font = [UIFont systemFontOfSize:20];
+        _titleLabel.textColor = [UIColor whiteColor];
+    }
+    return _titleLabel;
+}
+
+- (UIView *)titleView
+{
+    if(!_titleView)
+    {
+        _titleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 200, 40)];
+        
+        [_titleView addSubview:self.titleLabel];
+        [_titleView addSubview:self.arrowImage];
+        
+        self.titleLabel.text = @"时刻";
+        [self.titleLabel sizeToFit];
+        self.titleLabel.center = _titleView.center;
+        
+        self.arrowImage.center = _titleView.center;
+        
+        CGRect frame = self.arrowImage.frame;
+        frame.origin.x = self.titleLabel.frame.origin.x + self.titleLabel.frame.size.width + 4;
+        self.arrowImage.frame = frame;
+        
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(changeCollection:)];
+        [_titleView addGestureRecognizer:tap];
+        _titleView.userInteractionEnabled = YES;
+        
+    }
+    return _titleView;
+}
 
 @end
-
-

@@ -118,6 +118,24 @@ const static CGFloat kPadding = 8.0f;
     [self _updateAccessibility];
 }
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)refreshSelectCell:(NSNotification *)noti
+{
+    NSMutableOrderedSet *selectedAssets = (NSMutableOrderedSet *)noti.object;
+    for(PHAsset* asset in selectedAssets.array)
+    {
+        if(asset == self.asset)
+        {
+            self.assetSelected = YES;
+            break;
+        }
+    }
+}
+
 - (void)_init {
     
     //添加subview
@@ -128,6 +146,7 @@ const static CGFloat kPadding = 8.0f;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didDownloadQualityImage) name:TFImagePickeriCloudDownLoadFinish object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadingQualityImage:) name:TFImagePickeriCloudDownLoading object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshSelectCell:) name:TFImagePickerRefreshSelectCell object:nil];
     
     //添加约束
     NSDictionary *viewsDic = @{@"imageView":self.imageView,@"selectedBadgeButton":self.selectedBadgeButton,@"downloadIndicator" : self.downloadIndicator};

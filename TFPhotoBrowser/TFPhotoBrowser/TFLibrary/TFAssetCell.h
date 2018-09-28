@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #define TFImagePickeriCloudDownLoading      @"TFImagePickeriCloudDownLoading"
 #define TFImagePickeriCloudDownLoadFinish   @"TFImagePickeriCloudDownLoadFinish"
+#define TFImagePickerRefreshSelectCell      @"TFImagePickerRefreshSelectCell"
 
 typedef NS_ENUM(NSInteger, TFAssetCellClickType){
     /**

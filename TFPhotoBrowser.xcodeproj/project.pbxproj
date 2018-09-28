@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3EACC456215E322700FF8250 /* TFPhotoBrowserNewNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EACC454215E322700FF8250 /* TFPhotoBrowserNewNavigationBar.m */; };
 		6502B2B51D8846C3000EC298 /* RMDisplayLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 6502B2B21D8846C3000EC298 /* RMDisplayLabel.m */; };
 		6502B2B61D8846C3000EC298 /* RMDownloadIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 6502B2B41D8846C3000EC298 /* RMDownloadIndicator.m */; };
 		6CFD503A1CA52453003586D5 /* TFPhotoTagView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CFD50391CA52453003586D5 /* TFPhotoTagView.m */; };
@@ -100,6 +101,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3EACC454215E322700FF8250 /* TFPhotoBrowserNewNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFPhotoBrowserNewNavigationBar.m; sourceTree = "<group>"; };
+		3EACC455215E322700FF8250 /* TFPhotoBrowserNewNavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFPhotoBrowserNewNavigationBar.h; sourceTree = "<group>"; };
 		6502B2B11D8846C3000EC298 /* RMDisplayLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMDisplayLabel.h; sourceTree = "<group>"; };
 		6502B2B21D8846C3000EC298 /* RMDisplayLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMDisplayLabel.m; sourceTree = "<group>"; };
 		6502B2B31D8846C3000EC298 /* RMDownloadIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMDownloadIndicator.h; sourceTree = "<group>"; };
@@ -379,6 +382,8 @@
 		B06A14891B903AEB0022BCE5 /* TFPhotoBrowser */ = {
 			isa = PBXGroup;
 			children = (
+				3EACC455215E322700FF8250 /* TFPhotoBrowserNewNavigationBar.h */,
+				3EACC454215E322700FF8250 /* TFPhotoBrowserNewNavigationBar.m */,
 				C4C5C6601CEEBBED00B94AD9 /* Resources */,
 				6CF2BD521C6193C4009AF2C1 /* TFImageEditor */,
 				B06A14921B904AEE0022BCE5 /* TFPhotoBrowserConstants.h */,
@@ -523,7 +528,6 @@
 				B06A14481B9039810022BCE5 /* Frameworks */,
 				B06A14491B9039810022BCE5 /* Resources */,
 				31321B1550C9FA4B8774889F /* [CP] Copy Pods Resources */,
-				79A6A7CC220B4A6659079531 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -669,28 +673,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-TFPhotoBrowser/Pods-TFPhotoBrowser-resources.sh",
+				"${PODS_ROOT}/SVProgressHUD/SVProgressHUD/SVProgressHUD.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SVProgressHUD.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TFPhotoBrowser/Pods-TFPhotoBrowser-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		79A6A7CC220B4A6659079531 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TFPhotoBrowser/Pods-TFPhotoBrowser-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		AF18F4BB30779909C5C777BA /* [CP] Check Pods Manifest.lock */ = {
@@ -699,13 +691,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-TFPhotoBrowser-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -753,6 +748,7 @@
 				B08D61BC1C224CBC00335903 /* TFAsset.m in Sources */,
 				B0D8F84D1C7308E5000778EE /* PHImageManager+TFRequestImages.m in Sources */,
 				B02CE3191C22D443005D6E62 /* TFLibraryViewLayout.m in Sources */,
+				3EACC456215E322700FF8250 /* TFPhotoBrowserNewNavigationBar.m in Sources */,
 				B0006C4A215DFE570067907B /* TFImageCropViewController.m in Sources */,
 				B0420DB11B953376002CAF13 /* TFTapDetectingView.m in Sources */,
 				B0B30AFA1C3A551C000AA90B /* ALAssetRepresentation+TFMD5.m in Sources */,

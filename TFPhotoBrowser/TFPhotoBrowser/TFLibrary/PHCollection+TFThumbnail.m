@@ -100,7 +100,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSMutableArray *assets = [NSMutableArray new];
     
     
-    
+
     PHFetchResult *moments = [PHAssetCollection fetchMomentsWithOptions:nil];
     
     
@@ -171,7 +171,7 @@ NS_ASSUME_NONNULL_BEGIN
                 } else {
                     [[PHCollection _tf_thumbnailImageCache] setObject:result forKey:cacheKey];
                 }
-                
+
                 dispatch_async(dispatch_get_main_queue(), ^{
                     resultHandler(result);
                 });
@@ -204,7 +204,7 @@ NS_ASSUME_NONNULL_BEGIN
         PHFetchOptions *_options = [[PHFetchOptions alloc] init];
         _options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:NO]];
         PHFetchResult *result = [PHAsset fetchAssetsInAssetCollection:self options:_options];
-        
+    
         for (PHAsset *asset in result) {
             if (assets.count == 3) {
                 break;
@@ -247,7 +247,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
     else
     {
-        resultHandler(nil);
+         resultHandler(nil);
     }
 }
 

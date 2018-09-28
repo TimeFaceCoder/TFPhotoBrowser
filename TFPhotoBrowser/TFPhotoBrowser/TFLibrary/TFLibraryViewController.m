@@ -137,7 +137,7 @@ static CGSize AssetGridThumbnailSize;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         // Photos library iOS >= 8
         PHFetchOptions *allPhotosOptions = [[PHFetchOptions alloc] init];
-        allPhotosOptions.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"modificationDate" ascending:NO]];
+        allPhotosOptions.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:NO]];
         weakSelf.assetsFetchResults = [PHAsset fetchAssetsWithOptions:allPhotosOptions];
         [weakSelf.assetsFetchResults indexOfObject:[NSNull null] inRange:NSMakeRange(0, 1)];
         [_items addObject:[NSNull null]];
@@ -244,13 +244,16 @@ static CGSize AssetGridThumbnailSize;
     UIBarButtonItem *flexSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
     NSMutableArray *items = [[NSMutableArray alloc] init];
     UIBarButtonItem *doneButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.selectedButton];
-    UIBarButtonItem *collectionButtonItem = [[UIBarButtonItem alloc] initWithTitle:TFPhotoBrowserLocalizedStrings(@"Album")
-                                                                             style:UIBarButtonItemStyleDone
-                                                                            target:self
-                                                                            action:@selector(showAlbumList)];
+    
     
     [items addObject:fixedSpace];
-    [items addObject:collectionButtonItem];
+    if (!_hiddenAlbumSelectItem) {
+        UIBarButtonItem *collectionButtonItem = [[UIBarButtonItem alloc] initWithTitle:TFPhotoBrowserLocalizedStrings(@"Album")
+                                                                                 style:UIBarButtonItemStyleDone
+                                                                                target:self
+                                                                                action:@selector(showAlbumList)];
+        [items addObject:collectionButtonItem];
+    }
     [items addObject:flexSpace];
     [items addObject:doneButtonItem];
     [items addObject:fixedSpace];
@@ -288,6 +291,7 @@ static CGSize AssetGridThumbnailSize;
 }
 
 - (void)onViewClick:(id)sender {
+    
     if ([_libraryControllerDelegate respondsToSelector:@selector(didSelectPHAssets:removeList:infos:)]) {
         [_libraryControllerDelegate didSelectPHAssets:_selectedAssets removeList:_removeAssets infos:nil];
     }
@@ -343,35 +347,38 @@ static CGSize AssetGridThumbnailSize;
         return cameraCell;
     }
     TFLibraryCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kTFLCollectionLibraryIdentifier forIndexPath:indexPath];
-    TFAsset *asset = self.items[indexPath.item];
-    if (asset.isPHAsset) {
-        cell.representedAssetIdentifier = asset.localIdentifier;
-        // Add a badge to the cell if the PHAsset represents a Live Photo.
-        if (asset.phAsset.mediaSubtypes & PHAssetMediaSubtypePhotoLive) {
-            // Add Badge Image to the cell to denote that the asset is a Live Photo.
-            UIImage *badge = [PHLivePhotoView livePhotoBadgeImageWithOptions:PHLivePhotoBadgeOptionsOverContent];
-            cell.livePhotoBadgeImage = badge;
+    if (indexPath.item<=self.items.count -1) {
+        TFAsset *asset = self.items[indexPath.item];
+        if (asset.isPHAsset) {
+            cell.representedAssetIdentifier = asset.localIdentifier;
+            // Add a badge to the cell if the PHAsset represents a Live Photo.
+            if (asset.phAsset.mediaSubtypes & PHAssetMediaSubtypePhotoLive) {
+                // Add Badge Image to the cell to denote that the asset is a Live Photo.
+                UIImage *badge = [PHLivePhotoView livePhotoBadgeImageWithOptions:PHLivePhotoBadgeOptionsOverContent];
+                cell.livePhotoBadgeImage = badge;
+            }
+            // Request an image for the asset from the PHCachingImageManager.
+            [self.imageManager requestImageForAsset:asset.phAsset
+                                         targetSize:AssetGridThumbnailSize
+                                        contentMode:PHImageContentModeAspectFill
+                                            options:nil
+                                      resultHandler:^(UIImage *result, NSDictionary *info) {
+                                          // Set the cell's thumbnail image if it's still showing the same asset.
+                                          if ([cell.representedAssetIdentifier isEqualToString:asset.localIdentifier]) {
+                                              [cell setThumbnailImage:result
+                                                 imageResultIsInCloud:NO];
+                                          }
+                                      }];
         }
-        // Request an image for the asset from the PHCachingImageManager.
-        [self.imageManager requestImageForAsset:asset.phAsset
-                                     targetSize:AssetGridThumbnailSize
-                                    contentMode:PHImageContentModeAspectFill
-                                        options:nil
-                                  resultHandler:^(UIImage *result, NSDictionary *info) {
-                                      // Set the cell's thumbnail image if it's still showing the same asset.
-                                      if ([cell.representedAssetIdentifier isEqualToString:asset.localIdentifier]) {
-                                          [cell setThumbnailImage:result
-                                             imageResultIsInCloud:NO];
-                                      }
-                                  }];
+        else {
+            [cell setThumbnailImage:asset.thumbnail imageResultIsInCloud:NO];
+        }
+        if ([_selectedAssets containsObject:asset]) {
+            [cell setSelected:YES];
+            [collectionView selectItemAtIndexPath:indexPath animated:NO scrollPosition:UICollectionViewScrollPositionNone];
+        }
     }
-    else {
-        [cell setThumbnailImage:asset.thumbnail imageResultIsInCloud:NO];
-    }
-    if ([_selectedAssets containsObject:asset]) {
-        [cell setSelected:YES];
-        [collectionView selectItemAtIndexPath:indexPath animated:NO scrollPosition:UICollectionViewScrollPositionNone];
-    }
+    
     return cell;
 }
 
@@ -411,7 +418,7 @@ static CGSize AssetGridThumbnailSize;
                              }];
         }
         else {
-            [SVProgressHUD showImage:nil status:TFPhotoBrowserLocalizedStrings(@"Can't support camera")];
+            [SVProgressHUD showInfoWithStatus:TFPhotoBrowserLocalizedStrings(@"Can't support camera")];
         }
         
         [collectionView deselectItemAtIndexPath:indexPath animated:NO];

@@ -292,7 +292,9 @@
             cell.thumbnailView.image = TFPhotoBrowserImageNamed(@"TFLibraryCollectionIcon");
             [collection tf_requestThumbnailWithAssetsFetchOptions:self.assetFetchOptions completion:^(UIImage *result) {
                 if (result != nil) {
-                    cell.thumbnailView.image = result;
+                    if ([cell.thumbnailView.image isEqual:TFPhotoBrowserImageNamed(@"TFLibraryCollectionIcon")]) {
+                        cell.thumbnailView.image = result;
+                    }
                 }
             }];
             
@@ -334,7 +336,6 @@
         
         hidden = [self _isCollectionHidden:collection];
     }
-    
     
     if (hidden) {
         return 0.0;

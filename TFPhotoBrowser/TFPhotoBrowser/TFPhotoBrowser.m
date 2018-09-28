@@ -16,6 +16,11 @@
 #import "TFPhotoBrowserPrivate.h"
 #import "TFPhotoBrowserBundle.h"
 #import "TFPhotoTagView.h"
+#import "TFPhotoBrowserNewNavigationBar.h"
+
+//#define iPhoneXPhotoBrowser ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size) : NO)
+
+
 
 #define iPhoneX_PhotoBrowser (([UIApplication sharedApplication].statusBarFrame.size.height > 20) ? YES: NO)
 
@@ -201,7 +206,6 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     return theImage;
 }
 
-
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
     // View
@@ -226,6 +230,7 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     // Toolbar
     _toolbar = [[UIToolbar alloc] initWithFrame:[self frameForToolbarAtOrientation:[[UIApplication sharedApplication] statusBarOrientation]]];
     _toolbar.tintColor = [UIColor whiteColor];
+    
     if(iPhoneX_PhotoBrowser)
     {
         UIImage* image = [self createImageWithColor:[UIColor clearColor] width:[UIScreen mainScreen].bounds.size.width height:44];
@@ -244,9 +249,11 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     _toolbar.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
     
     _navigationItem = [UINavigationItem new];
-    _navigationBar = [[UINavigationBar alloc] initWithFrame:[self frameForNavbarAtOrientation:[[UIApplication sharedApplication] statusBarOrientation]]];
+    _navigationBar = [[TFPhotoBrowserNewNavigationBar alloc] initWithFrame:[self frameForNavbarAtOrientation:[[UIApplication sharedApplication] statusBarOrientation]]];
+    //_navigationBar.backgroundColor = [UIColor redColor];
+    
     _navigationBar.tintColor = [UIColor whiteColor];
-    _navigationBar.barTintColor = nil;
+    
     if(iPhoneX_PhotoBrowser)
     {
         UIImage* image = [self createImageWithColor:[UIColor clearColor] width:[UIScreen mainScreen].bounds.size.width height:44];
@@ -260,7 +267,6 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
         [_navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
         [_navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsCompact];
     }
-
     _navigationBar.barStyle = UIBarStyleBlackTranslucent;
     _navigationBar.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
     
@@ -335,8 +341,8 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
         [_toolbar setItems:@[flexSpace,customItem,flexSpace]];
     }
     else {
-        // Toolbar visibility
-        [_toolbar setItems:items];
+        //2017.12.27   暂时没有需要的按钮  toolbar隐藏
+        //[_toolbar setItems:items];
     }
     
     if (_displaySelectionButtons) {
@@ -732,6 +738,8 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
         [self jumpToPageAtIndex:_pageIndexBeforeRotation animated:NO];
     }
     
+    
+    //[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:NO];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -778,6 +786,8 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     // Super
     [super viewWillDisappear:animated];
     
+    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:NO];
+    
 }
 
 - (void)willMoveToParentViewController:(UIViewController *)parent {
@@ -813,6 +823,7 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     
     // Toolbar
     _toolbar.frame = [self frameForToolbarAtOrientation:[[UIApplication sharedApplication] statusBarOrientation]];
+    //(origin = (x = 0, y = 768), size = (width = 375, height = 44))
     
     if(iPhoneX_PhotoBrowser)
     {
@@ -882,8 +893,18 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     return NO;
 }
 
+
+
+- (BOOL)shouldAutorotate {
+    return NO;
+}
+
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations {
-    return UIInterfaceOrientationMaskAll;
+    return UIInterfaceOrientationMaskPortrait;
+}
+
+- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation {
+    return UIInterfaceOrientationPortrait;
 }
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
@@ -1441,10 +1462,11 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
 }
 
 - (CGRect)frameForNavbarAtOrientation:(UIInterfaceOrientation)orientation {
+    
     CGFloat height = iPhoneX_PhotoBrowser ? 88 : 64;
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone &&
         UIInterfaceOrientationIsLandscape(orientation)) height = 52;
-    
+
     return CGRectIntegral(CGRectMake(0, 0, self.view.bounds.size.width, height));
 }
 
@@ -1727,7 +1749,7 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
     [self cancelControlHiding];
     
     // Animations & positions
-    CGFloat animatonOffset = 20;
+    CGFloat animatonOffset = 0;
     CGFloat animationDuration = (animated ? 0.35 : 0);
     
     // Status bar
@@ -1737,7 +1759,9 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
         if (!_isVCBasedStatusBarAppearance) {
             
             // Non-view controller based
-            [[UIApplication sharedApplication] setStatusBarHidden:hidden withAnimation:animated ? UIStatusBarAnimationSlide : UIStatusBarAnimationNone];
+//            [[UIApplication sharedApplication] setStatusBarHidden:hidden withAnimation:animated ? UIStatusBarAnimationSlide : UIStatusBarAnimationNone];
+
+              [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:animated ? UIStatusBarAnimationSlide : UIStatusBarAnimationNone];
             
         } else {
             
@@ -1777,13 +1801,18 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
         // Nav bar slides up on it's own on iOS 7+
         // NavigationBar
         _navigationBar.frame = [self frameForNavbarAtOrientation:[[UIApplication sharedApplication] statusBarOrientation]];
-        if (hidden) _navigationBar.frame = CGRectOffset(_navigationBar.frame, 0, -animatonOffset);
-        _navigationBar.alpha = alpha;
+
+        if (hidden)
+        {
+            _navigationBar.frame = CGRectOffset(_navigationBar.frame, 0, -animatonOffset);
+        }
         
+        _navigationBar.alpha = alpha;
         
         // Toolbar
         _toolbar.frame = [self frameForToolbarAtOrientation:[[UIApplication sharedApplication] statusBarOrientation]];
         if (hidden) _toolbar.frame = CGRectOffset(_toolbar.frame, 0, animatonOffset);
+        
         
         if(iPhoneX_PhotoBrowser)
         {
@@ -1792,7 +1821,7 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
             _toolbar.frame = frame;
             _toolbar.backgroundColor = [UIColor clearColor];
         }
-
+        
         _toolbar.alpha = alpha;
         
         // Captions
@@ -1814,11 +1843,12 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
                 UIButton *v = page.selectedButton;
                 CGRect newFrame = [self frameForSelectedButton:v atIndex:0];
                 newFrame.origin.x = v.frame.origin.x;
+                
                 if(iPhoneX_PhotoBrowser && hidden)
                 {
                     newFrame.origin.y += 20;
                 }
-
+                
                 v.frame = newFrame;
             }
         }
@@ -1834,10 +1864,11 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
 
 - (BOOL)prefersStatusBarHidden {
     if (!_leaveStatusBarAlone) {
-        return _statusBarShouldBeHidden;
+        return  YES ;//_statusBarShouldBeHidden;
     } else {
         return [self presentingViewControllerPrefersStatusBarHidden];
     }
+    
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
@@ -1860,11 +1891,11 @@ static void * TFVideoPlayerObservation = &TFVideoPlayerObservation;
 - (void)hideControlsAfterDelay {
     if (![self areControlsHidden]) {
         [self cancelControlHiding];
-        _controlVisibilityTimer = [NSTimer scheduledTimerWithTimeInterval:self.delayToHideElements
-                                                                   target:self
-                                                                 selector:@selector(hideControls)
-                                                                 userInfo:nil
-                                                                  repeats:NO];
+//        _controlVisibilityTimer = [NSTimer scheduledTimerWithTimeInterval:self.delayToHideElements
+//                                                                   target:self
+//                                                                 selector:@selector(hideControls)
+//                                                                 userInfo:nil
+//                                                                  repeats:NO];
     }
 }
 

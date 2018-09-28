@@ -42,6 +42,9 @@ extern NSString * const FLibraryViewControllerImageTypePNG;
  *  存放不需要被筛掉的图片类型. 默认为nil时，不对图片进行筛选
  */
 @property (strong, nonatomic) NSArray                           *filterImageTypes;
+
+@property (nonatomic, assign) BOOL hiddenAlbumSelectItem;
+
 @end
 
 

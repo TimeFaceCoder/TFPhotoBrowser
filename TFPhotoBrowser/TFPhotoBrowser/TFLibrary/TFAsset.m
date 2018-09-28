@@ -366,13 +366,21 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
     return _type;
 }
 
+- (NSString *)convertHeic:(NSString *)extention
+{
+    if ([extention containsString:@"heic"] || [extention containsString:@"heif"]) {
+        return @"jpg";
+    }
+    return extention;
+}
+
 - (NSString*)fileExtension {
     if (_fileExtension == nil) {
         if (self.isPHAsset) {
             _fileExtension = @"jpg";
             NSString * filename = [self.phAsset valueForKey:@"filename"];
             if (filename.length) {
-                _fileExtension = [filename pathExtension];
+                _fileExtension = [self convertHeic:[filename pathExtension].lowercaseString];
             }
         }
         else {
@@ -477,6 +485,10 @@ static PHImageRequestOptions    *_imageRequestOptions = nil;
         PHFetchResult *fetchResult = [PHAsset fetchAssetsWithLocalIdentifiers:@[localIdentifier] options:nil];
         if ([fetchResult count] > 0) {
             PHAsset *asset = [fetchResult objectAtIndex:0];
+            
+            //2448 3264
+            NSLog(@"%@ %@", @(asset.pixelWidth), @(asset.pixelHeight));
+            
             return [[self alloc] initWithPHAsset:asset];
         }
     }

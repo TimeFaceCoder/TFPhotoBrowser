@@ -10,5 +10,6 @@ target 'TFPhotoBrowser' do
     pod 'SVProgressHUD'
     pod 'AsyncDisplayKit', :git => 'https://git.coding.net/TimeFace/AsyncDisplayKit.git'
     pod 'TFCamera', :git => 'https://github.com/TimeFaceCoder/TFCamera.git'
+
     xcodeproj 'TFPhotoBrowser.xcodeproj'
 end

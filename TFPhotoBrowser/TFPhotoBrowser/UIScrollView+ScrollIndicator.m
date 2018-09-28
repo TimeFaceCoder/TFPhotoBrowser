@@ -138,6 +138,4 @@ static const CGFloat CRScrollIndicatorLeftRightThreshold = 16.0f;
     }
 }
 
-
-
 @end

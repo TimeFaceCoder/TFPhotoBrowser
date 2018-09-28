@@ -10,7 +10,7 @@ PODS:
     - PINRemoteImage/iOS (= 3.0.0-beta.3)
   - DACircularProgress (2.3.1)
   - FLAnimatedImage (1.0.12)
-  - Masonry (1.0.2)
+  - Masonry (1.1.0)
   - PINCache (3.0.1-beta)
   - PINRemoteImage (3.0.0-beta.3):
     - PINRemoteImage/FLAnimatedImage (= 3.0.0-beta.3)
@@ -21,11 +21,11 @@ PODS:
     - PINRemoteImage/Core
   - PINRemoteImage/iOS (3.0.0-beta.3):
     - PINRemoteImage/Core
-  - pop (1.0.9)
-  - SDWebImage (4.0.0):
-    - SDWebImage/Core (= 4.0.0)
-  - SDWebImage/Core (4.0.0)
-  - SVProgressHUD (2.1.2)
+  - pop (1.0.10)
+  - SDWebImage (4.4.2):
+    - SDWebImage/Core (= 4.4.2)
+  - SDWebImage/Core (4.4.2)
+  - SVProgressHUD (2.2.5)
   - TFCamera (0.0.4):
     - Masonry
     - pop
@@ -38,6 +38,17 @@ DEPENDENCIES:
   - SDWebImage
   - SVProgressHUD
   - TFCamera (from `https://github.com/TimeFaceCoder/TFCamera.git`)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - DACircularProgress
+    - FLAnimatedImage
+    - Masonry
+    - PINCache
+    - PINRemoteImage
+    - pop
+    - SDWebImage
+    - SVProgressHUD
 
 EXTERNAL SOURCES:
   AsyncDisplayKit:
@@ -57,14 +68,14 @@ SPEC CHECKSUMS:
   AsyncDisplayKit: 94d2b0648c4a4ec5145dca23624e4ce856716c94
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
-  Masonry: 7c429b56da9d4ee0bbb3ed77a5ea710d6a5df39e
+  Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   PINCache: 6911fe422a633e18b3d3ddf2bd4f0e55e36e2892
   PINRemoteImage: 308731aa6534500e58fc211b9cc2bb7252df25ba
-  pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
-  SDWebImage: 76a6348bdc74eb5a55dd08a091ef298e56b55e41
-  SVProgressHUD: c404a55d78acbeb7ebb78b76d3faf986475a6994
+  pop: 82ca6b068ce9278fd350fd9dd09482a0ce9492e6
+  SDWebImage: 624d6e296c69b244bcede364c72ae0430ac14681
+  SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
   TFCamera: 2148748ebd0be73b820ef06c627d0250e3af9f0d
 
-PODFILE CHECKSUM: a1c6ad08d3ecc3479ffb7587d28eeca81c589330
+PODFILE CHECKSUM: 27e03651f6cec99a3d2445013c40593744342e22
 
-COCOAPODS: 1.3.0.beta.1
+COCOAPODS: 1.5.3
