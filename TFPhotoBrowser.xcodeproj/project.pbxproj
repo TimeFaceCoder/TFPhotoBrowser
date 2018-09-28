@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		3E878B731EF0CF8300C9C57C /* TFImageCropViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E878B701EF0CF8300C9C57C /* TFImageCropViewController.m */; };
-		3E878B741EF0CF8300C9C57C /* TFImageEditorFrameView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E878B721EF0CF8300C9C57C /* TFImageEditorFrameView.m */; };
 		6502B2B51D8846C3000EC298 /* RMDisplayLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 6502B2B21D8846C3000EC298 /* RMDisplayLabel.m */; };
 		6502B2B61D8846C3000EC298 /* RMDownloadIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 6502B2B41D8846C3000EC298 /* RMDownloadIndicator.m */; };
 		6CFD503A1CA52453003586D5 /* TFPhotoTagView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CFD50391CA52453003586D5 /* TFPhotoTagView.m */; };
@@ -102,8 +101,6 @@
 /* Begin PBXFileReference section */
 		3E878B6F1EF0CF8300C9C57C /* TFImageCropViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFImageCropViewController.h; sourceTree = "<group>"; };
 		3E878B701EF0CF8300C9C57C /* TFImageCropViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFImageCropViewController.m; sourceTree = "<group>"; };
-		3E878B711EF0CF8300C9C57C /* TFImageEditorFrameView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFImageEditorFrameView.h; sourceTree = "<group>"; };
-		3E878B721EF0CF8300C9C57C /* TFImageEditorFrameView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFImageEditorFrameView.m; sourceTree = "<group>"; };
 		6502B2B11D8846C3000EC298 /* RMDisplayLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMDisplayLabel.h; sourceTree = "<group>"; };
 		6502B2B21D8846C3000EC298 /* RMDisplayLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMDisplayLabel.m; sourceTree = "<group>"; };
 		6502B2B31D8846C3000EC298 /* RMDownloadIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMDownloadIndicator.h; sourceTree = "<group>"; };
@@ -385,8 +382,6 @@
 			children = (
 				3E878B6F1EF0CF8300C9C57C /* TFImageCropViewController.h */,
 				3E878B701EF0CF8300C9C57C /* TFImageCropViewController.m */,
-				3E878B711EF0CF8300C9C57C /* TFImageEditorFrameView.h */,
-				3E878B721EF0CF8300C9C57C /* TFImageEditorFrameView.m */,
 				C4C5C6601CEEBBED00B94AD9 /* Resources */,
 				6CF2BD521C6193C4009AF2C1 /* TFImageEditor */,
 				B06A14921B904AEE0022BCE5 /* TFPhotoBrowserConstants.h */,
@@ -584,7 +579,7 @@
 		B06A14431B9039810022BCE5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 1000;
 				ORGANIZATIONNAME = TimeFace;
 				TargetAttributes = {
 					B06A144A1B9039810022BCE5 = {
@@ -756,7 +751,6 @@
 				B02CE31F1C22D51E005D6E62 /* TFLibraryCollectionViewCell.m in Sources */,
 				B06A14951B904B080022BCE5 /* TFPhoto.m in Sources */,
 				B09C3C491C2015C9009C6CF0 /* TFLibraryViewController.m in Sources */,
-				3E878B741EF0CF8300C9C57C /* TFImageEditorFrameView.m in Sources */,
 				B0D8F8631C731390000778EE /* TFImageZoomView.m in Sources */,
 				B08D61BC1C224CBC00335903 /* TFAsset.m in Sources */,
 				B0D8F84D1C7308E5000778EE /* PHImageManager+TFRequestImages.m in Sources */,
@@ -827,17 +821,28 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -859,7 +864,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -870,17 +875,28 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -896,7 +912,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
